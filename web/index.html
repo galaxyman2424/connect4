@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect 4 vs. Minimax</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>Connect <span class="four">4</span></h1>
+    <p class="sub">Play a minimax bot. Slide the difficulty to change how deep it thinks.</p>
+  </header>
+
+  <section class="controls" aria-label="Game settings">
+    <div class="ctl level">
+      <label for="level">Difficulty <strong id="levelNum">5</strong></label>
+      <input id="level" type="range" min="1" max="10" step="1" value="5">
+      <div id="levelLabel" class="hint"></div>
+    </div>
+    <div class="ctl first">
+      <span class="lbl" id="firstLbl">Who goes first</span>
+      <div class="seg" role="radiogroup" aria-labelledby="firstLbl">
+        <button type="button" role="radio" id="firstHuman" aria-checked="true" class="on">Human</button>
+        <button type="button" role="radio" id="firstBot" aria-checked="false">Bot</button>
+      </div>
+    </div>
+    <button id="newGame" class="primary" type="button">New Game</button>
+  </section>
+
+  <div id="status" class="status" role="status" aria-live="polite">Your move</div>
+
+  <section class="stage">
+    <div id="ghostRow" class="ghost-row" aria-hidden="true"></div>
+    <div id="board" class="board" aria-label="Connect 4 board"></div>
+    <div id="colButtons" class="col-buttons" aria-label="Drop in column"></div>
+  </section>
+
+  <div id="reason" class="reason" aria-live="polite">&nbsp;</div>
+  <p class="keys">Tip: press <kbd>1</kbd>-<kbd>7</kbd> to drop a piece.</p>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

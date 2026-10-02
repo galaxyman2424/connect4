@@ -1,0 +1,359 @@
+{
+  "query": "44334552",
+  "change_col_1indexed": 4,
+  "corpus": "selfplay",
+  "corpus_size": 46560,
+  "k": 5,
+  "embeddings": {
+    "features": {
+      "before": {
+        "query_best_cols_1indexed": [
+          4
+        ],
+        "label_source": "solver",
+        "neighbors": [
+          {
+            "rank": 1,
+            "moves": "32354544",
+            "source": "selfplay",
+            "ply": 8,
+            "cosine": 0.9932,
+            "best_cols_1indexed": [
+              5
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 2,
+            "moves": "554344",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.988,
+            "best_cols_1indexed": [
+              6
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 3,
+            "moves": "453344",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.988,
+            "best_cols_1indexed": [
+              2
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 4,
+            "moves": "344543",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.988,
+            "best_cols_1indexed": [
+              4,
+              5,
+              6
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          },
+          {
+            "rank": 5,
+            "moves": "35544345",
+            "source": "selfplay",
+            "ply": 8,
+            "cosine": 0.9867,
+            "best_cols_1indexed": [
+              4
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          }
+        ],
+        "share_same_best_move": 0.4
+      },
+      "after (+col 4)": {
+        "query_best_cols_1indexed": [
+          5
+        ],
+        "label_source": "solver",
+        "neighbors": [
+          {
+            "rank": 1,
+            "moves": "413544433",
+            "source": "selfplay",
+            "ply": 9,
+            "cosine": 0.9775,
+            "best_cols_1indexed": [
+              2
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 2,
+            "moves": "574344455",
+            "source": "selfplay",
+            "ply": 9,
+            "cosine": 0.9766,
+            "best_cols_1indexed": [
+              6
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 3,
+            "moves": "5543444",
+            "source": "selfplay",
+            "ply": 7,
+            "cosine": 0.9764,
+            "best_cols_1indexed": [
+              6
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 4,
+            "moves": "574344334",
+            "source": "selfplay",
+            "ply": 9,
+            "cosine": 0.9721,
+            "best_cols_1indexed": [
+              2,
+              3,
+              4,
+              5,
+              7
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          },
+          {
+            "rank": 5,
+            "moves": "4544455",
+            "source": "selfplay",
+            "ply": 7,
+            "cosine": 0.9696,
+            "best_cols_1indexed": [
+              4
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          }
+        ],
+        "share_same_best_move": 0.2
+      },
+      "top_k_overlap_before_after": 0
+    },
+    "raw": {
+      "before": {
+        "query_best_cols_1indexed": [
+          4
+        ],
+        "label_source": "solver",
+        "neighbors": [
+          {
+            "rank": 1,
+            "moves": "4534435",
+            "source": "selfplay",
+            "ply": 7,
+            "cosine": 0.9354,
+            "best_cols_1indexed": [
+              4
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          },
+          {
+            "rank": 2,
+            "moves": "45344353",
+            "source": "selfplay",
+            "ply": 8,
+            "cosine": 0.875,
+            "best_cols_1indexed": [
+              3
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 3,
+            "moves": "35534444",
+            "source": "selfplay",
+            "ply": 8,
+            "cosine": 0.875,
+            "best_cols_1indexed": [
+              1,
+              2,
+              3,
+              5
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 4,
+            "moves": "453443",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.866,
+            "best_cols_1indexed": [
+              3,
+              5
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 5,
+            "moves": "355344",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.866,
+            "best_cols_1indexed": [
+              4
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          }
+        ],
+        "share_same_best_move": 0.4
+      },
+      "after (+col 4)": {
+        "query_best_cols_1indexed": [
+          5
+        ],
+        "label_source": "solver",
+        "neighbors": [
+          {
+            "rank": 1,
+            "moves": "3544434",
+            "source": "selfplay",
+            "ply": 7,
+            "cosine": 0.8819,
+            "best_cols_1indexed": [
+              5
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          },
+          {
+            "rank": 2,
+            "moves": "4534435",
+            "source": "selfplay",
+            "ply": 7,
+            "cosine": 0.8819,
+            "best_cols_1indexed": [
+              4
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 3,
+            "moves": "45344353",
+            "source": "selfplay",
+            "ply": 8,
+            "cosine": 0.825,
+            "best_cols_1indexed": [
+              3
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 4,
+            "moves": "355344",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.8165,
+            "best_cols_1indexed": [
+              4
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": false
+          },
+          {
+            "rank": 5,
+            "moves": "453443",
+            "source": "selfplay",
+            "ply": 6,
+            "cosine": 0.8165,
+            "best_cols_1indexed": [
+              3,
+              5
+            ],
+            "label_source": "solver",
+            "same_best_move_as_query": true
+          }
+        ],
+        "share_same_best_move": 0.4
+      },
+      "top_k_overlap_before_after": 4
+    }
+  },
+  "label_agreement_accuracy_set": [
+    {
+      "embedding": "features",
+      "pairs": 15000,
+      "share_optimal_col_overlap": 0.4842,
+      "share_same_outcome": 0.641,
+      "mean_abs_ply_diff": 2.28
+    },
+    {
+      "embedding": "raw",
+      "pairs": 15000,
+      "share_optimal_col_overlap": 0.4211,
+      "share_same_outcome": 0.4946,
+      "mean_abs_ply_diff": 6.28
+    },
+    {
+      "embedding": "random_same_bucket",
+      "pairs": 15000,
+      "share_optimal_col_overlap": 0.4013,
+      "share_same_outcome": 0.4952,
+      "mean_abs_ply_diff": 1.17
+    },
+    {
+      "embedding": "random_any",
+      "pairs": 15000,
+      "share_optimal_col_overlap": 0.3873,
+      "share_same_outcome": 0.4855,
+      "mean_abs_ply_diff": 7.84
+    }
+  ],
+  "feature_names": [
+    "phase",
+    "to_move",
+    "p1_center",
+    "p1_center_w",
+    "p1_open2",
+    "p1_open3",
+    "p1_threats_now",
+    "p1_threat_cells",
+    "p1_threats_odd",
+    "p1_threats_even",
+    "p2_center",
+    "p2_center_w",
+    "p2_open2",
+    "p2_open3",
+    "p2_threats_now",
+    "p2_threat_cells",
+    "p2_threats_odd",
+    "p2_threats_even",
+    "height_0",
+    "height_1",
+    "height_2",
+    "height_3",
+    "height_4",
+    "height_5",
+    "height_6"
+  ]
+}

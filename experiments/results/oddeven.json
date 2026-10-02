@@ -1,0 +1,164 @@
+{
+  "root_eval_by_depth": {
+    "1": {
+      "mean": 5.658,
+      "n": 2241
+    },
+    "2": {
+      "mean": -1.137,
+      "n": 2086
+    },
+    "3": {
+      "mean": 4.727,
+      "n": 1858
+    },
+    "4": {
+      "mean": -1.163,
+      "n": 1786
+    },
+    "5": {
+      "mean": 4.381,
+      "n": 1697
+    },
+    "6": {
+      "mean": -0.975,
+      "n": 1653
+    },
+    "7": {
+      "mean": 3.969,
+      "n": 1598
+    },
+    "8": {
+      "mean": -0.63,
+      "n": 1561
+    },
+    "9": {
+      "mean": 3.306,
+      "n": 1485
+    },
+    "10": {
+      "mean": -0.339,
+      "n": 1423
+    }
+  },
+  "accuracy_step": [
+    {
+      "to_depth": 2,
+      "parity": "even",
+      "delta_optimal": 0.0813,
+      "delta_keeps_nl": 0.0557
+    },
+    {
+      "to_depth": 3,
+      "parity": "odd",
+      "delta_optimal": 0.036,
+      "delta_keeps_nl": 0.0131
+    },
+    {
+      "to_depth": 4,
+      "parity": "even",
+      "delta_optimal": 0.027,
+      "delta_keeps_nl": 0.0132
+    },
+    {
+      "to_depth": 5,
+      "parity": "odd",
+      "delta_optimal": 0.0067,
+      "delta_keeps_nl": -0.0005
+    },
+    {
+      "to_depth": 6,
+      "parity": "even",
+      "delta_optimal": 0.009,
+      "delta_keeps_nl": 0.0075
+    },
+    {
+      "to_depth": 7,
+      "parity": "odd",
+      "delta_optimal": 0.0046,
+      "delta_keeps_nl": -0.0014
+    },
+    {
+      "to_depth": 8,
+      "parity": "even",
+      "delta_optimal": 0.0114,
+      "delta_keeps_nl": 0.0051
+    },
+    {
+      "to_depth": 9,
+      "parity": "odd",
+      "delta_optimal": 0.0036,
+      "delta_keeps_nl": 0.0033
+    },
+    {
+      "to_depth": 10,
+      "parity": "even",
+      "delta_optimal": 0.01,
+      "delta_keeps_nl": 0.0024
+    }
+  ],
+  "strength_step": [
+    {
+      "to_depth": 2,
+      "parity": "even",
+      "elo_gain": 271.5,
+      "lo": 230.6,
+      "hi": 318.6,
+      "h2h_score": 0.775
+    },
+    {
+      "to_depth": 3,
+      "parity": "odd",
+      "elo_gain": -64.2,
+      "lo": -97.5,
+      "hi": -30.0,
+      "h2h_score": 0.46
+    },
+    {
+      "to_depth": 4,
+      "parity": "even",
+      "elo_gain": 182.1,
+      "lo": 150.9,
+      "hi": 216.6,
+      "h2h_score": 0.78
+    },
+    {
+      "to_depth": 5,
+      "parity": "odd",
+      "elo_gain": 19.3,
+      "lo": -11.3,
+      "hi": 51.7,
+      "h2h_score": 0.555
+    },
+    {
+      "to_depth": 6,
+      "parity": "even",
+      "elo_gain": 27.3,
+      "lo": -5.6,
+      "hi": 56.1,
+      "h2h_score": 0.585
+    },
+    {
+      "to_depth": 7,
+      "parity": "odd",
+      "elo_gain": 19.9,
+      "lo": -10.9,
+      "hi": 54.6,
+      "h2h_score": 0.5
+    },
+    {
+      "to_depth": 8,
+      "parity": "even",
+      "elo_gain": 44.1,
+      "lo": 9.3,
+      "hi": 77.1,
+      "h2h_score": 0.6
+    }
+  ],
+  "parity_means": {
+    "strength_step_odd_mean_elo_gain": -8.3333,
+    "strength_step_even_mean_elo_gain": 131.25,
+    "accuracy_step_odd_mean_delta_optimal": 0.0127,
+    "accuracy_step_even_mean_delta_optimal": 0.0277
+  }
+}

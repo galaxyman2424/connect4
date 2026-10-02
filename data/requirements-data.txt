@@ -1,0 +1,4 @@
+# Only needed for data/download_data.py (run on your own machine)
+datasets
+huggingface_hub
+unlzw3

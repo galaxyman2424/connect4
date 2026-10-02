@@ -1,0 +1,20 @@
+# build artifacts
+tools/pons/c4solver
+tools/pons/c4solver_big
+tools/pons/*.o
+tools/pons/*.book
+__pycache__/
+*.pyc
+# data: keep the small accuracy CSV committed; ignore large generated files (>5 MB)
+data/uci/connect-4.data
+data/uci/positions.csv
+data/uci/_shard*.tsv
+tools/pons/generator
+tools/pons/*.exe
+# local tooling / scratch
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+smoke/
+connect4.tgz
