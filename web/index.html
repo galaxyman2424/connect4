@@ -5,16 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Connect 4 vs. Minimax</title>
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/lab.css">
 </head>
 <body>
+<nav class="topnav" aria-label="Pages"><a href="/" class="on" aria-current="page">Play</a><a href="/lab">Lab</a></nav>
 <main class="app">
   <header>
     <h1>Connect <span class="four">4</span></h1>
-    <p class="sub">Play a minimax bot. Slide the difficulty to change how deep it thinks.</p>
+    <p class="sub">Play our minimax bot (slide the difficulty to change how deep it thinks) or a neural network we trained. Charts and findings: <a href="/lab" style="color:var(--accent)">Lab</a>.</p>
   </header>
 
   <section class="controls" aria-label="Game settings">
-    <div class="ctl level">
+    <div class="ctl opp" id="oppCtl" hidden>
+      <span class="lbl" id="oppLbl">Opponent</span>
+      <div class="row">
+        <div class="seg" role="radiogroup" aria-labelledby="oppLbl">
+          <button type="button" role="radio" id="oppMinimax" aria-checked="true" class="on">Minimax</button>
+          <button type="button" role="radio" id="oppNN" aria-checked="false">Neural net</button>
+        </div>
+        <select id="nnRun" aria-label="Which trained network" hidden></select>
+        <select id="nnSims" aria-label="Search budget" hidden>
+          <option value="0">no search (policy only)</option>
+          <option value="50">MCTS 50 simulations</option>
+          <option value="200" selected>MCTS 200 simulations</option>
+          <option value="800">MCTS 800 simulations</option>
+        </select>
+      </div>
+    </div>
+    <div class="ctl level" id="levelCtl">
       <label for="level">Difficulty <strong id="levelNum">5</strong></label>
       <input id="level" type="range" min="1" max="10" step="1" value="5">
       <div id="levelLabel" class="hint"></div>

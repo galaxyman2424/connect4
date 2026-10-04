@@ -18,3 +18,11 @@ venv/
 .ipynb_checkpoints/
 smoke/
 connect4.tgz
+# neural net (nn/): keep runs/<run>/{config.json,metrics.jsonl,model.npz,best.npz,eval.json,notes.md}
+runs/*/checkpoints/
+runs/_*
+*.tmp.npz
+nn_data/
+# arena: third-party bots are downloaded by `python -m arena.fetch`, not committed
+arena/third_party/
+experiments/results/arena/*/games.csv.old

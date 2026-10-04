@@ -20,13 +20,15 @@ Project layout mirrors the repo layout in connect4-project-statement.md.
 - evaluate(board, player) -> float, score from `player`'s perspective (window scoring per statement).
 
 ## engine/minimax.py
-- negamax search: search(board, depth, time_limit=None, use_tt=True, ordering=True) -> SearchResult
+- negamax search: search(board, depth, time_limit=None, use_tt=True, ordering=True, evaluator=None) -> SearchResult
+  evaluator: optional leaf evaluation f(me_bits, opp_bits) -> number (side-to-move view, |v| << 1e6);
+  None = engine/heuristic.py. Used by nn/agents.NNMinimaxAgent (network value as the evaluation).
   SearchResult fields: col:int, score:float, nodes:int, ms:float, depth_reached:int
   Score from the side-to-move perspective; wins scored as large (e.g. 1e6 - ply) so faster wins preferred.
 
 ## engine/agents.py
 - RandomAgent(seed=None).choose(board) -> int
-- MinimaxAgent(depth, epsilon=0.0, time_limit=None, seed=None).choose(board) -> int; .last_result -> SearchResult (None-ish/defaults if random move)
+- MinimaxAgent(depth, epsilon=0.0, time_limit=None, seed=None, evaluator=None).choose(board) -> int; .last_result -> SearchResult (None-ish/defaults if random move)
 - SolverAgent (optional; wraps a Pons solver binary if present at tools/pons/c4solver)
 - LEVELS = {1:(1,0.5),2:(1,0.2),3:(2,0.1),4:(3,0),5:(4,0),6:(5,0),7:(6,0),8:(7,0),9:(8,0),10:(20,0)} with level 10 time_limit≈2.0s (iterative deepening)
 - agent_for_level(level, seed=None) -> MinimaxAgent
@@ -35,3 +37,8 @@ Project layout mirrors the repo layout in connect4-project-statement.md.
 - GET / -> web/index.html (static files from web/)
 - POST /api/move JSON {board: grid, level: int} -> {col, score, nodes, ms, depth, random: bool} ; error 400 on bad board / game over
 - Run: `python server/app.py` -> http://localhost:5000
+
+## server/app.py additions (Lab page)
+- GET /lab -> web/lab.html; JSON under /api/lab/* and /api/nn/models (see server/lab_api.py)
+- POST /api/move also accepts {board, engine: "nn", run: "<runs/ folder>", sims: 0-5000} (0 = policy head only)
+  -> same fields + engine: "nn", nn: {visits, prior, q, pv, run, sims}; score = MCTS value in [-1, 1]

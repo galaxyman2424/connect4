@@ -1,0 +1,7 @@
+# Extra packages for TRAINING the neural network (the GPU machine).
+# The website and the arena only need requirements.txt (numpy runs exported models).
+#
+# On Linux, `pip install torch` from PyPI ships the CUDA build (CUDA 13.0 runtime for
+# torch 2.14, which needs NVIDIA driver >= 580; the training box has 580.173.02).
+# If yours is older, pick the matching wheel at https://pytorch.org/get-started/locally/
+torch>=2.4

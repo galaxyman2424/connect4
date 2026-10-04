@@ -1,0 +1,689 @@
+{
+  "run": "pilot_cpu_sup",
+  "model": "runs/pilot_cpu_sup/model.npz",
+  "model_meta": {
+    "run": "pilot_cpu_sup",
+    "phase": "supervised",
+    "epoch": 6,
+    "val_loss": 1.85488,
+    "bench_optimal": 0.6353,
+    "exported": "2026-10-03T19:36:56"
+  },
+  "created": "2026-10-03T20:09:35",
+  "settings": {
+    "run": "pilot_cpu_sup",
+    "model": "model.npz",
+    "sims": "50",
+    "ladder_sims": 50,
+    "depths": "1,2,4",
+    "openings": 4,
+    "hyp_depths": "1,2",
+    "hyp_openings": 4,
+    "hyp_positions": 60,
+    "workers": 1,
+    "quick": true,
+    "skip": "accuracy,tactics,ladder"
+  },
+  "accuracy": {
+    "nn_policy": {
+      "n": 3000,
+      "optimal": 0.6353,
+      "keeps_nl": 0.7746,
+      "by_bucket": {
+        "8-11": {
+          "n": 500,
+          "optimal": 0.64,
+          "keeps_nl": 0.8053,
+          "n_not_lost": 339
+        },
+        "12-15": {
+          "n": 500,
+          "optimal": 0.638,
+          "keeps_nl": 0.814,
+          "n_not_lost": 344
+        },
+        "16-19": {
+          "n": 500,
+          "optimal": 0.63,
+          "keeps_nl": 0.7725,
+          "n_not_lost": 356
+        },
+        "20-23": {
+          "n": 500,
+          "optimal": 0.63,
+          "keeps_nl": 0.7765,
+          "n_not_lost": 349
+        },
+        "24-27": {
+          "n": 500,
+          "optimal": 0.606,
+          "keeps_nl": 0.744,
+          "n_not_lost": 375
+        },
+        "28-30": {
+          "n": 500,
+          "optimal": 0.668,
+          "keeps_nl": 0.7412,
+          "n_not_lost": 371
+        }
+      }
+    },
+    "nn_mcts50": {
+      "n": 3000,
+      "optimal": 0.7877,
+      "keeps_nl": 0.9082,
+      "n_not_lost": 2134,
+      "by_bucket": {
+        "8-11": {
+          "n": 500,
+          "optimal": 0.732,
+          "keeps_nl": 0.8879,
+          "n_not_lost": 339
+        },
+        "12-15": {
+          "n": 500,
+          "optimal": 0.756,
+          "keeps_nl": 0.9012,
+          "n_not_lost": 344
+        },
+        "16-19": {
+          "n": 500,
+          "optimal": 0.756,
+          "keeps_nl": 0.8764,
+          "n_not_lost": 356
+        },
+        "20-23": {
+          "n": 500,
+          "optimal": 0.806,
+          "keeps_nl": 0.9112,
+          "n_not_lost": 349
+        },
+        "24-27": {
+          "n": 500,
+          "optimal": 0.818,
+          "keeps_nl": 0.9253,
+          "n_not_lost": 375
+        },
+        "28-30": {
+          "n": 500,
+          "optimal": 0.858,
+          "keeps_nl": 0.9434,
+          "n_not_lost": 371
+        }
+      }
+    },
+    "minimax_reference": {
+      "d1": {
+        "optimal": 0.7287,
+        "keeps_nl": 0.8529,
+        "ms": 0.087
+      },
+      "d2": {
+        "optimal": 0.81,
+        "keeps_nl": 0.9086,
+        "ms": 0.199
+      },
+      "d3": {
+        "optimal": 0.846,
+        "keeps_nl": 0.9217,
+        "ms": 0.565
+      },
+      "d4": {
+        "optimal": 0.873,
+        "keeps_nl": 0.9349,
+        "ms": 1.283
+      },
+      "d5": {
+        "optimal": 0.8797,
+        "keeps_nl": 0.9344,
+        "ms": 2.813
+      },
+      "d6": {
+        "optimal": 0.8887,
+        "keeps_nl": 0.9419,
+        "ms": 5.407
+      },
+      "d7": {
+        "optimal": 0.8933,
+        "keeps_nl": 0.9405,
+        "ms": 10.816
+      },
+      "d8": {
+        "optimal": 0.9047,
+        "keeps_nl": 0.9456,
+        "ms": 19.266
+      },
+      "d9": {
+        "optimal": 0.9083,
+        "keeps_nl": 0.9489,
+        "ms": 36.324
+      },
+      "d10": {
+        "optimal": 0.9183,
+        "keeps_nl": 0.9513,
+        "ms": 62.129
+      }
+    }
+  },
+  "value": {
+    "accuracy": 0.7433,
+    "by_bucket": {
+      "8-11": 0.802,
+      "12-15": 0.782,
+      "16-19": 0.78,
+      "20-23": 0.724,
+      "24-27": 0.718,
+      "28-30": 0.654
+    },
+    "confusion": [
+      [
+        1636,
+        12,
+        252
+      ],
+      [
+        129,
+        13,
+        92
+      ],
+      [
+        276,
+        9,
+        581
+      ]
+    ],
+    "labels": [
+      "win",
+      "draw",
+      "loss"
+    ]
+  },
+  "tactics": {
+    "nn_policy": {
+      "win1": 0.6154,
+      "block": 0.2308,
+      "win2": 0.6154,
+      "win3": 0.6154,
+      "all": 0.5192
+    },
+    "nn_mcts50": {
+      "win1": 1.0,
+      "block": 0.8462,
+      "win2": 0.9231,
+      "win3": 0.6923,
+      "all": 0.8654
+    },
+    "reference": {
+      "minimax_d1": {
+        "win1": 1.0,
+        "block": 0.6923,
+        "win2": 0.7692,
+        "win3": 0.6154,
+        "all": 0.7692
+      },
+      "minimax_d2": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 0.4615,
+        "win3": 0.6154,
+        "all": 0.7692
+      },
+      "minimax_d3": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 1.0,
+        "win3": 0.6154,
+        "all": 0.9038
+      },
+      "minimax_d4": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 1.0,
+        "win3": 0.6923,
+        "all": 0.9231
+      },
+      "minimax_d5": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 1.0,
+        "win3": 1.0,
+        "all": 1.0
+      },
+      "minimax_d6": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 1.0,
+        "win3": 1.0,
+        "all": 1.0
+      },
+      "minimax_d7": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 1.0,
+        "win3": 1.0,
+        "all": 1.0
+      },
+      "minimax_d8": {
+        "win1": 1.0,
+        "block": 1.0,
+        "win2": 1.0,
+        "win3": 1.0,
+        "all": 1.0
+      }
+    }
+  },
+  "ladder": {
+    "player": "nn_mcts50",
+    "vs": {
+      "minimax_d1": {
+        "games": 8,
+        "win": 7,
+        "draw": 0,
+        "loss": 1,
+        "score": 0.875,
+        "a_ms": 36.28,
+        "b_ms": 0.08
+      },
+      "minimax_d2": {
+        "games": 8,
+        "win": 5,
+        "draw": 0,
+        "loss": 3,
+        "score": 0.625,
+        "a_ms": 36.8,
+        "b_ms": 0.18
+      },
+      "minimax_d4": {
+        "games": 8,
+        "win": 2,
+        "draw": 1,
+        "loss": 5,
+        "score": 0.3125,
+        "a_ms": 40.53,
+        "b_ms": 1.1
+      }
+    },
+    "elo": 1313.8,
+    "ladder_elo": {
+      "minimax_d1": 1000.0,
+      "minimax_d2": 1271.5,
+      "minimax_d3": 1207.3,
+      "minimax_d4": 1389.4,
+      "minimax_d5": 1408.7,
+      "minimax_d6": 1435.9,
+      "minimax_d7": 1455.9,
+      "minimax_d8": 1499.9
+    },
+    "openings": 4,
+    "games": [
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "35",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 9,
+        "moves": "355454545",
+        "a_ms": 38.45,
+        "b_ms": 0.1
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "35",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 18,
+        "moves": "354433443545523251",
+        "a_ms": 46.08,
+        "b_ms": 0.09
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "6712",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 13,
+        "moves": "6712244442333",
+        "a_ms": 39.65,
+        "b_ms": 0.08
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "6712",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 18,
+        "moves": "671244446646655553",
+        "a_ms": 50.88,
+        "b_ms": 0.09
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "5547",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 7,
+        "moves": "5547342",
+        "a_ms": 7.03,
+        "b_ms": 0.07
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "5547",
+        "a_first": false,
+        "score_a": 0.0,
+        "plies": 9,
+        "moves": "554744326",
+        "a_ms": 15.59,
+        "b_ms": 0.06
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "5767",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 25,
+        "moves": "5767644645443553654633377",
+        "a_ms": 43.84,
+        "b_ms": 0.09
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d1",
+        "opening": "5767",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 28,
+        "moves": "5767434437753433544536655166",
+        "a_ms": 48.75,
+        "b_ms": 0.08
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "35",
+        "a_first": true,
+        "score_a": 0.0,
+        "plies": 36,
+        "moves": "355454554454643233663311667117117677",
+        "a_ms": 46.62,
+        "b_ms": 0.17
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "35",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 38,
+        "moves": "35443344355245534212223251111166666677",
+        "a_ms": 48.0,
+        "b_ms": 0.18
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "6712",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 15,
+        "moves": "671224444234331",
+        "a_ms": 42.89,
+        "b_ms": 0.21
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "6712",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 30,
+        "moves": "671244446635555663421151211233",
+        "a_ms": 42.08,
+        "b_ms": 0.26
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "5547",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 7,
+        "moves": "5547326",
+        "a_ms": 12.3,
+        "b_ms": 0.08
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "5547",
+        "a_first": false,
+        "score_a": 0.0,
+        "plies": 7,
+        "moves": "5547326",
+        "a_ms": 13.97,
+        "b_ms": 0.13
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "5767",
+        "a_first": true,
+        "score_a": 0.0,
+        "plies": 36,
+        "moves": "576764454644366467723333137271111155",
+        "a_ms": 38.8,
+        "b_ms": 0.2
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d2",
+        "opening": "5767",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 20,
+        "moves": "57674344377534334566",
+        "a_ms": 49.76,
+        "b_ms": 0.25
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "35",
+        "a_first": true,
+        "score_a": 0.0,
+        "plies": 22,
+        "moves": "3553535533444664647616",
+        "a_ms": 59.53,
+        "b_ms": 1.62
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "35",
+        "a_first": false,
+        "score_a": 0.5,
+        "plies": 42,
+        "moves": "355544451245544232222311633316666167177777",
+        "a_ms": 44.9,
+        "b_ms": 0.9
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "6712",
+        "a_first": true,
+        "score_a": 0.0,
+        "plies": 40,
+        "moves": "6712262722377533566553365315111276714444",
+        "a_ms": 43.46,
+        "b_ms": 1.57
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "6712",
+        "a_first": false,
+        "score_a": 1.0,
+        "plies": 34,
+        "moves": "6712444466466515555221224151126733",
+        "a_ms": 47.87,
+        "b_ms": 1.39
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "5547",
+        "a_first": true,
+        "score_a": 1.0,
+        "plies": 7,
+        "moves": "5547326",
+        "a_ms": 13.58,
+        "b_ms": 0.11
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "5547",
+        "a_first": false,
+        "score_a": 0.0,
+        "plies": 7,
+        "moves": "5547326",
+        "a_ms": 13.59,
+        "b_ms": 0.33
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "5767",
+        "a_first": true,
+        "score_a": 0.0,
+        "plies": 36,
+        "moves": "576767746644455544561125262212121133",
+        "a_ms": 46.82,
+        "b_ms": 1.11
+      },
+      {
+        "a": "nn_mcts50",
+        "b": "minimax_d4",
+        "opening": "5767",
+        "a_first": false,
+        "score_a": 0.0,
+        "plies": 23,
+        "moves": "57674344443776336564557",
+        "a_ms": 54.5,
+        "b_ms": 1.76
+      }
+    ]
+  },
+  "hypothesis": {
+    "depths": [
+      1,
+      2
+    ],
+    "positions": 60,
+    "openings": 4,
+    "rows": [
+      {
+        "depth": 1,
+        "head_to_head": {
+          "games": 8,
+          "win": 4,
+          "draw": 0,
+          "loss": 4,
+          "score": 0.5,
+          "a_ms": 8.19,
+          "b_ms": 0.1
+        },
+        "binom_p": 1.0,
+        "nn_accuracy": {
+          "optimal": 0.7333,
+          "keeps_nl": 0.9318
+        },
+        "hand_accuracy": {
+          "optimal": 0.7,
+          "keeps_nl": 0.7955
+        },
+        "mcnemar_only_nn": 7,
+        "mcnemar_only_hand": 5,
+        "mcnemar_p": 0.7744,
+        "nn_tactics": {
+          "win1": 1.0,
+          "block": 0.4615,
+          "win2": 0.3846,
+          "win3": 0.4615,
+          "all": 0.5769
+        },
+        "hand_tactics": {
+          "win1": 1.0,
+          "block": 0.6923,
+          "win2": 0.7692,
+          "win3": 0.6154,
+          "all": 0.7692
+        },
+        "nn_ms": 6.57,
+        "hand_ms": 0.04,
+        "criteria": {
+          "score_at_least_50pct": true,
+          "wins_and_blocks_at_least_as_hand": false,
+          "fast_enough_2s": true
+        },
+        "supported": false
+      },
+      {
+        "depth": 2,
+        "head_to_head": {
+          "games": 8,
+          "win": 5,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.625,
+          "a_ms": 17.49,
+          "b_ms": 0.21
+        },
+        "binom_p": 0.7266,
+        "nn_accuracy": {
+          "optimal": 0.7833,
+          "keeps_nl": 0.9318
+        },
+        "hand_accuracy": {
+          "optimal": 0.7833,
+          "keeps_nl": 0.8636
+        },
+        "mcnemar_only_nn": 3,
+        "mcnemar_only_hand": 3,
+        "mcnemar_p": 1.0,
+        "nn_tactics": {
+          "win1": 1.0,
+          "block": 1.0,
+          "win2": 0.6923,
+          "win3": 0.3077,
+          "all": 0.75
+        },
+        "hand_tactics": {
+          "win1": 1.0,
+          "block": 1.0,
+          "win2": 0.4615,
+          "win3": 0.6154,
+          "all": 0.7692
+        },
+        "nn_ms": 18.4,
+        "hand_ms": 0.12,
+        "criteria": {
+          "score_at_least_50pct": true,
+          "wins_and_blocks_at_least_as_hand": true,
+          "fast_enough_2s": true
+        },
+        "supported": true
+      }
+    ],
+    "verdict": "supported at 1 of 2 depths (d1 no, d2 yes)"
+  },
+  "seconds": 6.4
+}

@@ -42,7 +42,7 @@ class MinimaxAgent:
     is then True, nodes=0, depth_reached=0, score=0.0)."""
 
     def __init__(self, depth, epsilon=0.0, time_limit=None, seed=None,
-                 use_tt=True, ordering=True):
+                 use_tt=True, ordering=True, evaluator=None):
         if depth < 1:
             raise ValueError("depth must be >= 1")
         if not 0.0 <= epsilon <= 1.0:
@@ -52,6 +52,7 @@ class MinimaxAgent:
         self.time_limit = time_limit
         self.use_tt = use_tt
         self.ordering = ordering
+        self.evaluator = evaluator      # None = hand-crafted heuristic
         self.rng = random.Random(seed)
         self.last_result = None
         self.name = "d%d" % depth + ("_e%g" % epsilon if epsilon else "") + \
@@ -69,7 +70,8 @@ class MinimaxAgent:
                 depth_reached=0, random=True)
             return col
         self.last_result = search(board, self.depth, time_limit=self.time_limit,
-                                  use_tt=self.use_tt, ordering=self.ordering)
+                                  use_tt=self.use_tt, ordering=self.ordering,
+                                  evaluator=self.evaluator)
         return self.last_result.col
 
 

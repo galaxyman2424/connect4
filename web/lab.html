@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect 4 Lab</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/lab.css">
+</head>
+<body>
+<nav class="topnav" aria-label="Pages"><a href="/">Play</a><a href="/lab" class="on" aria-current="page">Lab</a></nav>
+<main class="lab-main">
+  <header>
+    <h1>Connect <span class="four">4</span> Lab</h1>
+    <p class="sub">What we measured: training our own neural network, and how open-source Connect 4 bots do against each other. Charts are drawn from the results files in the repo, so they update when you re-run an experiment and refresh the page.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="training" class="on">Neural net training</button>
+    <button type="button" role="tab" data-tab="hypothesis">Hypothesis test</button>
+    <button type="button" role="tab" data-tab="arena">Bot arena</button>
+    <button type="button" role="tab" data-tab="method">How it works</button>
+  </div>
+
+  <!-- ============================================================ training -->
+  <section id="tab-training" class="tab on" role="tabpanel">
+    <div class="bar">
+      <label for="runSel">Training run</label>
+      <select id="runSel"></select>
+      <span id="runInfo" class="hint"></span>
+      <span class="spacer"></span>
+      <button type="button" class="btn" id="reload">Refresh</button>
+    </div>
+    <div id="trainBody"></div>
+  </section>
+
+  <!-- ========================================================== hypothesis -->
+  <section id="tab-hypothesis" class="tab" role="tabpanel">
+    <div class="bar">
+      <label for="hypSel">Network</label>
+      <select id="hypSel"></select>
+      <span class="hint">Results of <code>python -m nn.evaluate --run &lt;run&gt;</code></span>
+    </div>
+    <div id="hypBody"></div>
+  </section>
+
+  <!-- =============================================================== arena -->
+  <section id="tab-arena" class="tab" role="tabpanel">
+    <div class="bar">
+      <label for="arenaSel">Tournament</label>
+      <select id="arenaSel"></select>
+      <span id="arenaInfo" class="hint"></span>
+    </div>
+    <div id="arenaBody"></div>
+  </section>
+
+  <!-- ============================================================== method -->
+  <section id="tab-method" class="tab prose" role="tabpanel">
+    <div class="grid g2">
+      <div class="card">
+        <h3>Phase A: learn from perfect play (supervised)</h3>
+        <p>We generate a few hundred thousand positions (random and minimax games), label every one with Pascal Pons' perfect solver (the exact result of each of the 7 moves), and train the network to predict the best moves (policy) and the win/draw/loss result (value). This answers the question: <em>can a small network learn to evaluate Connect 4 positions at all?</em></p>
+        <pre>python -m nn.make_dataset --positions 300000
+python -m nn.train_supervised --run sup_6x64</pre>
+      </div>
+      <div class="card">
+        <h3>Phase B: learn from nothing (AlphaZero self-play)</h3>
+        <p>The network starts random and only knows the rules. Each generation it plays ~1,000 games against itself, choosing moves with Monte Carlo Tree Search guided by the network. It then trains its policy toward what the search found and its value toward who actually won. Better network, better search, better training data, and so on.</p>
+        <pre>python -m nn.train_selfplay --run az_6x64 --preset standard</pre>
+      </div>
+      <div class="card">
+        <h3>The network</h3>
+        <p>A small residual CNN (default 6 blocks &times; 64 channels, ~0.46 M parameters). Input: 4 planes of 6&times;7: my stones, opponent's stones, a plane of ones, and "am I the first player?" (odd/even threats matter in Connect 4). Two outputs: a <b>policy</b> (probability of each column) and a <b>value</b> (probability of win / draw / loss for the side to move).</p>
+      </div>
+      <div class="card">
+        <h3>How we measure strength</h3>
+        <ul>
+          <li><b>Accuracy vs perfect play</b>: on 3,000 held-out solver-labelled positions (never used in training), how often the chosen move is optimal, and how often it at least keeps a won/drawn game (non-blunder rate). Same set and definitions as the minimax accuracy experiment.</li>
+          <li><b>Value accuracy</b>: how often the value head's win/draw/loss call matches the solver.</li>
+          <li><b>Games vs minimax</b>: random 2-4 move openings, each played with both colours. The Elo is placed on the existing minimax ladder (depth 1 = 1000).</li>
+          <li><b>Arena</b>: round robin vs open-source bots, Bradley-Terry Elo with bootstrap 95% confidence intervals.</li>
+        </ul>
+      </div>
+      <div class="card wide">
+        <h3>The hypothesis (from our dossier)</h3>
+        <p><em>"A small neural network can learn a board evaluation that plays as well as our hand-crafted minimax heuristic."</em> We test it by plugging the network's value into our own minimax search in place of the hand-crafted heuristic and comparing the two at the same search depth. <b>Success:</b> it scores at least 50% head to head, still takes immediate wins and makes forced blocks at least as often as the hand-crafted version at that depth, and stays under 2 s per move. <b>Failure:</b> a lower score, missed wins or blocks, or moves that take too long. See the "Hypothesis test" tab.</p>
+        <p class="muted">Full write-up: docs/NEURAL_NET.md, docs/ARENA.md and docs/PRESENTATION_GUIDE.md in the repo.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="/lab.js"></script>
+</body>
+</html>

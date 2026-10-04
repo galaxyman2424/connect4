@@ -8,6 +8,7 @@
   };
   // Encoding: +1 = whoever moves first, -1 = second. Rendered p1 = red, p2 = yellow.
   var grid, human, bot, turn, over, busy, gameId = 0, humanFirst = true;
+  var useNN = false;   // opponent: false = minimax (slider level), true = trained network (Lab)
 
   var $ = function (id) { return document.getElementById(id); };
   var boardEl = $("board"), statusEl = $("status"), reasonEl = $("reason"),
@@ -153,14 +154,19 @@
     fetch("/api/move", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ board: grid, level: parseInt(levelEl.value, 10) })
+      body: JSON.stringify(useNN ? { board: grid, engine: "nn", run: $("nnRun").value, sims: parseInt($("nnSims").value, 10) }
+                                 : { board: grid, level: parseInt(levelEl.value, 10) })
     }).then(function (res) {
       return res.json().then(function (j) { return { ok: res.ok, j: j }; });
     }).then(function (o) {
       if (id !== gameId) return;
       if (!o.ok) throw new Error(o.j.error || "server error");
       var j = o.j;
-      if (j.random) reasonEl.textContent = "Bot played a random move";
+      if (j.engine === "nn") {
+        var winPct = Math.round(50 * (j.score + 1));
+        reasonEl.textContent = "Neural net (" + j.nn.run + "): " + (j.nn.sims ? fmt(j.nn.sims) + " simulations" : "policy only") +
+          " in " + fmt(j.ms) + " ms, expects to score about " + winPct + "%";
+      } else if (j.random) reasonEl.textContent = "Bot played a random move";
       else reasonEl.textContent = "Bot searched " + fmt(j.nodes) + (j.nodes === 1 ? " position in " : " positions in ") + fmt(j.ms) +
         " ms (depth " + j.depth + ", " + evalStr(j.score) + ")";
       var wait = place(j.col, bot, true);
@@ -206,7 +212,33 @@
     $("levelLabel").textContent = "Search depth " + L[0] + ", " + L[1] + "% random moves";
   }
 
+  function setOpponent(nn) {
+    useNN = nn;
+    $("oppMinimax").classList.toggle("on", !nn); $("oppMinimax").setAttribute("aria-checked", !nn);
+    $("oppNN").classList.toggle("on", nn); $("oppNN").setAttribute("aria-checked", nn);
+    $("nnRun").hidden = !nn; $("nnSims").hidden = !nn;
+    $("levelCtl").hidden = nn;
+    newGame();
+  }
+  function loadModels() {
+    fetch("/api/nn/models").then(function (r) { return r.ok ? r.json() : []; }).then(function (list) {
+      if (!list.length) return;
+      var sel = $("nnRun");
+      list.forEach(function (m) {
+        var o = document.createElement("option");
+        o.value = m.run;
+        o.textContent = m.run + (m.elo ? " (Elo " + Math.round(m.elo) + ")" : "");
+        sel.appendChild(o);
+      });
+      $("oppCtl").hidden = false;
+    }).catch(function () {});
+  }
+
   build();
+  $("oppMinimax").addEventListener("click", function () { setOpponent(false); });
+  $("oppNN").addEventListener("click", function () { setOpponent(true); });
+  $("nnRun").addEventListener("change", newGame);
+  loadModels();
   levelEl.addEventListener("input", updateLevel);
   levelEl.addEventListener("change", function () { levelEl.blur(); });
   $("newGame").addEventListener("click", newGame);

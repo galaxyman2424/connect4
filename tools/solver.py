@@ -117,6 +117,8 @@ class Solver:
                 if len(parts) != 2 or parts[0] != moves:
                     raise SolverError("bad solver reply %r" % line)
                 return int(parts[1])
+            if moves == "" and len(parts) == 7:      # empty board: the solver echoes no move string
+                parts = [""] + parts
             if len(parts) != 8 or parts[0] != moves:
                 raise SolverError("invalid position %r (solver said %r)" % (moves, line.strip()))
             return [None if int(x) == INVALID else int(x) for x in parts[1:]]

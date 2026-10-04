@@ -1,0 +1,4 @@
+# Extra packages for the bot arena (python -m arena.tournament).
+# numpy / matplotlib come from requirements.txt.
+torch>=2.4      # the two pretrained AlphaZero bots (plkmo_az, bruneton_az)
+tqdm            # imported by plkmo's MCTS_c4.py

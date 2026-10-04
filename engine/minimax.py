@@ -76,15 +76,20 @@ def plies_to_end(score):
     return int(WIN - abs(score))
 
 
-def search(board, depth, time_limit=None, use_tt=True, ordering=True):
-    """Pick a move for the side to move on ``board`` (not mutated)."""
+def search(board, depth, time_limit=None, use_tt=True, ordering=True, evaluator=None):
+    """Pick a move for the side to move on ``board`` (not mutated).
+
+    ``evaluator``: optional leaf evaluation ``f(me_bits, opp_bits) -> number``
+    (side-to-move perspective) used at depth 0 instead of the hand-crafted
+    heuristic.  It must stay well below ``MATE_THRESHOLD`` in absolute value.
+    The neural-network experiments (nn/agents.py) plug a value network in here."""
     if board.is_terminal():
         raise ValueError("cannot search a finished game")
     if depth < 1:
         raise ValueError("depth must be >= 1")
     t0 = time.perf_counter()
     deadline = (t0 + time_limit) if time_limit else None
-    s = _Searcher(use_tt, ordering, deadline)
+    s = _Searcher(use_tt, ordering, deadline, evaluator)
     cur = board.current_bits()
     mask = board.mask
     max_depth = min(depth, ROWS * COLS - board.moves_played)
@@ -115,8 +120,9 @@ def search(board, depth, time_limit=None, use_tt=True, ordering=True):
 
 
 class _Searcher:
-    def __init__(self, use_tt, ordering, deadline):
+    def __init__(self, use_tt, ordering, deadline, evaluator=None):
         self.nodes = 0
+        self.evaluate = evaluator or evaluate_bits
         self.tt = {} if use_tt else None
         self.ordering = ordering
         self.deadline = deadline
@@ -177,7 +183,7 @@ class _Searcher:
             return 0
         opp = cur ^ mask
         if depth == 0:
-            return evaluate_bits(cur, opp)
+            return self.evaluate(cur, opp)
         possible = (mask + BOTTOM_MASK) & BOARD_MASK
         if winning_cells_mask(cur, mask) & possible:
             return WIN - ply - 1

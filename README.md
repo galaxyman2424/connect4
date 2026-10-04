@@ -7,6 +7,12 @@ experiments that measure how much stronger the bot gets as it searches deeper an
 * Project statement: [`connect4-project-statement.md`](connect4-project-statement.md)
 * Results write-up: [`docs/REPORT.md`](docs/REPORT.md)
 * Engine API shared by the website and the experiments: [`CONTRACT.md`](CONTRACT.md)
+* **Part 2: our own neural network + open-source bot arena**
+  * [`docs/NEURAL_NET.md`](docs/NEURAL_NET.md): design, method, metrics
+  * [`docs/TRAINING_RUNBOOK.md`](docs/TRAINING_RUNBOOK.md): copy-paste steps for the GPU training PC
+  * [`docs/ARENA.md`](docs/ARENA.md): the open-source bots, adapters, tournament protocol
+  * [`docs/PRESENTATION_GUIDE.md`](docs/PRESENTATION_GUIDE.md): the story, slide plan, numbers to fill in, likely questions
+  * Lab page: `python server/app.py`, then open http://localhost:5000/lab
 
 ```
 engine/       board (bitboards), heuristic, minimax search, agents + slider levels
@@ -16,7 +22,11 @@ tests/        pytest suite (rules, search, server)
 experiments/  tournament, tactics, accuracy, cost, odd/even, embedding, analysis.ipynb
 data/         solver-labeled accuracy set (committed) + dataset download script
 tools/        Pascal Pons' perfect-play solver (C++ source, AGPL-3.0) + Python wrapper
-docs/         REPORT.md, screenshots
+docs/         REPORT.md, screenshots, NEURAL_NET.md, TRAINING_RUNBOOK.md, ARENA.md, PRESENTATION_GUIDE.md
+nn/           neural network: model, MCTS, numpy inference, datasets, supervised + self-play training, evaluation
+runs/         one folder per training run (metrics + exported model; shown on the Lab page)
+arena/        open-source bot adapters, fetch script, round-robin tournament
+web/lab.*     the Lab (data) page
 ```
 
 ## Setup
@@ -38,10 +48,30 @@ python server/app.py               # then open http://localhost:5000
 Pick a level (1 = very easy, 10 = strongest, about 2 s per move), choose who goes first, click a
 column. Under the board the page shows the bot's reasoning ("searched N positions in M ms").
 
+## Lab page and neural-net opponent
+
+`python server/app.py`, then open http://localhost:5000/lab. Four tabs: **Neural net training**
+(charts from `runs/<run>/metrics.jsonl`), **Hypothesis test** (`runs/<run>/eval.json`), **Bot
+arena** (`experiments/results/arena/<name>/summary.json`) and **How it works**. Pages
+show the exact command to run when there's no data yet. Once a run folder with a `model.npz`
+exists, the play page gets an **Opponent: Neural net** switch. The website only needs numpy,
+not PyTorch.
+
+Train on a GPU machine: see [`docs/TRAINING_RUNBOOK.md`](docs/TRAINING_RUNBOOK.md). In short:
+
+```bash
+pip install -r requirements-train.txt                      # PyTorch
+python -m nn.make_dataset --positions 300000               # needs tools/pons/c4solver + 7x6.book
+python -m nn.train_supervised --run sup_6x64               # Phase A: learn from perfect play
+python -m nn.train_selfplay --run az_6x64 --preset standard  # Phase B: AlphaZero self-play
+python -m nn.evaluate --run az_6x64                        # full evaluation + hypothesis test
+python -m arena.fetch && python -m arena.tournament --add-nn nn:runs/az_6x64/model.npz:mcts:200
+```
+
 ## Tests
 
 ```bash
-python -m pytest -q                # 227 tests, ~15 s
+python -m pytest -q                # 243 tests, ~15 s (the PyTorch test is skipped if torch isn't installed)
 ```
 
 ## Reproduce the experiments

@@ -10,9 +10,12 @@ from flask import Flask, jsonify, request, send_from_directory  # noqa: E402
 
 from engine.board import Board, ROWS, COLS  # noqa: E402
 from engine.agents import agent_for_level  # noqa: E402
+from server.lab_api import bp as lab_bp, nn_evaluator  # noqa: E402
 
 WEB_DIR = os.path.join(ROOT, "web")
+STATIC = ("app.js", "style.css", "lab.js", "lab.css")
 app = Flask(__name__, static_folder=None)
+app.register_blueprint(lab_bp)
 
 
 class BadRequest(Exception):
@@ -61,9 +64,14 @@ def index():
     return send_from_directory(WEB_DIR, "index.html")
 
 
+@app.get("/lab")
+def lab():
+    return send_from_directory(WEB_DIR, "lab.html")
+
+
 @app.get("/<path:name>")
 def static_files(name):
-    if name in ("app.js", "style.css"):
+    if name in STATIC:
         return send_from_directory(WEB_DIR, name)
     return jsonify({"error": "not found"}), 404
 
@@ -73,16 +81,33 @@ def api_move():
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
         return jsonify({"error": "expected JSON object"}), 400
+    kind = data.get("engine", "minimax")
+    if kind not in ("minimax", "nn"):
+        return jsonify({"error": "engine must be 'minimax' or 'nn'"}), 400
     level = data.get("level", 5)
-    if isinstance(level, bool) or not isinstance(level, int) or not 1 <= level <= 10:
+    if kind == "minimax" and (isinstance(level, bool) or not isinstance(level, int) or not 1 <= level <= 10):
         return jsonify({"error": "level must be an integer 1-10"}), 400
+    sims = data.get("sims", 200)
+    if kind == "nn" and (isinstance(sims, bool) or not isinstance(sims, int) or not 0 <= sims <= 5000):
+        return jsonify({"error": "sims must be an integer 0-5000 (0 = policy head only)"}), 400
     try:
         board = parse_board(data.get("board"))
     except BadRequest as e:
         return jsonify({"error": str(e)}), 400
 
-    agent = agent_for_level(level)
+    nn_info = None
+    if kind == "nn":
+        from nn.agents import MCTSAgent, PolicyAgent
+        try:
+            ev = nn_evaluator(data.get("run"))
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        agent = PolicyAgent(ev) if sims == 0 else MCTSAgent(ev, sims=sims)
+    else:
+        agent = agent_for_level(level)
     col = agent.choose(board)
+    if kind == "nn":
+        nn_info = dict(agent.last_info, run=data.get("run"), sims=sims)
     res = getattr(agent, "last_result", None)
     is_random = bool(getattr(res, "random", False))
     after = board.copy()
@@ -97,7 +122,10 @@ def api_move():
         "random": is_random,
         "player": mover,
         "status": status_of(after),
+        "engine": kind,
     }
+    if nn_info is not None:
+        out["nn"] = nn_info
     return jsonify(out)
 
 
