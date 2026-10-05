@@ -1,0 +1,41 @@
+{
+  "phase": "supervised",
+  "created": "2026-10-04T16:08:01",
+  "args": {
+    "data": "nn_data/solver_300k.npz",
+    "run": "sup_6x64",
+    "epochs": 30,
+    "batch": 1024,
+    "lr": 0.002,
+    "weight_decay": 0.0001,
+    "value_weight": 1.0,
+    "blocks": 6,
+    "channels": 64,
+    "val_frac": 0.05,
+    "mcts_every": 5,
+    "mcts_sims": 100,
+    "device": "auto",
+    "seed": 0
+  },
+  "device": "cpu",
+  "model": {
+    "blocks": 6,
+    "channels": 64,
+    "policy_channels": 2,
+    "value_channels": 4,
+    "value_hidden": 64
+  },
+  "params": 458338,
+  "train_positions": 285000,
+  "val_positions": 15000,
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}

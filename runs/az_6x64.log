@@ -1,0 +1,82 @@
+nohup: ignoring input
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU0 NVIDIA GeForce GTX 750 Ti which is of compute capability (CC) 5.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:602: UserWarning: 
+NVIDIA GeForce GTX 750 Ti with CUDA capability sm_50 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA GeForce GTX 750 Ti GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+[17:50:09] run az_6x64: cpu, 458338 params, self-play on cpu with 8 workers x 128 parallel games
+[18:06:28] gen 1/100  games 1000 (P1 52% draw 8%, len 24.6)  loss 2.681 (p 1.854 v 0.827)  bench optimal 0.463 value 0.568  [self-play 531s, train 443s/193 steps, eval 5s]
+[18:23:25] gen 2/100  games 1000 (P1 49% draw 14%, len 28.2)  loss 2.362 (p 1.637 v 0.725)  bench optimal 0.481 value 0.605  [self-play 503s, train 509s/221 steps, eval 4s]
+[18:52:07] gen 3/100  games 1000 (P1 41% draw 11%, len 29.9)  loss 2.213 (p 1.558 v 0.655)  bench optimal 0.473 value 0.626  [self-play 550s, train 1161s/234 steps, eval 11s]
+[19:35:25] gen 4/100  games 1000 (P1 37% draw 13%, len 29.4)  loss 2.105 (p 1.490 v 0.615)  bench optimal 0.506 value 0.541  [self-play 952s, train 1630s/230 steps, eval 16s]
+[20:34:19] gen 5/100  games 1000 (P1 42% draw 9%, len 29.9)  loss 2.043 (p 1.448 v 0.595)  bench optimal 0.547 value 0.675  [self-play 1138s, train 1430s/235 steps, eval 965s]
+      vs minimax: d2 0.80  d4 0.60  d6 0.55   Elo~1477.6   MCTS optimal 0.792
+[21:31:41] gen 6/100  games 1000 (P1 44% draw 12%, len 30.4)  loss 1.992 (p 1.405 v 0.587)  bench optimal 0.555 value 0.665  [self-play 1196s, train 2229s/238 steps, eval 17s]
+[22:26:10] gen 7/100  games 1000 (P1 48% draw 15%, len 30.5)  loss 1.942 (p 1.363 v 0.579)  bench optimal 0.552 value 0.616  [self-play 1185s, train 2067s/239 steps, eval 16s]
+[23:26:37] gen 8/100  games 1000 (P1 42% draw 18%, len 31.5)  loss 1.899 (p 1.333 v 0.567)  bench optimal 0.600 value 0.664  [self-play 1248s, train 2363s/246 steps, eval 16s]
+[00:29:25] gen 9/100  games 1000 (P1 36% draw 23%, len 33.1)  loss 1.857 (p 1.297 v 0.560)  bench optimal 0.607 value 0.701  [self-play 1332s, train 2421s/259 steps, eval 14s]
+[01:51:41] gen 10/100  games 1000 (P1 39% draw 31%, len 33.8)  loss 1.804 (p 1.262 v 0.541)  bench optimal 0.609 value 0.704  [self-play 1382s, train 2482s/265 steps, eval 1071s]
+      vs minimax: d2 0.82  d4 0.90  d6 0.85   Elo~1688.1   MCTS optimal 0.826
+[02:52:45] gen 11/100  games 1000 (P1 34% draw 26%, len 34.9)  loss 1.766 (p 1.229 v 0.537)  bench optimal 0.600 value 0.649  [self-play 1437s, train 2227s/273 steps, eval 0s]
+[02:57:08] gen 12/100  games 1000 (P1 46% draw 18%, len 32.2)  loss 1.742 (p 1.212 v 0.530)  bench optimal 0.635 value 0.685  [self-play 226s, train 37s/252 steps, eval 0s]
+[03:01:00] gen 13/100  games 1000 (P1 55% draw 16%, len 31.7)  loss 1.723 (p 1.196 v 0.527)  bench optimal 0.613 value 0.613  [self-play 196s, train 35s/248 steps, eval 0s]
+[03:05:22] gen 14/100  games 1000 (P1 46% draw 25%, len 34.0)  loss 1.703 (p 1.178 v 0.525)  bench optimal 0.650 value 0.705  [self-play 223s, train 39s/266 steps, eval 0s]
+[03:10:02] gen 15/100  games 1000 (P1 44% draw 33%, len 34.2)  loss 1.681 (p 1.159 v 0.522)  bench optimal 0.648 value 0.716  [self-play 221s, train 39s/268 steps, eval 20s]
+      vs minimax: d2 0.75  d4 0.85  d6 0.80   Elo~1614.6   MCTS optimal 0.818
+[03:14:46] gen 16/100  games 1000 (P1 21% draw 58%, len 37.3)  loss 1.630 (p 1.125 v 0.504)  bench optimal 0.648 value 0.702  [self-play 247s, train 36s/292 steps, eval 0s]
+[03:18:47] gen 17/100  games 1000 (P1 66% draw 14%, len 34.4)  loss 1.605 (p 1.106 v 0.499)  bench optimal 0.636 value 0.666  [self-play 207s, train 35s/269 steps, eval 0s]
+[03:23:02] gen 18/100  games 1000 (P1 49% draw 24%, len 34.0)  loss 1.596 (p 1.098 v 0.499)  bench optimal 0.640 value 0.691  [self-play 219s, train 35s/267 steps, eval 0s]
+[03:27:14] gen 19/100  games 1000 (P1 44% draw 32%, len 33.8)  loss 1.568 (p 1.078 v 0.490)  bench optimal 0.662 value 0.704  [self-play 216s, train 36s/265 steps, eval 0s]
+[03:31:49] gen 20/100  games 1000 (P1 39% draw 37%, len 34.7)  loss 1.516 (p 1.035 v 0.481)  bench optimal 0.659 value 0.711  [self-play 218s, train 36s/271 steps, eval 21s]
+      vs minimax: d2 0.95  d4 0.90  d6 0.82   Elo~1742.1   MCTS optimal 0.813
+[03:36:24] gen 21/100  games 1000 (P1 45% draw 27%, len 34.1)  loss 1.480 (p 1.000 v 0.480)  bench optimal 0.658 value 0.715  [self-play 239s, train 36s/267 steps, eval 0s]
+[03:40:30] gen 22/100  games 1000 (P1 63% draw 16%, len 32.6)  loss 1.446 (p 0.978 v 0.468)  bench optimal 0.658 value 0.746  [self-play 211s, train 35s/255 steps, eval 0s]
+[03:44:38] gen 23/100  games 1000 (P1 53% draw 19%, len 33.3)  loss 1.415 (p 0.952 v 0.463)  bench optimal 0.685 value 0.726  [self-play 213s, train 34s/261 steps, eval 0s]
+[03:48:46] gen 24/100  games 1000 (P1 52% draw 16%, len 33.5)  loss 1.391 (p 0.939 v 0.452)  bench optimal 0.662 value 0.732  [self-play 213s, train 35s/262 steps, eval 0s]
+[03:53:24] gen 25/100  games 1000 (P1 36% draw 35%, len 34.9)  loss 1.365 (p 0.920 v 0.445)  bench optimal 0.662 value 0.735  [self-play 220s, train 37s/273 steps, eval 21s]
+      vs minimax: d2 1.00  d4 0.95  d6 1.00   Elo~2086.3   MCTS optimal 0.809
+[03:57:38] gen 26/100  games 1000 (P1 53% draw 23%, len 32.5)  loss 1.346 (p 0.910 v 0.436)  bench optimal 0.669 value 0.734  [self-play 223s, train 30s/255 steps, eval 0s]
+[04:01:39] gen 27/100  games 1000 (P1 75% draw 8%, len 32.5)  loss 1.327 (p 0.899 v 0.428)  bench optimal 0.659 value 0.734  [self-play 210s, train 30s/254 steps, eval 0s]
+[04:05:24] gen 28/100  games 1000 (P1 68% draw 10%, len 30.9)  loss 1.315 (p 0.894 v 0.421)  bench optimal 0.664 value 0.742  [self-play 196s, train 29s/241 steps, eval 0s]
+[04:09:08] gen 29/100  games 1000 (P1 71% draw 11%, len 30.0)  loss 1.307 (p 0.891 v 0.416)  bench optimal 0.655 value 0.744  [self-play 195s, train 29s/235 steps, eval 0s]
+[04:13:06] gen 30/100  games 1000 (P1 77% draw 8%, len 30.6)  loss 1.299 (p 0.888 v 0.411)  bench optimal 0.662 value 0.729  [self-play 190s, train 28s/240 steps, eval 20s]
+      vs minimax: d2 0.90  d4 0.93  d6 0.95   Elo~1813.1   MCTS optimal 0.815
+[04:16:41] gen 31/100  games 1000 (P1 85% draw 7%, len 29.5)  loss 1.280 (p 0.882 v 0.398)  bench optimal 0.666 value 0.756  [self-play 187s, train 27s/231 steps, eval 0s]
+[04:20:20] gen 32/100  games 1000 (P1 78% draw 9%, len 30.4)  loss 1.270 (p 0.882 v 0.388)  bench optimal 0.666 value 0.732  [self-play 191s, train 28s/238 steps, eval 0s]
+[04:23:52] gen 33/100  games 1000 (P1 84% draw 7%, len 29.9)  loss 1.260 (p 0.881 v 0.378)  bench optimal 0.669 value 0.759  [self-play 184s, train 28s/234 steps, eval 0s]
+[04:27:23] gen 34/100  games 1000 (P1 86% draw 6%, len 29.4)  loss 1.260 (p 0.887 v 0.373)  bench optimal 0.662 value 0.752  [self-play 184s, train 27s/231 steps, eval 0s]
+[04:31:02] gen 35/100  games 1000 (P1 85% draw 8%, len 28.8)  loss 1.256 (p 0.895 v 0.361)  bench optimal 0.672 value 0.743  [self-play 173s, train 26s/226 steps, eval 20s]
+      vs minimax: d2 0.85  d4 0.95  d6 0.85   Elo~1727.4   MCTS optimal 0.805
+[04:34:46] gen 36/100  games 1000 (P1 88% draw 5%, len 29.8)  loss 1.254 (p 0.897 v 0.357)  bench optimal 0.678 value 0.754  [self-play 196s, train 27s/233 steps, eval 0s]
+[04:38:13] gen 37/100  games 1000 (P1 86% draw 5%, len 29.4)  loss 1.243 (p 0.901 v 0.342)  bench optimal 0.681 value 0.742  [self-play 180s, train 27s/230 steps, eval 0s]
+[04:41:33] gen 38/100  games 1000 (P1 90% draw 4%, len 28.2)  loss 1.241 (p 0.905 v 0.336)  bench optimal 0.678 value 0.754  [self-play 174s, train 26s/221 steps, eval 0s]
+[04:44:56] gen 39/100  games 1000 (P1 84% draw 6%, len 29.5)  loss 1.230 (p 0.909 v 0.321)  bench optimal 0.675 value 0.762  [self-play 176s, train 27s/231 steps, eval 0s]
+[04:48:41] gen 40/100  games 1000 (P1 77% draw 4%, len 29.5)  loss 1.222 (p 0.907 v 0.314)  bench optimal 0.671 value 0.757  [self-play 178s, train 27s/231 steps, eval 21s]
+      vs minimax: d2 0.90  d4 1.00  d6 0.90   Elo~1835.3   MCTS optimal 0.804
+[04:52:32] gen 41/100  games 1000 (P1 59% draw 19%, len 31.4)  loss 1.222 (p 0.905 v 0.316)  bench optimal 0.667 value 0.738  [self-play 196s, train 35s/246 steps, eval 0s]
+[04:56:15] gen 42/100  games 1000 (P1 53% draw 6%, len 29.6)  loss 1.220 (p 0.903 v 0.317)  bench optimal 0.676 value 0.743  [self-play 191s, train 32s/232 steps, eval 0s]
+[05:00:21] gen 43/100  games 1000 (P1 34% draw 24%, len 33.4)  loss 1.219 (p 0.900 v 0.319)  bench optimal 0.692 value 0.762  [self-play 210s, train 36s/262 steps, eval 0s]
+[05:04:15] gen 44/100  games 1000 (P1 46% draw 21%, len 33.2)  loss 1.226 (p 0.899 v 0.327)  bench optimal 0.682 value 0.737  [self-play 198s, train 36s/260 steps, eval 0s]
+[05:08:31] gen 45/100  games 1000 (P1 58% draw 12%, len 32.5)  loss 1.223 (p 0.896 v 0.326)  bench optimal 0.683 value 0.759  [self-play 200s, train 35s/255 steps, eval 21s]
+      vs minimax: d2 0.72  d4 0.85  d6 0.90   Elo~1643.7   MCTS optimal 0.811
+[05:12:19] gen 46/100  games 1000 (P1 63% draw 10%, len 30.9)  loss 1.226 (p 0.899 v 0.328)  bench optimal 0.679 value 0.746  [self-play 199s, train 28s/242 steps, eval 0s]
+[05:15:54] gen 47/100  games 1000 (P1 82% draw 8%, len 29.1)  loss 1.241 (p 0.912 v 0.329)  bench optimal 0.688 value 0.760  [self-play 188s, train 27s/228 steps, eval 0s]
+[05:19:30] gen 48/100  games 1000 (P1 81% draw 7%, len 28.5)  loss 1.239 (p 0.919 v 0.320)  bench optimal 0.688 value 0.769  [self-play 189s, train 27s/223 steps, eval 0s]
+[05:22:56] gen 49/100  games 1000 (P1 84% draw 6%, len 28.2)  loss 1.245 (p 0.928 v 0.317)  bench optimal 0.678 value 0.770  [self-play 180s, train 26s/221 steps, eval 0s]
+[05:26:49] gen 50/100  games 1000 (P1 84% draw 8%, len 28.8)  loss 1.253 (p 0.933 v 0.319)  bench optimal 0.681 value 0.768  [self-play 185s, train 27s/226 steps, eval 20s]
+      vs minimax: d2 0.88  d4 0.88  d6 0.90   Elo~1727.4   MCTS optimal 0.807
+[05:30:27] gen 51/100  games 1000 (P1 84% draw 8%, len 29.3)  loss 1.254 (p 0.936 v 0.318)  bench optimal 0.680 value 0.751  [self-play 185s, train 32s/229 steps, eval 0s]
+[05:34:02] gen 52/100  games 1000 (P1 82% draw 12%, len 30.1)  loss 1.258 (p 0.938 v 0.320)  bench optimal 0.684 value 0.744  [self-play 182s, train 33s/236 steps, eval 0s]
+[05:37:55] gen 53/100  games 1000 (P1 81% draw 8%, len 30.3)  loss 1.263 (p 0.943 v 0.319)  bench optimal 0.695 value 0.768  [self-play 200s, train 32s/237 steps, eval 0s]

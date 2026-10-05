@@ -1,0 +1,938 @@
+{
+  "bots": [
+    "pons_perfect",
+    "bruneton_az",
+    "plkmo_az",
+    "alfo_mcts",
+    "galli_minimax",
+    "easyai_negamax",
+    "kaggle_negamax",
+    "ours_minimax_d4",
+    "ours_minimax_d8",
+    "nn_az_6x64_mcts200"
+  ],
+  "matrix": [
+    [
+      null,
+      0.7875,
+      1.0,
+      0.8625,
+      0.925,
+      0.95,
+      1.0,
+      0.925,
+      0.9375,
+      0.9625
+    ],
+    [
+      0.2125,
+      null,
+      1.0,
+      0.6375,
+      0.825,
+      0.9375,
+      1.0,
+      0.7375,
+      0.7875,
+      0.8625
+    ],
+    [
+      0.0,
+      0.0,
+      null,
+      0.0,
+      0.0,
+      0.025,
+      0.075,
+      0.0,
+      0.0,
+      0.05
+    ],
+    [
+      0.1375,
+      0.3625,
+      1.0,
+      null,
+      0.5125,
+      0.95,
+      0.9625,
+      0.525,
+      0.675,
+      0.7375
+    ],
+    [
+      0.075,
+      0.175,
+      1.0,
+      0.4875,
+      null,
+      0.95,
+      0.95,
+      0.5375,
+      0.2875,
+      0.7875
+    ],
+    [
+      0.05,
+      0.0625,
+      0.975,
+      0.05,
+      0.05,
+      null,
+      0.6125,
+      0.075,
+      0.05,
+      0.125
+    ],
+    [
+      0.0,
+      0.0,
+      0.925,
+      0.0375,
+      0.05,
+      0.3875,
+      null,
+      0.025,
+      0.025,
+      0.1125
+    ],
+    [
+      0.075,
+      0.2625,
+      1.0,
+      0.475,
+      0.4625,
+      0.925,
+      0.975,
+      null,
+      0.4,
+      0.65
+    ],
+    [
+      0.0625,
+      0.2125,
+      1.0,
+      0.325,
+      0.7125,
+      0.95,
+      0.975,
+      0.6,
+      null,
+      0.7125
+    ],
+    [
+      0.0375,
+      0.1375,
+      0.95,
+      0.2625,
+      0.2125,
+      0.875,
+      0.8875,
+      0.35,
+      0.2875,
+      null
+    ]
+  ],
+  "wdl": {
+    "bruneton_az": {
+      "plkmo_az": [
+        40,
+        0,
+        0
+      ],
+      "alfo_mcts": [
+        25,
+        1,
+        14
+      ],
+      "pons_perfect": [
+        6,
+        5,
+        29
+      ],
+      "galli_minimax": [
+        33,
+        0,
+        7
+      ],
+      "easyai_negamax": [
+        37,
+        1,
+        2
+      ],
+      "kaggle_negamax": [
+        40,
+        0,
+        0
+      ],
+      "ours_minimax_d4": [
+        29,
+        1,
+        10
+      ],
+      "ours_minimax_d8": [
+        29,
+        5,
+        6
+      ],
+      "nn_az_6x64_mcts200": [
+        34,
+        1,
+        5
+      ]
+    },
+    "plkmo_az": {
+      "bruneton_az": [
+        0,
+        0,
+        40
+      ],
+      "alfo_mcts": [
+        0,
+        0,
+        40
+      ],
+      "pons_perfect": [
+        0,
+        0,
+        40
+      ],
+      "galli_minimax": [
+        0,
+        0,
+        40
+      ],
+      "easyai_negamax": [
+        1,
+        0,
+        39
+      ],
+      "kaggle_negamax": [
+        3,
+        0,
+        37
+      ],
+      "ours_minimax_d4": [
+        0,
+        0,
+        40
+      ],
+      "ours_minimax_d8": [
+        0,
+        0,
+        40
+      ],
+      "nn_az_6x64_mcts200": [
+        2,
+        0,
+        38
+      ]
+    },
+    "alfo_mcts": {
+      "plkmo_az": [
+        40,
+        0,
+        0
+      ],
+      "bruneton_az": [
+        14,
+        1,
+        25
+      ],
+      "pons_perfect": [
+        4,
+        3,
+        33
+      ],
+      "galli_minimax": [
+        20,
+        1,
+        19
+      ],
+      "easyai_negamax": [
+        38,
+        0,
+        2
+      ],
+      "kaggle_negamax": [
+        38,
+        1,
+        1
+      ],
+      "ours_minimax_d4": [
+        20,
+        2,
+        18
+      ],
+      "ours_minimax_d8": [
+        27,
+        0,
+        13
+      ],
+      "nn_az_6x64_mcts200": [
+        29,
+        1,
+        10
+      ]
+    },
+    "pons_perfect": {
+      "plkmo_az": [
+        40,
+        0,
+        0
+      ],
+      "bruneton_az": [
+        29,
+        5,
+        6
+      ],
+      "alfo_mcts": [
+        33,
+        3,
+        4
+      ],
+      "galli_minimax": [
+        36,
+        2,
+        2
+      ],
+      "easyai_negamax": [
+        38,
+        0,
+        2
+      ],
+      "kaggle_negamax": [
+        40,
+        0,
+        0
+      ],
+      "ours_minimax_d4": [
+        36,
+        2,
+        2
+      ],
+      "ours_minimax_d8": [
+        37,
+        1,
+        2
+      ],
+      "nn_az_6x64_mcts200": [
+        38,
+        1,
+        1
+      ]
+    },
+    "galli_minimax": {
+      "plkmo_az": [
+        40,
+        0,
+        0
+      ],
+      "bruneton_az": [
+        7,
+        0,
+        33
+      ],
+      "alfo_mcts": [
+        19,
+        1,
+        20
+      ],
+      "pons_perfect": [
+        2,
+        2,
+        36
+      ],
+      "easyai_negamax": [
+        38,
+        0,
+        2
+      ],
+      "kaggle_negamax": [
+        38,
+        0,
+        2
+      ],
+      "ours_minimax_d4": [
+        19,
+        5,
+        16
+      ],
+      "ours_minimax_d8": [
+        11,
+        1,
+        28
+      ],
+      "nn_az_6x64_mcts200": [
+        31,
+        1,
+        8
+      ]
+    },
+    "easyai_negamax": {
+      "plkmo_az": [
+        39,
+        0,
+        1
+      ],
+      "bruneton_az": [
+        2,
+        1,
+        37
+      ],
+      "alfo_mcts": [
+        2,
+        0,
+        38
+      ],
+      "pons_perfect": [
+        2,
+        0,
+        38
+      ],
+      "galli_minimax": [
+        2,
+        0,
+        38
+      ],
+      "kaggle_negamax": [
+        24,
+        1,
+        15
+      ],
+      "ours_minimax_d4": [
+        3,
+        0,
+        37
+      ],
+      "ours_minimax_d8": [
+        2,
+        0,
+        38
+      ],
+      "nn_az_6x64_mcts200": [
+        5,
+        0,
+        35
+      ]
+    },
+    "kaggle_negamax": {
+      "plkmo_az": [
+        37,
+        0,
+        3
+      ],
+      "bruneton_az": [
+        0,
+        0,
+        40
+      ],
+      "alfo_mcts": [
+        1,
+        1,
+        38
+      ],
+      "pons_perfect": [
+        0,
+        0,
+        40
+      ],
+      "galli_minimax": [
+        2,
+        0,
+        38
+      ],
+      "easyai_negamax": [
+        15,
+        1,
+        24
+      ],
+      "ours_minimax_d4": [
+        1,
+        0,
+        39
+      ],
+      "ours_minimax_d8": [
+        1,
+        0,
+        39
+      ],
+      "nn_az_6x64_mcts200": [
+        4,
+        1,
+        35
+      ]
+    },
+    "ours_minimax_d4": {
+      "plkmo_az": [
+        40,
+        0,
+        0
+      ],
+      "bruneton_az": [
+        10,
+        1,
+        29
+      ],
+      "alfo_mcts": [
+        18,
+        2,
+        20
+      ],
+      "pons_perfect": [
+        2,
+        2,
+        36
+      ],
+      "galli_minimax": [
+        16,
+        5,
+        19
+      ],
+      "easyai_negamax": [
+        37,
+        0,
+        3
+      ],
+      "kaggle_negamax": [
+        39,
+        0,
+        1
+      ],
+      "ours_minimax_d8": [
+        14,
+        4,
+        22
+      ],
+      "nn_az_6x64_mcts200": [
+        24,
+        4,
+        12
+      ]
+    },
+    "ours_minimax_d8": {
+      "plkmo_az": [
+        40,
+        0,
+        0
+      ],
+      "bruneton_az": [
+        6,
+        5,
+        29
+      ],
+      "alfo_mcts": [
+        13,
+        0,
+        27
+      ],
+      "pons_perfect": [
+        2,
+        1,
+        37
+      ],
+      "galli_minimax": [
+        28,
+        1,
+        11
+      ],
+      "easyai_negamax": [
+        38,
+        0,
+        2
+      ],
+      "kaggle_negamax": [
+        39,
+        0,
+        1
+      ],
+      "ours_minimax_d4": [
+        22,
+        4,
+        14
+      ],
+      "nn_az_6x64_mcts200": [
+        27,
+        3,
+        10
+      ]
+    },
+    "nn_az_6x64_mcts200": {
+      "plkmo_az": [
+        38,
+        0,
+        2
+      ],
+      "bruneton_az": [
+        5,
+        1,
+        34
+      ],
+      "alfo_mcts": [
+        10,
+        1,
+        29
+      ],
+      "pons_perfect": [
+        1,
+        1,
+        38
+      ],
+      "galli_minimax": [
+        8,
+        1,
+        31
+      ],
+      "easyai_negamax": [
+        35,
+        0,
+        5
+      ],
+      "kaggle_negamax": [
+        35,
+        1,
+        4
+      ],
+      "ours_minimax_d4": [
+        12,
+        4,
+        24
+      ],
+      "ours_minimax_d8": [
+        10,
+        3,
+        27
+      ]
+    }
+  },
+  "per_bot": {
+    "pons_perfect": {
+      "games": 360,
+      "score": 0.9278,
+      "wins": 327,
+      "draws": 14,
+      "losses": 19,
+      "score_moving_first": 0.9417,
+      "avg_ms": 126.7,
+      "max_ms": 2620.6,
+      "forfeits": 0
+    },
+    "bruneton_az": {
+      "games": 360,
+      "score": 0.7778,
+      "wins": 273,
+      "draws": 14,
+      "losses": 73,
+      "score_moving_first": 0.7861,
+      "avg_ms": 830.7,
+      "max_ms": 3957.3,
+      "forfeits": 0
+    },
+    "plkmo_az": {
+      "games": 360,
+      "score": 0.0167,
+      "wins": 6,
+      "draws": 0,
+      "losses": 354,
+      "score_moving_first": 0.0111,
+      "avg_ms": 20785.7,
+      "max_ms": 48354.9,
+      "forfeits": 0
+    },
+    "alfo_mcts": {
+      "games": 360,
+      "score": 0.6514,
+      "wins": 230,
+      "draws": 9,
+      "losses": 121,
+      "score_moving_first": 0.6361,
+      "avg_ms": 1768.6,
+      "max_ms": 9322.5,
+      "forfeits": 0
+    },
+    "galli_minimax": {
+      "games": 360,
+      "score": 0.5833,
+      "wins": 205,
+      "draws": 10,
+      "losses": 145,
+      "score_moving_first": 0.6111,
+      "avg_ms": 640.7,
+      "max_ms": 3954.8,
+      "forfeits": 0
+    },
+    "easyai_negamax": {
+      "games": 360,
+      "score": 0.2278,
+      "wins": 81,
+      "draws": 2,
+      "losses": 277,
+      "score_moving_first": 0.2472,
+      "avg_ms": 540.3,
+      "max_ms": 4998.2,
+      "forfeits": 0
+    },
+    "kaggle_negamax": {
+      "games": 360,
+      "score": 0.1736,
+      "wins": 61,
+      "draws": 3,
+      "losses": 296,
+      "score_moving_first": 0.1583,
+      "avg_ms": 108.4,
+      "max_ms": 965.3,
+      "forfeits": 0
+    },
+    "ours_minimax_d4": {
+      "games": 360,
+      "score": 0.5806,
+      "wins": 200,
+      "draws": 18,
+      "losses": 142,
+      "score_moving_first": 0.5694,
+      "avg_ms": 3.8,
+      "max_ms": 34.4,
+      "forfeits": 0
+    },
+    "ours_minimax_d8": {
+      "games": 360,
+      "score": 0.6167,
+      "wins": 215,
+      "draws": 14,
+      "losses": 131,
+      "score_moving_first": 0.6278,
+      "avg_ms": 79.4,
+      "max_ms": 738.8,
+      "forfeits": 0
+    },
+    "nn_az_6x64_mcts200": {
+      "games": 360,
+      "score": 0.4444,
+      "wins": 154,
+      "draws": 12,
+      "losses": 194,
+      "score_moving_first": 0.4278,
+      "avg_ms": 85160.1,
+      "max_ms": 204764.9,
+      "forfeits": 0
+    }
+  },
+  "elo": {
+    "pons_perfect": {
+      "elo": 1949.1,
+      "lo": 1866.6,
+      "hi": 2056.6
+    },
+    "bruneton_az": {
+      "elo": 1732.2,
+      "lo": 1662.3,
+      "hi": 1828.8
+    },
+    "plkmo_az": {
+      "elo": 572.1,
+      "lo": 367.7,
+      "hi": 688.8
+    },
+    "alfo_mcts": {
+      "elo": 1597.5,
+      "lo": 1528.2,
+      "hi": 1691.4
+    },
+    "galli_minimax": {
+      "elo": 1529.8,
+      "lo": 1459.1,
+      "hi": 1621.2
+    },
+    "easyai_negamax": {
+      "elo": 1096.4,
+      "lo": 1023.1,
+      "hi": 1174.9
+    },
+    "kaggle_negamax": {
+      "elo": 1000.0,
+      "lo": 1000.0,
+      "hi": 1000.0
+    },
+    "ours_minimax_d4": {
+      "elo": 1527.0,
+      "lo": 1460.9,
+      "hi": 1615.7
+    },
+    "ours_minimax_d8": {
+      "elo": 1562.9,
+      "lo": 1500.8,
+      "hi": 1655.4
+    },
+    "nn_az_6x64_mcts200": {
+      "elo": 1386.4,
+      "lo": 1314.7,
+      "hi": 1478.6
+    }
+  },
+  "elo_anchor": "kaggle_negamax",
+  "unrated": [],
+  "first_player_score": 0.5017,
+  "games": 1800,
+  "decisive": 1752,
+  "forfeits": [],
+  "meta": {
+    "name": "main",
+    "openings": [
+      "71",
+      "643",
+      "232",
+      "262",
+      "44",
+      "2763",
+      "22",
+      "1473",
+      "24",
+      "2537",
+      "3257",
+      "243",
+      "5466",
+      "72",
+      "3117",
+      "75",
+      "273",
+      "374",
+      "3344",
+      "4626"
+    ],
+    "seed": 4150,
+    "created": "2026-10-05T02:52:50",
+    "seconds": 32531.3,
+    "workers": 14,
+    "command": "/home/connor/projects/introAI/connect4/arena/tournament.py --openings 20 --add-nn nn:runs/az_6x64/model.npz:mcts:200",
+    "machine": {
+      "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "cpus": 16
+    }
+  },
+  "bot_info": {
+    "pons_perfect": {
+      "label": "Pons solver (perfect play)",
+      "group": "open source",
+      "author": "Pascal Pons",
+      "url": "https://github.com/PascalPons/connect4",
+      "commit": "d6ba50d",
+      "license": "AGPL-3.0",
+      "lang": "C++",
+      "algorithm": "Exact solver: negamax + alpha-beta on bitboards, transposition table, iterative null-window search, opening book. Never makes a mistake.",
+      "params": {}
+    },
+    "bruneton_az": {
+      "label": "AlphaZero (Bruneton et al.)",
+      "group": "open source",
+      "author": "J.-P. Bruneton, A. Douin, V. Reverdy",
+      "url": "https://github.com/jpbruneton/Alpha-Zero-algorithm-for-Connect-4-game",
+      "commit": "6cd76be",
+      "license": "BSD-3-Clause",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (1 block x 256 filters, 1.2 M params) policy+value net trained by self-play, PUCT MCTS. Pretrained weights from the repo.",
+      "params": {
+        "sims": 200
+      }
+    },
+    "plkmo_az": {
+      "label": "AlphaZero (plkmo / AI Singapore)",
+      "group": "open source",
+      "author": "plkmo (Wee Tee Soh)",
+      "url": "https://github.com/plkmo/AlphaZero_Connect4",
+      "commit": "01ff24a",
+      "license": "Apache-2.0",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (19 blocks x 128 channels) policy+value net trained by self-play ('iter8' weights from the repo), PUCT MCTS with root noise.",
+      "params": {
+        "reads": 777
+      }
+    },
+    "alfo_mcts": {
+      "label": "UCT MCTS, random roll-outs (Alfo5123)",
+      "group": "open source",
+      "author": "Alfredo de la Fuente",
+      "url": "https://github.com/Alfo5123/Connect4",
+      "commit": "d371203",
+      "license": "MIT",
+      "lang": "Python 2 (run under 3)",
+      "algorithm": "Classic Monte Carlo Tree Search (UCT) with uniformly random play-outs; no heuristic, no neural network.",
+      "params": {
+        "iterations": 3000
+      }
+    },
+    "galli_minimax": {
+      "label": "Minimax (Keith Galli tutorial)",
+      "group": "open source",
+      "author": "Keith Galli",
+      "url": "https://github.com/KeithGalli/Connect4-Python",
+      "commit": "503c0b4",
+      "license": "MIT",
+      "lang": "Python / numpy",
+      "algorithm": "Minimax + alpha-beta, window heuristic (center 3, three 5, two 2, opponent three -4), no move ordering or transposition table.",
+      "params": {
+        "depth": 5
+      }
+    },
+    "easyai_negamax": {
+      "label": "easyAI Negamax",
+      "group": "open source",
+      "author": "Zulko (Valentin Zulkower)",
+      "url": "https://github.com/Zulko/easyAI",
+      "commit": "43e9462",
+      "license": "MIT",
+      "lang": "Python / numpy",
+      "algorithm": "Negamax + alpha-beta from the easyAI library on its ConnectFour example; scores only wins/losses (no positional heuristic).",
+      "params": {
+        "depth": 5
+      }
+    },
+    "kaggle_negamax": {
+      "label": "Kaggle ConnectX negamax",
+      "group": "open source",
+      "author": "Kaggle",
+      "url": "https://github.com/Kaggle/kaggle-environments",
+      "commit": "eb8b5ef",
+      "license": "Apache-2.0",
+      "lang": "Python",
+      "algorithm": "The built-in 'negamax' opponent of Kaggle's ConnectX competition: plain negamax, depth 4, no pruning, leaf score = own stones adjacent to the cell.",
+      "params": {}
+    },
+    "ours_minimax_d4": {
+      "label": "Our minimax, depth 4 (slider level 5)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python",
+      "algorithm": "Negamax + alpha-beta, transposition table, move ordering, iterative deepening, bit-parallel window heuristic.",
+      "params": {
+        "depth": 4
+      }
+    },
+    "ours_minimax_d8": {
+      "label": "Our minimax, depth 8 (slider level 9)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python",
+      "algorithm": "Same search as above, 8 plies deep.",
+      "params": {
+        "depth": 8
+      }
+    },
+    "nn_az_6x64_mcts200": {
+      "label": "Our neural net (az_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/az_6x64/model.npz"
+      }
+    }
+  }
+}

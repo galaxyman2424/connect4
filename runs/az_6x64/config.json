@@ -1,0 +1,56 @@
+{
+  "phase": "selfplay",
+  "created": "2026-10-04T17:50:09",
+  "args": {
+    "run": "az_6x64",
+    "preset": "standard",
+    "resume": false,
+    "init": null,
+    "generations": 100,
+    "games": 1000,
+    "sims": 128,
+    "buffer": 600000,
+    "eval_every": 5,
+    "eval_openings": 10,
+    "eval_depths": "2,4,6",
+    "eval_sims": 100,
+    "reuse": 4.0,
+    "batch": 512,
+    "lr": 0.001,
+    "lr_final": 0.0001,
+    "weight_decay": 0.0001,
+    "value_weight": 1.0,
+    "blocks": 6,
+    "channels": 64,
+    "c_puct": 1.5,
+    "temp_moves": 12,
+    "dir_alpha": 1.0,
+    "dir_eps": 0.25,
+    "workers": 8,
+    "parallel": 128,
+    "device": "auto",
+    "selfplay_device": "auto",
+    "match_workers": 14,
+    "seed": 1
+  },
+  "device": "cpu",
+  "selfplay_device": "cpu",
+  "model": {
+    "blocks": 6,
+    "channels": 64,
+    "policy_channels": 2,
+    "value_channels": 4,
+    "value_hidden": 64
+  },
+  "params": 458338,
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}
