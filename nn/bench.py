@@ -156,8 +156,13 @@ def make_agent(spec):
       ("nn", model_path, "policy")              policy head only
       ("nn", model_path, "mcts", sims)          network + MCTS
       ("nn", model_path, "minimax", depth)      minimax with the network's value as eval
+      ("weights", weights.json, depth)          minimax with evolved heuristic weights (rl/evolve.py)
+      ("ntuple", ntuple.npz, depth)             n-tuple TD agent; depth 0 = greedy (rl/ntuple.py)
       ("random",)"""
     kind = spec[0]
+    if kind in ("weights", "ntuple"):
+        from rl.agents import make_agent as rl_make_agent
+        return rl_make_agent(spec)
     if kind == "minimax":
         from engine.agents import MinimaxAgent
         return MinimaxAgent(int(spec[1]))
@@ -189,6 +194,9 @@ def _cached_evaluator(path, loader):
 
 
 def spec_name(spec):
+    if spec[0] in ("weights", "ntuple"):
+        from rl.agents import spec_name as rl_spec_name
+        return rl_spec_name(spec)
     if spec[0] == "minimax":
         return "minimax_d%d" % spec[1]
     if spec[0] == "random":

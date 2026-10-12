@@ -12,7 +12,12 @@ GET /api/lab/run/<run>         config, metrics, eval, notes of one run
 GET /api/lab/arena             list of tournaments
 GET /api/lab/arena/<name>      summary.json of one tournament
 GET /api/lab/reference         minimax baselines (accuracy, Elo ladder, tactics, speed)
+GET /api/lab/methods           list of method comparisons (rl/compare.py)
+GET /api/lab/methods/<name>    summary.json of one comparison
 GET /api/nn/models             runs that have an exported model.npz (play page menu)
+
+Runs from rl/ (evolution, ntuple, dqn, ppo, distill) use the same files plus
+cost.json (training cost from rl/meter.py), which is included when present.
 """
 
 import csv
@@ -26,6 +31,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNS = os.path.join(ROOT, "runs")
 RESULTS = os.path.join(ROOT, "experiments", "results")
 ARENA = os.path.join(RESULTS, "arena")
+METHODS = os.path.join(RESULTS, "methods")
 SAFE = re.compile(r"^[A-Za-z0-9_.\-]{1,80}$")
 
 bp = Blueprint("lab", __name__)
@@ -72,10 +78,12 @@ def _run_summary(name):
     best = max((r.get("bench_optimal") or 0 for r in m), default=None)
     elos = [r["elo"] for r in m if r.get("elo") is not None]
     ev = _json(os.path.join(d, "eval.json"))
-    return {"name": name, "phase": cfg.get("phase"), "created": cfg.get("created"),
+    cost = (_json(os.path.join(d, "cost.json")) or {}).get("total")
+    return {"name": name, "phase": cfg.get("phase"), "cost": cost, "created": cfg.get("created"),
             "model": cfg.get("model"), "params": cfg.get("params"), "device": cfg.get("device"),
             "points": len(m), "last": {k: last.get(k) for k in ("epoch", "gen", "total_games", "elapsed_sec",
-                                                                   "bench_optimal", "bench_value_acc", "time")},
+                                                                   "bench_optimal", "bench_value_acc", "time",
+                                                                   "energy_wh")},
             "best_bench_optimal": best, "last_elo": elos[-1] if elos else None,
             "has_model": os.path.isfile(os.path.join(d, "model.npz")),
             "has_eval": ev is not None,
@@ -105,8 +113,13 @@ def run(name):
             notes = f.read()
     except OSError:
         pass
+    cost = _json(os.path.join(d, "cost.json"))
+    if cost:
+        for seg in cost.get("segments", []):
+            seg.pop("timeline", None)
     return jsonify({"name": name, "config": _json(os.path.join(d, "config.json"), {}),
-                    "metrics": _metrics(os.path.join(d, "metrics.jsonl")), "eval": ev, "notes": notes})
+                    "metrics": _metrics(os.path.join(d, "metrics.jsonl")), "eval": ev, "notes": notes,
+                    "cost": cost})
 
 
 @bp.get("/api/lab/arena")
@@ -126,6 +139,28 @@ def arenas():
 @bp.get("/api/lab/arena/<name>")
 def arena(name):
     d = _safe_dir(ARENA, name)
+    s = _json(os.path.join(d, "summary.json"))
+    if s is None:
+        abort(404)
+    return jsonify(s)
+
+
+@bp.get("/api/lab/methods")
+def methods():
+    out = []
+    if os.path.isdir(METHODS):
+        for name in sorted(os.listdir(METHODS)):
+            s = _json(os.path.join(METHODS, name, "summary.json")) if SAFE.match(name) else None
+            if s:
+                out.append({"name": name, "created": s.get("created"), "entries": len(s.get("entries", []))})
+    out.sort(key=lambda r: r.get("created") or "", reverse=True)
+    out.sort(key=lambda r: r["name"] != "main")
+    return jsonify(out)
+
+
+@bp.get("/api/lab/methods/<name>")
+def method_summary(name):
+    d = _safe_dir(METHODS, name)
     s = _json(os.path.join(d, "summary.json"))
     if s is None:
         abort(404)

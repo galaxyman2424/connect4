@@ -213,6 +213,7 @@ def main():
                 st = "ERROR: %s: %s" % (type(ex).__name__, ex)
             print("%-16s %-42s %s" % (n, e["label"], st))
         print("\nplus any trained network: nn:runs/<run>/model.npz[:mcts:200|:policy|:minimax:4]")
+        print("plus rl/ players: evo:runs/<run>/weights.json[:depth]  ntuple:runs/<run>/ntuple.npz[:depth]")
         return
 
     names = [x.strip() for x in a.bots.split(",") if x.strip()] + a.add_nn

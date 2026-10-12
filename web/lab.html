@@ -12,12 +12,13 @@
 <main class="lab-main">
   <header>
     <h1>Connect <span class="four">4</span> Lab</h1>
-    <p class="sub">What we measured: training our own neural network, and how open-source Connect 4 bots do against each other. Charts are drawn from the results files in the repo, so they update when you re-run an experiment and refresh the page.</p>
+    <p class="sub">What we measured: training our own neural network seven different ways (supervised, AlphaZero, evolution, TD n-tuple, DQN, PPO, distillation), what each one costs to train, and how open-source Connect 4 bots do against each other. Charts are drawn from the results files in the repo, so they update when you re-run an experiment and refresh the page.</p>
   </header>
 
   <div class="tabs" role="tablist">
     <button type="button" role="tab" data-tab="training" class="on">Neural net training</button>
     <button type="button" role="tab" data-tab="hypothesis">Hypothesis test</button>
+    <button type="button" role="tab" data-tab="methods">Method comparison</button>
     <button type="button" role="tab" data-tab="arena">Bot arena</button>
     <button type="button" role="tab" data-tab="method">How it works</button>
   </div>
@@ -42,6 +43,16 @@
       <span class="hint">Results of <code>python -m nn.evaluate --run &lt;run&gt;</code></span>
     </div>
     <div id="hypBody"></div>
+  </section>
+
+  <!-- ============================================================= methods -->
+  <section id="tab-methods" class="tab" role="tabpanel">
+    <div class="bar">
+      <label for="methSel">Comparison</label>
+      <select id="methSel"></select>
+      <span id="methInfo" class="hint"></span>
+    </div>
+    <div id="methBody"></div>
   </section>
 
   <!-- =============================================================== arena -->

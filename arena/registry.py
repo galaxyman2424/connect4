@@ -136,6 +136,31 @@ def nn_entry(spec):
                   "params": {"model": path}, "make": make}
 
 
+def rl_entry(spec):
+    """Dynamic entry for the non-network methods of rl/:
+    'evo:<weights.json>[:depth]'    our minimax with evolved heuristic weights (default depth 4)
+    'ntuple:<ntuple.npz>[:depth]'   TD n-tuple player; depth 0 = greedy, >0 = inside our minimax"""
+    parts = spec.split(":")
+    kind, path = parts[0], parts[1]
+    depth = int(parts[2]) if len(parts) > 2 else (4 if kind == "evo" else 0)
+    run = os.path.basename(os.path.dirname(os.path.abspath(path)))
+    name = "%s_%s_d%d" % (kind, run, depth)
+
+    def make():
+        from nn.bench import make_agent
+        ag = make_agent(("weights" if kind == "evo" else "ntuple", path, depth))
+        return A.Ours(ag, name)
+    if kind == "evo":
+        label = "Evolved heuristic (%s), minimax d%d" % (run, depth)
+        algo = "Our minimax + alpha-beta (depth %d) with heuristic weights tuned by CMA-ES." % depth
+    else:
+        label = "TD n-tuple (%s)%s" % (run, ", minimax d%d" % depth if depth else ", greedy")
+        algo = ("n-tuple network (lookup tables over 8-cell patterns) trained by TD(lambda) self-play; "
+                + ("value used at the leaves of our minimax (depth %d)." % depth if depth else "greedy, no search."))
+    return name, {"label": label, "group": "ours", "author": "Connor Thelen", "url": "", "license": "",
+                  "lang": "Python / numpy", "algorithm": algo, "params": {"model": path}, "make": make}
+
+
 def resolve(names, overrides=None):
     """names -> {name: entry}. overrides: {'bot.param': value}."""
     out = {}
@@ -143,6 +168,8 @@ def resolve(names, overrides=None):
     for n in names:
         if n.startswith("nn:"):
             key, entry = nn_entry(n)
+        elif n.startswith("evo:") or n.startswith("ntuple:"):
+            key, entry = rl_entry(n)
         elif n in BOTS:
             key, entry = n, dict(BOTS[n])
             params = dict(entry["params"])

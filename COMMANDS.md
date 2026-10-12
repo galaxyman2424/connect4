@@ -8,6 +8,9 @@ one with `server/`, `nn/`, `arena/` in it). More detail on training:
 - **Part B** trains the neural network, on the Linux Mint PC with the RTX 3050.
 - **Part C** runs the bot tournament.
 - **Part D** moves results from the training PC to the website PC.
+- **Part E** trains the five extra methods (evolution, TD n-tuple, DQN, PPO, distillation),
+  measures their training cost and compares everything. Details:
+  [`docs/OTHER_METHODS.md`](docs/OTHER_METHODS.md).
 
 ---
 
@@ -150,7 +153,7 @@ git push
 On the Windows PC:
 
 ```powershell
-git pull
+git pull origin main
 .venv\Scripts\activate
 python server/app.py                    # then open http://localhost:5000/lab
 ```
@@ -165,6 +168,50 @@ On Windows (PowerShell): `Remove-Item -Recurse -Force runs\pilot_cpu_az, runs\pi
 
 ---
 
+## E. More learning methods + training cost (Linux PC)
+
+Same terminal setup as Part B (`source .venv/bin/activate`, `CUDA_VISIBLE_DEVICES=0`).
+Each trainer measures its own time, CPU core-hours, GPU energy and cost into
+`runs/<run>/cost.json`. Times below are rough guesses; check the log's first lines.
+
+```bash
+python -m pytest -q tests/test_rl.py            # quick check (~10 s)
+
+# CPU-only methods (can run at the same time as one GPU job)
+nohup python -m rl.evolve --run evo_d2 --generations 60 --depth 2 > runs/evo_d2.log 2>&1 &         # ~20-40 min
+nohup python -m rl.ntuple --run td_ntuple --games 3000000 > runs/td_ntuple.log 2>&1 &             # 1 core, ~1-2 h
+
+# GPU methods (one at a time)
+nohup python -m rl.ppo --run ppo_6x64 --iterations 300 > runs/ppo_6x64.log 2>&1 &                 # ~45-90 min
+nohup python -m rl.dqn --run dqn_6x64 --iterations 400 > runs/dqn_6x64.log 2>&1 &                 # ~45-90 min
+
+# combinations
+python -m rl.ppo --run ppo_from_sup --init runs/sup_6x64/checkpoints/best.pt --iterations 300     # supervised warm start
+python -m rl.dqn --run dqn_from_sup --init runs/sup_6x64/checkpoints/best.pt --iterations 400
+python -m rl.distill --run distill_az_2x32 --teacher nn:runs/az_6x64/model.npz:mcts:100           # search -> tiny net
+python -m rl.distill --run distill_ens_2x32 --teacher nn:runs/az_6x64/model.npz:mcts:100 \
+    --teacher nn:runs/ppo_6x64/model.npz --teacher ntuple:runs/td_ntuple/ntuple.npz --teacher-weights 2,1,1
+
+# cost of runs trained before the meter existed (estimate from logged time x watts)
+python -m rl.meter --estimate --run az_6x64 --gpu-watts 100 --cpu-watts 90
+# or measure any command, e.g. a new supervised run:
+python -m rl.meter --run sup_m -- python -m nn.train_supervised --data nn_data/solver_300k.npz --run sup_m --epochs 30
+
+# compare everything: Elo, accuracy, ms/move, training hours, GPU-h, kWh, $
+python -m rl.compare
+```
+
+| need to... | command |
+|---|---|
+| continue a stopped run | add `--resume` (and e.g. a bigger `--iterations` / `--games` / `--generations`) |
+| evaluate a DQN/PPO/distilled net like Part 2 | `python -m nn.evaluate --run ppo_6x64` |
+| see results | Lab page, **Method comparison** tab, and each run under **Neural net training** |
+| add the new players to the arena | `--add-nn evo:runs/evo_d2/weights.json:6 --add-nn ntuple:runs/td_ntuple/ntuple.npz:4` |
+
+Commit `runs/` and `experiments/results/methods/` like in Part D.
+
+---
+
 ## Where things end up
 
 | what | where |
@@ -174,3 +221,6 @@ On Windows (PowerShell): `Remove-Item -Recurse -Force runs\pilot_cpu_az, runs\pi
 | full evaluation + hypothesis test | `runs/<run>/eval.json` |
 | your notes for the presentation | `runs/<run>/notes.md` |
 | tournament results | `experiments/results/arena/<name>/summary.json` |
+| training cost of a run | `runs/<run>/cost.json` |
+| evolved weights / n-tuple table | `runs/<run>/weights.json`, `runs/<run>/ntuple.npz` |
+| method comparison | `experiments/results/methods/<name>/summary.json` (+ csv, png charts) |

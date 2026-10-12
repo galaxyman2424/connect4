@@ -7,6 +7,19 @@
             purple: "#CC79A7", sky: "#0072B2", grey: "#8e96b5", pink: "#ef476f", gold: "#ffd166", white: "#e9ecf8" };
   var SEQ = [C.blue, C.orange, C.green, C.pink, C.purple, C.gold, C.red, C.sky, C.grey];
   var REF = null, RUNS = [], ARENAS = [], CACHE = {};
+  // training methods: label, what one point on the x axis is
+  var PHASE = {
+    supervised: { label: "Supervised (perfect-play labels)", short: "supervised", x: "epoch", unit: "epochs" },
+    selfplay: { label: "AlphaZero self-play", short: "self-play", x: "generation", unit: "gens" },
+    evolution: { label: "Evolution (CMA-ES) of the heuristic weights", short: "evolution", x: "generation", unit: "gens" },
+    ntuple: { label: "TD(λ) n-tuple network", short: "n-tuple TD", x: "generation", unit: "gens" },
+    dqn: { label: "Deep Q-learning (double DQN)", short: "DQN", x: "iteration", unit: "iters" },
+    ppo: { label: "PPO self-play (policy gradient)", short: "PPO", x: "iteration", unit: "iters" },
+    distill: { label: "Knowledge distillation", short: "distillation", x: "epoch", unit: "epochs" }
+  };
+  function phaseOf(p) { return PHASE[p] || { label: p || "?", short: p || "?", x: "step", unit: "points" }; }
+  function isRL(p) { return ["evolution", "ntuple", "dqn", "ppo", "distill"].indexOf(p) >= 0; }
+  function kwh(wh) { return wh == null ? "–" : wh >= 1000 ? (wh / 1000).toFixed(2) + " kWh" : wh.toFixed(wh < 10 ? 2 : 0) + " Wh"; }
 
   // ------------------------------------------------------------ helpers
   function el(tag, attrs, html) {
@@ -155,13 +168,14 @@
   function scatter(items, o) {
     var W = 640, H = 280, m = { l: 52, r: 16, t: 12, b: 40 };
     var xs = items.map(function (i) { return Math.log10(Math.max(i.x, 0.01)); });
+    if (!items.length) { var d0 = el("div", { "class": "empty" }, "No data yet."); return d0; }
     var x0 = Math.floor(Math.min.apply(null, xs)), x1 = Math.ceil(Math.max.apply(null, xs)); if (x1 === x0) x1++;
     var y0 = o.yMin, y1 = o.yMax;
     var X = function (v) { return m.l + (Math.log10(Math.max(v, 0.01)) - x0) / (x1 - x0) * (W - m.l - m.r); };
     var Y = function (v) { return H - m.b - (v - y0) / (y1 - y0) * (H - m.t - m.b); };
     var s = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '"><g class="grid">';
     niceTicks(y0, y1, 5).forEach(function (t) { s += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + Y(t) + '" y2="' + Y(t) + '"/><text x="' + (m.l - 6) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + (o.yFmt ? o.yFmt(t) : t) + "</text>"; });
-    for (var e = x0; e <= x1; e++) { var xv = Math.pow(10, e); s += '<line x1="' + X(xv) + '" x2="' + X(xv) + '" y1="' + m.t + '" y2="' + (H - m.b) + '"/><text x="' + X(xv) + '" y="' + (H - m.b + 15) + '" text-anchor="middle">' + (xv >= 1000 ? xv / 1000 + " s" : xv + " ms") + "</text>"; }
+    for (var e = x0; e <= x1; e++) { var xv = Math.pow(10, e); s += '<line x1="' + X(xv) + '" x2="' + X(xv) + '" y1="' + m.t + '" y2="' + (H - m.b) + '"/><text x="' + X(xv) + '" y="' + (H - m.b + 15) + '" text-anchor="middle">' + (o.xTick ? o.xTick(xv) : xv >= 1000 ? xv / 1000 + " s" : xv + " ms") + "</text>"; }
     s += "</g>";
     items.forEach(function (it) {
       s += '<circle cx="' + X(it.x) + '" cy="' + Y(it.y) + '" r="6" fill="' + it.color + '" fill-opacity=".85"><title>' + esc(it.label) + "</title></circle>";
@@ -219,7 +233,8 @@
     var sel = $("runSel"), hs = $("hypSel");
     sel.innerHTML = ""; hs.innerHTML = "";
     RUNS.forEach(function (r) {
-      var lab = r.name + "  (" + (r.phase === "selfplay" ? "self-play" : r.phase || "?") + ", " + r.points + (r.phase === "selfplay" ? " gens" : " epochs") + ")";
+      var ph = phaseOf(r.phase);
+      var lab = r.name + "  (" + ph.short + ", " + r.points + " " + ph.unit + ")";
       sel.appendChild(el("option", { value: r.name }, esc(lab)));
       if (r.has_eval) hs.appendChild(el("option", { value: r.name }, esc(r.name)));
     });
@@ -244,10 +259,14 @@
   function renderRun(d) {
     var body = $("trainBody"); body.innerHTML = "";
     var cfg = d.config || {}, M = d.metrics || [], sp = cfg.phase === "selfplay";
+    var mc = cfg.model || {};
+    var modelDesc = mc.kind === "n-tuple" ? mc.tuples + " tuples × " + mc.length + " cells, " + fmtInt(cfg.params) + " table weights"
+      : mc.kind === "weighted heuristic" ? (mc.features || []).length + " heuristic weights, searched at minimax depth " + mc.search_depth
+      : (mc.blocks || "?") + "×" + (mc.channels || "?") + " ResNet, " + fmtInt(cfg.params) + " params";
+    $("runInfo").textContent = phaseOf(cfg.phase).label + " · " + modelDesc + " · " + (cfg.device || "") + " · started " + (cfg.created || "").replace("T", " ");
+    if (isRL(cfg.phase)) return renderRL(d, body);
     var xk = sp ? "gen" : "epoch", xl = sp ? "generation" : "epoch";
     var last = M[M.length - 1] || {};
-    var mc = cfg.model || {};
-    $("runInfo").textContent = (sp ? "AlphaZero self-play" : "Supervised (perfect-play labels)") + " · " + (mc.blocks || "?") + "×" + (mc.channels || "?") + " ResNet, " + fmtInt(cfg.params) + " params · " + (cfg.device || "") + " · started " + (cfg.created || "").replace("T", " ");
     var best = M.reduce(function (a, r) { return Math.max(a, r.bench_optimal || 0); }, 0);
     var mctsBest = M.reduce(function (a, r) { return Math.max(a, r.bench_mcts_optimal || 0); }, 0);
     var elos = M.filter(function (r) { return r.elo != null; });
@@ -327,6 +346,161 @@
     body.appendChild(renderRunsOverview());
   }
 
+  // ======================================================= other methods (rl/)
+  var METHOD_COLOR = { supervised: C.blue, selfplay: C.gold, evolution: C.green, ntuple: C.purple,
+                       dqn: C.red, ppo: C.orange, distill: C.sky, hand: C.grey, custom: C.white };
+  var PCT = function (v) { return Math.round(v * 100) + "%"; };
+
+  function renderRL(d, body) {
+    var cfg = d.config || {}, M = d.metrics || [], ph = cfg.phase, P = phaseOf(ph);
+    var xk = "gen", xl = P.x;
+    var last = M[M.length - 1] || {};
+    var cost = d.cost && d.cost.total;
+    var pts = function (k, f) { return M.filter(function (r) { return r[k] != null; }).map(function (r) { return [r[xk], f ? f(r[k]) : r[k]]; }); };
+    var best = M.reduce(function (a, r) { return Math.max(a, r.bench_optimal || 0); }, 0);
+    var elos = M.filter(function (r) { return r.elo != null; });
+    var what = { evolution: "minimax d" + ((cfg.model || {}).search_depth || "?") + " with the evolved weights", ntuple: "greedy, no search",
+                 dqn: "argmax Q, no search", ppo: "policy, no search", distill: "student policy, no search" }[ph] || "";
+    var t = '<div class="tiles">';
+    t += tile(P.x.charAt(0).toUpperCase() + P.x.slice(1) + "s", fmtInt(last[xk]), last.total_games ? fmtInt(last.total_games) + " games" : last.positions_seen ? fmtInt(last.positions_seen) + " positions seen" : "");
+    t += tile("Training time", dur(cost ? cost.wall_sec : last.elapsed_sec), cost ? num(cost.cpu_core_hours, 1) + " CPU core-h · " + num(cost.gpu_hours, 2) + " GPU-h" : "");
+    if (cost) t += tile("Energy", kwh(cost.energy_wh), "GPU " + kwh(cost.gpu_wh) + " + CPU " + kwh(cost.cpu_wh) + (cost.cpu_wh_source === "estimate" ? " (est.)" : "") + " · $" + num(cost.energy_cost_usd, 2));
+    t += tile("Best move accuracy", pct(best), what);
+    if (last.bench_value_acc != null && ph !== "evolution") t += tile("Value accuracy", pct(last.bench_value_acc), "win/draw/loss vs solver");
+    if (ph === "distill") t += tile("Agrees with teacher", pct(last.val_teacher_agreement), "student " + num(last.student_ms, 2) + " ms vs teacher " + Object.values(last.teacher_ms || {}).map(function (v) { return num(v, 1); }).join(" / ") + " ms");
+    if (elos.length) t += tile("Elo (latest)", num(elos[elos.length - 1].elo), "minimax d1 = 1000");
+    if (ph === "evolution" && last.weights) t += tile("Step size σ", num(last.sigma, 3), "CMA-ES search radius");
+    body.appendChild(el("div", null, t + "</div>"));
+
+    var g = el("div", { "class": "grid g2" });
+    body.appendChild(g);
+    g.appendChild(card("Accuracy vs perfect play", "Share of held-out positions (" + (last.bench_positions || "3,000") + ") where it picks a move the perfect solver also rates best (" + what + "). Dashed: our hand-crafted minimax at depth 1/4/8.",
+      lineChart({ series: [{ name: "optimal move", points: pts("bench_optimal"), color: C.blue, dots: ph === "evolution" },
+                           { name: "non-blunder rate", points: pts("bench_keeps_nl"), color: C.green, dash: true, dots: ph === "evolution" }],
+                  refs: accRefs(), yMin: 0, yMax: 1, yFmt: PCT, xLabel: xl, intX: true })));
+    if (elos.length) {
+      var ladderRefs = [];
+      if (REF && REF.elo) ["d1", "d2", "d4", "d6", "d8"].forEach(function (k) { if (REF.elo[k]) ladderRefs.push({ y: REF.elo[k].elo, label: "minimax " + k, color: C.grey }); });
+      g.appendChild(card("Strength (Elo) over training", "From games against our minimax at fixed depths (depth 1 = 1000). Dashed lines: minimax depths.",
+        lineChart({ series: [{ name: what, points: pts("elo"), color: C.gold, dots: true }], refs: ladderRefs, xLabel: xl, intX: true })));
+      var depthKeys = {};
+      M.forEach(function (r) { if (r.vs_minimax) Object.keys(r.vs_minimax).forEach(function (k) { depthKeys[k] = 1; }); });
+      g.appendChild(card("Score vs minimax", "Share of points (draw = ½) against minimax at each depth.",
+        lineChart({ series: Object.keys(depthKeys).sort().map(function (k, i) {
+          return { name: "vs " + k.replace("d", "depth "), points: M.filter(function (r) { return r.vs_minimax && r.vs_minimax[k]; }).map(function (r) { return [r[xk], r.vs_minimax[k].score]; }), color: SEQ[i], dots: true };
+        }), refs: [{ y: 0.5, label: "even", color: C.grey }], yMin: 0, yMax: 1, yFmt: PCT, xLabel: xl, intX: true })));
+    }
+    var f2 = function (v) { return v.toFixed(2); };
+    if (ph === "evolution") {
+      g.appendChild(card("Fitness per generation", "Score of the candidates (games vs the hand-crafted minimax and vs the current mean; or accuracy). Best / mean / worst of each generation's population.",
+        lineChart({ series: [{ name: "best", points: pts("fitness_best"), color: C.green }, { name: "mean", points: pts("fitness_mean"), color: C.blue }, { name: "worst", points: pts("fitness_worst"), color: C.red, dash: true }], xLabel: xl, intX: true, yFmt: f2 })));
+      var names = last.weights ? Object.keys(last.weights) : [];
+      g.appendChild(card("Weights over generations", "The mean of the search distribution - the current answer. Hand-crafted start: centre 3, three 5, two 2, opponent three −4, opponent two −2, the rest 0.",
+        lineChart({ series: names.map(function (n, i) { return { name: n, color: SEQ[i % SEQ.length], dash: i >= SEQ.length, points: M.filter(function (r) { return r.weights; }).map(function (r) { return [r[xk], r.weights[n]]; }) }; }), xLabel: xl, intX: true, yFmt: f2 })));
+      g.appendChild(card("Step size σ", "How far CMA-ES samples from the mean. Shrinks as it converges.",
+        lineChart({ series: [{ name: "sigma", points: pts("sigma"), color: C.purple }], xLabel: xl, intX: true, yFmt: f2 })));
+    } else if (ph === "ntuple") {
+      g.appendChild(card("TD error", "Average |λ-return − value| per position: how surprised the table still is by what happens next.",
+        lineChart({ series: [{ name: "TD error", points: pts("td_error"), color: C.purple }], xLabel: xl, intX: true, yFmt: function (v) { return v.toFixed(3); } })));
+      g.appendChild(card("Speed and exploration", "Self-play games per second (CPU only) and the share of random moves.",
+        lineChart({ series: [{ name: "games / s", points: pts("games_per_sec"), color: C.blue }], xLabel: xl, intX: true })));
+    } else if (ph === "dqn") {
+      g.appendChild(card("Training loss", "Huber loss of Q(s,a) against the Bellman target, and cross-entropy of the side value head against game results.",
+        lineChart({ series: [{ name: "Q loss", points: pts("q_loss"), color: C.red }, { name: "value loss", points: pts("value_loss"), color: C.orange }], xLabel: xl, intX: true, yFmt: function (v) { return v.toFixed(3); } })));
+      g.appendChild(card("Q values and exploration", "Average |Q| of the moves trained on, and epsilon (share of random moves).",
+        lineChart({ series: [{ name: "mean |Q|", points: pts("q_abs_mean"), color: C.red }, { name: "epsilon", points: pts("eps"), color: C.grey, dash: true }], yMin: 0, yMax: 1, xLabel: xl, intX: true, yFmt: f2 })));
+    } else if (ph === "ppo") {
+      g.appendChild(card("Training loss", "Clipped policy loss, value cross-entropy, and the policy's entropy (how spread out its move choice is).",
+        lineChart({ series: [{ name: "policy loss", points: pts("policy_loss"), color: C.orange }, { name: "value loss", points: pts("value_loss"), color: C.blue }, { name: "entropy", points: pts("entropy"), color: C.grey, dash: true }], xLabel: xl, intX: true, yFmt: f2 })));
+      g.appendChild(card("Update size", "Approximate KL divergence between the old and new policy, and the share of moves whose probability ratio hit the clip. Small and steady = healthy PPO.",
+        lineChart({ series: [{ name: "approx KL", points: pts("approx_kl"), color: C.purple }, { name: "clip fraction", points: pts("clip_frac"), color: C.pink }], xLabel: xl, intX: true, yFmt: function (v) { return v.toFixed(3); } })));
+      if (M.some(function (r) { return r.score_vs_pool != null; }))
+        g.appendChild(card("Score vs past selves", "Games against frozen snapshots from the opponent pool. Staying above 50% = it keeps beating its older versions.",
+          lineChart({ series: [{ name: "score vs pool", points: pts("score_vs_pool"), color: C.gold, dots: true }], refs: [{ y: 0.5, label: "even", color: C.grey }], yMin: 0, yMax: 1, yFmt: PCT, xLabel: xl, intX: true })));
+    } else if (ph === "distill") {
+      g.appendChild(card("Distillation loss", "KL divergence between the teacher's and the student's move distribution (train / validation), and the value cross-entropy.",
+        lineChart({ series: [{ name: "train KL", points: pts("policy_loss"), color: C.sky }, { name: "val KL", points: pts("val_policy_kl"), color: C.sky, dash: true }, { name: "value loss", points: pts("value_loss"), color: C.orange }], xLabel: xl, intX: true, yFmt: function (v) { return v.toFixed(3); } })));
+      g.appendChild(card("Agreement with the teacher", "Validation positions where the student's top move is the teacher's top move.",
+        lineChart({ series: [{ name: "same top move", points: pts("val_teacher_agreement"), color: C.green }], yMin: 0, yMax: 1, yFmt: PCT, xLabel: xl, intX: true })));
+    }
+    if (M.some(function (r) { return r.p1_win != null; }))
+      g.appendChild(card("Training games", "Who wins the games the method learns from, and how long they are.",
+        lineChart({ series: [{ name: "first player wins", points: pts("p1_win"), color: C.pink }, { name: "draws", points: pts("draw"), color: C.grey }, { name: "second player wins", points: pts("p2_win"), color: C.gold }],
+                    yMin: 0, yMax: 1, yFmt: PCT, xLabel: xl, intX: true })));
+    if (ph !== "evolution" && M.some(function (r) { return r.bench_value_acc != null; }))
+      g.appendChild(card("Value accuracy", "Win/draw/loss call vs the solver on the held-out positions. (Always 'win' = 63%.)",
+        lineChart({ series: [{ name: "value", points: pts("bench_value_acc"), color: C.green }], refs: [{ y: 0.6333, label: "always 'win'", color: C.grey }], yMin: 0, yMax: 1, yFmt: PCT, xLabel: xl, intX: true })));
+    if (M.some(function (r) { return r.energy_wh != null; }))
+      g.appendChild(card("Compute spent so far", "Cumulative energy (Wh, GPU + CPU) and CPU core-hours, measured by rl/meter.py while training.",
+        lineChart({ series: [{ name: "energy (Wh)", points: pts("energy_wh"), color: C.gold }, { name: "CPU core-hours", points: pts("cpu_core_sec", function (v) { return v / 3600; }), color: C.blue }], xLabel: xl, intX: true, yFmt: function (v) { return String(Number(v.toPrecision(2))); } })));
+    var lb = M.filter(function (r) { return r.bench_by_bucket; }).slice(-1)[0];
+    if (lb) {
+      var bk = ["8-11", "12-15", "16-19", "20-23", "24-27", "28-30"];
+      var ser = [{ name: P.short, values: bk.map(function (b) { return (lb.bench_by_bucket[b] || {}).optimal; }), color: METHOD_COLOR[ph] || C.blue }];
+      [4, 8].forEach(function (dd, i) { if (refAcc(dd)) ser.push({ name: "minimax depth " + dd, values: bk.map(function (b) { return (refAcc(dd, b) || {}).optimal; }), color: i ? C.white : C.purple }); });
+      g.appendChild(card("Accuracy by game phase", "Latest " + xl + ", by stones on the board.",
+        groupedBars({ categories: bk, series: ser, yMin: 0, yMax: 1, yFmt: PCT, xLabel: "stones on the board" })));
+    }
+    if (d.eval) body.appendChild(renderEval(d.eval));
+    if (d.notes) { var n = el("div", { "class": "grid", style: "margin-top:14px" }); var nd = el("div", { "class": "notes" }); nd.textContent = d.notes; n.appendChild(card("Notes (runs/" + d.name + "/notes.md)", null, nd, true)); body.appendChild(n); }
+    body.appendChild(renderRunsOverview());
+  }
+
+  // ===================================================== method comparison
+  function loadMethodsList() {
+    return getJSON("/api/lab/methods").then(function (list) {
+      var s = $("methSel"); s.innerHTML = "";
+      list.forEach(function (m) { s.appendChild(el("option", { value: m.name }, esc(m.name + " (" + m.entries + " entries)"))); });
+      if (!list.length) {
+        $("methBody").innerHTML = '<div class="empty"><b>No method comparison yet.</b> After training some of the methods (docs/OTHER_METHODS.md), run<pre>python -m rl.compare</pre>It plays every trained method against the minimax ladder, measures accuracy and speed, and reads each run\'s training cost.</div>';
+        return;
+      }
+      loadMethods(s.value);
+    }).catch(function () {});
+  }
+  function loadMethods(name) {
+    getJSON("/api/lab/methods/" + encodeURIComponent(name)).then(renderMethods)
+      .catch(function (e) { $("methBody").innerHTML = '<div class="empty">' + esc(e.message) + "</div>"; });
+  }
+  function renderMethods(s) {
+    var body = $("methBody"); body.innerHTML = "";
+    var E = (s.entries || []).slice().sort(function (a, b) { return (b.elo || 0) - (a.elo || 0); });
+    var st = s.settings || {};
+    $("methInfo").textContent = E.length + " entries · Elo from " + st.openings + " openings × 2 colours vs minimax depths " + (st.depths || []).join(", ") + " · accuracy on " + fmtInt(st.positions) + " positions · " + (s.created || "").replace("T", " ");
+    var short = function (e) { var l = e.label.split(" [")[0]; return l.length > 34 ? l.slice(0, 33) + "…" : l; };
+    var withCost = E.filter(function (e) { return e.cost && e.cost.energy_wh != null; });
+    var top = E[0] || {};
+    var cheapest = withCost.slice().sort(function (a, b) { return a.cost.energy_wh - b.cost.energy_wh; })[0];
+    body.appendChild(el("div", { "class": "tiles" },
+      tile("Strongest", esc(short(top)), "Elo " + num(top.elo)) +
+      tile("Cheapest to train", cheapest ? esc(short(cheapest)) : "–", cheapest ? kwh(cheapest.cost.energy_wh) + ", Elo " + num(cheapest.elo) : "needs cost.json") +
+      tile("Fastest per move", esc(short(E.slice().sort(function (a, b) { return a.ms_per_move - b.ms_per_move; })[0] || {})), num((E.slice().sort(function (a, b) { return a.ms_per_move - b.ms_per_move; })[0] || {}).ms_per_move, 2) + " ms")));
+    var g = el("div", { "class": "grid g2" }); body.appendChild(g);
+    var rows = E.map(function (e) {
+      var c = e.cost || {}, inc = c.including_teachers;
+      return { cls: e.method === "hand" ? "" : "ours", cells: ['<span style="color:' + (METHOD_COLOR[e.method] || C.white) + '">●</span> ' + esc(e.label), num(e.elo), pct(e.optimal), num(e.ms_per_move, 1),
+        c.wall_hours != null ? num(c.wall_hours, 2) : "–", c.gpu_hours != null ? num(c.gpu_hours, 2) : "–", c.cpu_core_hours != null ? num(c.cpu_core_hours, 1) : "–",
+        c.energy_wh != null ? kwh(c.energy_wh) + (inc ? ' <span class="muted">(' + kwh(inc.energy_kwh * 1000) + " incl. teachers)</span>" : "") : "–",
+        c.energy_cost_usd != null ? "$" + num(c.energy_cost_usd, 2) : "–"] };
+    });
+    g.appendChild(card("All methods", "Sorted by strength. Training cost from runs/&lt;run&gt;/cost.json (wall time, GPU-hours, CPU core-hours, energy, electricity price). A distilled student's cost is shown alone and including its teachers. ms/move: CPU, numpy, one position at a time (like the website).",
+      table(["method", "Elo", "optimal", "ms/move", "train h", "GPU-h", "CPU core-h", "energy", "cost"], rows), true));
+    var lo = Math.min.apply(null, E.map(function (e) { return e.elo || 0; })), hi = Math.max.apply(null, E.map(function (e) { return e.elo || 0; }));
+    var yMin = Math.floor((lo - 100) / 100) * 100, yMax = Math.ceil((hi + 100) / 100) * 100;
+    var dot = function (e, x) { return { x: x, y: e.elo, label: e.label + ": Elo " + num(e.elo), short: short(e), color: METHOD_COLOR[e.method] || C.white }; };
+    g.appendChild(card("Strength vs training energy", "Up and to the left = more strength per kWh. Log scale. Methods without a cost.json are missing (train them under rl.meter).",
+      scatter(withCost.filter(function (e) { return e.elo != null && e.cost.energy_wh > 0; }).map(function (e) { return dot(e, e.cost.energy_wh); }),
+        { yMin: yMin, yMax: yMax, yFmt: function (v) { return Math.round(v); }, xLabel: "training energy (GPU + CPU)", yLabel: "Elo", xTick: function (v) { return v >= 1000 ? v / 1000 + " kWh" : v + " Wh"; } })));
+    g.appendChild(card("Strength vs training time", "Wall-clock hours of training (log scale).",
+      scatter(E.filter(function (e) { return e.elo != null && e.cost && e.cost.wall_hours > 0; }).map(function (e) { return dot(e, e.cost.wall_hours); }),
+        { yMin: yMin, yMax: yMax, yFmt: function (v) { return Math.round(v); }, xLabel: "training time", yLabel: "Elo", xTick: function (v) { return v < 1 ? Math.round(v * 60) + " min" : v + " h"; } })));
+    g.appendChild(card("Strength vs thinking time", "Milliseconds per move at play time (log scale). Search costs time at every move; learning costs time once.",
+      scatter(E.filter(function (e) { return e.elo != null; }).map(function (e) { return dot(e, Math.max(e.ms_per_move, 0.01)); }),
+        { yMin: yMin, yMax: yMax, yFmt: function (v) { return Math.round(v); }, xLabel: "time per move", yLabel: "Elo" })));
+    g.appendChild(card("Elo", "On the minimax ladder (depth 1 = 1000). Grey = our hand-crafted minimax at the same depth (reference).",
+      hBars(E.filter(function (e) { return e.elo != null; }).map(function (e) { return { label: short(e), value: e.elo, color: METHOD_COLOR[e.method] || C.white }; }), { xLabel: "Elo" })));
+  }
+
   function renderEval(ev) {
     var g = el("div", { "class": "grid g2", style: "margin-top:14px" });
     var acc = ev.accuracy || {};
@@ -360,11 +534,13 @@
   function renderRunsOverview() {
     var w = el("div", { "class": "grid", style: "margin-top:14px" });
     var rows = RUNS.map(function (r) {
-      return [esc(r.name), r.phase === "selfplay" ? "self-play" : "supervised", (r.model ? r.model.blocks + "×" + r.model.channels : "–"), fmtInt(r.params),
-              fmtInt(r.last.gen || r.last.epoch), r.last.total_games ? fmtInt(r.last.total_games) : "–", dur(r.last.elapsed_sec), pct(r.best_bench_optimal), num(r.eval_elo || r.last_elo)];
+      var net = r.model && r.model.blocks ? r.model.blocks + "×" + r.model.channels : r.model && r.model.kind === "n-tuple" ? "n-tuple" : r.model && r.model.kind ? "10 weights" : "–";
+      return [esc(r.name), phaseOf(r.phase).short, net, fmtInt(r.params),
+              fmtInt(r.last.gen || r.last.epoch), r.last.total_games ? fmtInt(r.last.total_games) : "–", dur((r.cost && r.cost.wall_sec) || r.last.elapsed_sec),
+              r.cost ? kwh(r.cost.energy_wh) : "–", pct(r.best_bench_optimal), num(r.eval_elo || r.last_elo)];
     });
     var series = RUNS.map(function (r, i) { var d = CACHE[r.name]; if (!d) return null; return { name: r.name, color: SEQ[i % SEQ.length], points: d.metrics.filter(function (m) { return m.bench_optimal != null && m.elapsed_sec != null; }).map(function (m) { return [m.elapsed_sec / 3600, m.bench_optimal]; }) }; }).filter(Boolean);
-    var c = card("All runs", "Compare training runs. The chart shows runs you have opened on this page; x = hours of training.", table(["run", "phase", "net", "params", "gen/epoch", "games", "time", "best accuracy", "Elo"], rows), true);
+    var c = card("All runs", "Compare training runs. The chart shows runs you have opened on this page; x = hours of training.", table(["run", "method", "model", "params", "gen/epoch", "games", "time", "energy", "best accuracy", "Elo"], rows), true);
     if (series.length > 1) c.appendChild(lineChart({ series: series, refs: accRefs(), yMin: 0, yMax: 1, yFmt: function (v) { return Math.round(v * 100) + "%"; }, xLabel: "hours of training", xFmt: function (v) { return v.toFixed(1); } }));
     w.appendChild(c);
     return w;
@@ -500,7 +676,9 @@
   $("runSel").addEventListener("change", function () { loadRun(this.value); });
   $("hypSel").addEventListener("change", function () { loadHyp(this.value); });
   $("arenaSel").addEventListener("change", function () { loadArena(this.value); });
-  $("reload").addEventListener("click", function () { CACHE = {}; loadAll(); loadArenaList(); });
+  $("methSel").addEventListener("change", function () { loadMethods(this.value); });
+  $("reload").addEventListener("click", function () { CACHE = {}; loadAll(); loadArenaList(); loadMethodsList(); });
   loadAll();
   loadArenaList();
+  loadMethodsList();
 })();
