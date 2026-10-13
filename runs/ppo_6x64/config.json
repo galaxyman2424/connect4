@@ -1,0 +1,52 @@
+{
+  "phase": "ppo",
+  "created": "2026-10-12T14:33:01",
+  "args": {
+    "run": "ppo_6x64",
+    "resume": false,
+    "init": null,
+    "iterations": 300,
+    "games": 2048,
+    "parallel": 1024,
+    "epochs": 4,
+    "minibatch": 2048,
+    "lr": 0.0003,
+    "weight_decay": 0.0001,
+    "clip": 0.2,
+    "lam": 0.95,
+    "value_weight": 0.5,
+    "entropy": 0.01,
+    "target_kl": 0.03,
+    "pool_prob": 0.3,
+    "pool_size": 10,
+    "snapshot_every": 10,
+    "blocks": 6,
+    "channels": 64,
+    "eval_every": 10,
+    "eval_openings": 10,
+    "eval_depths": "2,4,6",
+    "workers": 14,
+    "device": "auto",
+    "seed": 1
+  },
+  "device": "cuda:0",
+  "model": {
+    "blocks": 6,
+    "channels": 64,
+    "policy_channels": 2,
+    "value_channels": 4,
+    "value_hidden": 64
+  },
+  "params": 458338,
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce RTX 3050",
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}

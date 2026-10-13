@@ -1,0 +1,83 @@
+{
+  "segments": [
+    {
+      "wall_sec": 707.6,
+      "cpu_core_sec": 728.5,
+      "gpu_sec": 707.6,
+      "gpu_util_avg": 41.1,
+      "gpu_mem_max_mib": 1043,
+      "gpu_wh": 11.53,
+      "cpu_wh": 1.32,
+      "cpu_wh_source": "estimate",
+      "energy_wh": 12.85,
+      "id": "18779-1791835781",
+      "label": "rl.distill distill_ens_2x32",
+      "ended": "2026-10-12T16:21:29",
+      "timeline": [
+        [
+          2.1,
+          0.06
+        ],
+        [
+          64.0,
+          1.22
+        ],
+        [
+          126.0,
+          2.31
+        ],
+        [
+          187.9,
+          3.41
+        ],
+        [
+          249.6,
+          4.5
+        ],
+        [
+          309.8,
+          5.57
+        ],
+        [
+          369.9,
+          6.64
+        ],
+        [
+          430.0,
+          7.7
+        ],
+        [
+          491.8,
+          8.8
+        ],
+        [
+          553.7,
+          9.9
+        ],
+        [
+          613.9,
+          10.97
+        ],
+        [
+          675.8,
+          12.05
+        ]
+      ]
+    }
+  ],
+  "total": {
+    "wall_sec": 707.6,
+    "cpu_core_sec": 728.5,
+    "gpu_sec": 707.6,
+    "gpu_wh": 11.53,
+    "cpu_wh": 1.32,
+    "energy_wh": 12.85,
+    "wall_hours": 0.197,
+    "cpu_core_hours": 0.202,
+    "gpu_hours": 0.197,
+    "energy_kwh": 0.0129,
+    "price_per_kwh": 0.2,
+    "energy_cost_usd": 0.003,
+    "cpu_wh_source": "estimate"
+  }
+}

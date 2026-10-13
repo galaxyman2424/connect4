@@ -1,0 +1,1561 @@
+{
+  "name": "main",
+  "created": "2026-10-12T22:59:34",
+  "settings": {
+    "depths": [
+      1,
+      2,
+      4,
+      6,
+      8
+    ],
+    "openings": 10,
+    "positions": 1000,
+    "search_depth": 4,
+    "mcts_sims": 200
+  },
+  "ladder_elo": {
+    "minimax_d1": 1000.0,
+    "minimax_d2": 1271.5,
+    "minimax_d3": 1207.3,
+    "minimax_d4": 1389.4,
+    "minimax_d5": 1408.7,
+    "minimax_d6": 1435.9,
+    "minimax_d7": 1455.9,
+    "minimax_d8": 1499.9
+  },
+  "entries": [
+    {
+      "label": "AlphaZero self-play: policy only [az_6x64]",
+      "method": "selfplay",
+      "run": "az_6x64",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/az_6x64/model.npz",
+        "policy"
+      ],
+      "key": "[\"AlphaZero self-play: policy only [az_6x64]\", [\"nn\", \"runs/az_6x64/model.npz\", \"policy\"], 1791846577.5012655, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1547.3,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 18,
+          "draw": 0,
+          "loss": 2,
+          "score": 0.9,
+          "a_ms": 2.94,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 13,
+          "draw": 1,
+          "loss": 6,
+          "score": 0.675,
+          "a_ms": 2.97,
+          "b_ms": 0.23
+        },
+        "d4": {
+          "games": 20,
+          "win": 15,
+          "draw": 1,
+          "loss": 4,
+          "score": 0.775,
+          "a_ms": 2.92,
+          "b_ms": 1.6
+        },
+        "d6": {
+          "games": 20,
+          "win": 13,
+          "draw": 3,
+          "loss": 4,
+          "score": 0.725,
+          "a_ms": 2.88,
+          "b_ms": 7.19
+        },
+        "d8": {
+          "games": 20,
+          "win": 12,
+          "draw": 2,
+          "loss": 6,
+          "score": 0.65,
+          "a_ms": 2.5,
+          "b_ms": 28.75
+        }
+      },
+      "optimal": 0.727,
+      "keeps_nl": 0.8604,
+      "ms_per_move": 2.943,
+      "model_bytes": 1706204,
+      "cost": {
+        "wall_sec": 44312.4,
+        "cpu_core_sec": 14253.1,
+        "gpu_sec": 44312.4,
+        "gpu_wh": 1215.78,
+        "cpu_wh": 1087.37,
+        "energy_wh": 2303.15,
+        "wall_hours": 12.309,
+        "cpu_core_hours": 3.959,
+        "gpu_hours": 12.309,
+        "energy_kwh": 2.3032,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.461,
+        "cpu_wh_source": "estimate,estimate (elapsed x 90 W)",
+        "source": "cost.json"
+      },
+      "eval_sec": 1.9,
+      "params": 458338
+    },
+    {
+      "label": "AlphaZero self-play + MCTS 200 [az_6x64]",
+      "method": "selfplay",
+      "run": "az_6x64",
+      "search": "mcts200",
+      "spec": [
+        "nn",
+        "runs/az_6x64/model.npz",
+        "mcts",
+        200
+      ],
+      "key": "[\"AlphaZero self-play + MCTS 200 [az_6x64]\", [\"nn\", \"runs/az_6x64/model.npz\", \"mcts\", 200], 1791846577.5012655, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1644.5,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 19,
+          "draw": 0,
+          "loss": 1,
+          "score": 0.95,
+          "a_ms": 451.78,
+          "b_ms": 0.1
+        },
+        "d2": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 414.89,
+          "b_ms": 0.24
+        },
+        "d4": {
+          "games": 20,
+          "win": 15,
+          "draw": 2,
+          "loss": 3,
+          "score": 0.8,
+          "a_ms": 384.36,
+          "b_ms": 1.4
+        },
+        "d6": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 382.18,
+          "b_ms": 6.81
+        },
+        "d8": {
+          "games": 20,
+          "win": 14,
+          "draw": 0,
+          "loss": 6,
+          "score": 0.7,
+          "a_ms": 360.11,
+          "b_ms": 28.59
+        }
+      },
+      "optimal": 0.834,
+      "keeps_nl": 0.9783,
+      "ms_per_move": 318.153,
+      "model_bytes": 1706204,
+      "cost": {
+        "wall_sec": 44312.4,
+        "cpu_core_sec": 14253.1,
+        "gpu_sec": 44312.4,
+        "gpu_wh": 1215.78,
+        "cpu_wh": 1087.37,
+        "energy_wh": 2303.15,
+        "wall_hours": 12.309,
+        "cpu_core_hours": 3.959,
+        "gpu_hours": 12.309,
+        "energy_kwh": 2.3032,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.461,
+        "cpu_wh_source": "estimate,estimate (elapsed x 90 W)",
+        "source": "cost.json"
+      },
+      "eval_sec": 68.8,
+      "params": 458338
+    },
+    {
+      "label": "Distillation: policy only [distill_az_2x32]",
+      "method": "distill",
+      "run": "distill_az_2x32",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/distill_az_2x32/best.npz",
+        "policy"
+      ],
+      "key": "[\"Distillation: policy only [distill_az_2x32]\", [\"nn\", \"runs/distill_az_2x32/best.npz\", \"policy\"], 1791835731.5244021, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1578.9,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 18,
+          "draw": 0,
+          "loss": 2,
+          "score": 0.9,
+          "a_ms": 0.88,
+          "b_ms": 0.08
+        },
+        "d2": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 0.85,
+          "b_ms": 0.21
+        },
+        "d4": {
+          "games": 20,
+          "win": 12,
+          "draw": 1,
+          "loss": 7,
+          "score": 0.625,
+          "a_ms": 0.85,
+          "b_ms": 1.67
+        },
+        "d6": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 0.84,
+          "b_ms": 7.12
+        },
+        "d8": {
+          "games": 20,
+          "win": 11,
+          "draw": 4,
+          "loss": 5,
+          "score": 0.65,
+          "a_ms": 0.76,
+          "b_ms": 25.71
+        }
+      },
+      "optimal": 0.724,
+      "keeps_nl": 0.8862,
+      "ms_per_move": 0.822,
+      "model_bytes": 190696,
+      "cost": {
+        "wall_sec": 698.9,
+        "cpu_core_sec": 719.2,
+        "gpu_sec": 698.9,
+        "gpu_wh": 11.45,
+        "cpu_wh": 1.3,
+        "energy_wh": 12.74,
+        "wall_hours": 0.194,
+        "cpu_core_hours": 0.2,
+        "gpu_hours": 0.194,
+        "energy_kwh": 0.0127,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.003,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json",
+        "including_teachers": {
+          "wall_sec": 698.9,
+          "cpu_core_sec": 719.2,
+          "gpu_sec": 698.9,
+          "gpu_wh": 11.45,
+          "cpu_wh": 1.3,
+          "energy_wh": 12.74,
+          "wall_hours": 12.503,
+          "cpu_core_hours": 4.159,
+          "gpu_hours": 12.503,
+          "energy_kwh": 2.3159,
+          "price_per_kwh": 0.2,
+          "energy_cost_usd": 0.464,
+          "cpu_wh_source": "estimate",
+          "source": "cost.json"
+        }
+      },
+      "eval_sec": 1.4,
+      "params": 50146
+    },
+    {
+      "label": "Distillation: policy only [distill_ens_2x32]",
+      "method": "distill",
+      "run": "distill_ens_2x32",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/distill_ens_2x32/best.npz",
+        "policy"
+      ],
+      "key": "[\"Distillation: policy only [distill_ens_2x32]\", [\"nn\", \"runs/distill_ens_2x32/best.npz\", \"policy\"], 1791836488.9524505, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1513.0,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 0.86,
+          "b_ms": 0.07
+        },
+        "d2": {
+          "games": 20,
+          "win": 16,
+          "draw": 1,
+          "loss": 3,
+          "score": 0.825,
+          "a_ms": 0.86,
+          "b_ms": 0.23
+        },
+        "d4": {
+          "games": 20,
+          "win": 10,
+          "draw": 0,
+          "loss": 10,
+          "score": 0.5,
+          "a_ms": 0.85,
+          "b_ms": 1.64
+        },
+        "d6": {
+          "games": 20,
+          "win": 16,
+          "draw": 0,
+          "loss": 4,
+          "score": 0.8,
+          "a_ms": 0.82,
+          "b_ms": 7.07
+        },
+        "d8": {
+          "games": 20,
+          "win": 10,
+          "draw": 3,
+          "loss": 7,
+          "score": 0.575,
+          "a_ms": 0.75,
+          "b_ms": 28.8
+        }
+      },
+      "optimal": 0.744,
+      "keeps_nl": 0.8848,
+      "ms_per_move": 0.824,
+      "model_bytes": 190694,
+      "cost": {
+        "wall_sec": 707.6,
+        "cpu_core_sec": 728.5,
+        "gpu_sec": 707.6,
+        "gpu_wh": 11.53,
+        "cpu_wh": 1.32,
+        "energy_wh": 12.85,
+        "wall_hours": 0.197,
+        "cpu_core_hours": 0.202,
+        "gpu_hours": 0.197,
+        "energy_kwh": 0.0129,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.003,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json",
+        "including_teachers": {
+          "wall_sec": 707.6,
+          "cpu_core_sec": 728.5,
+          "gpu_sec": 707.6,
+          "gpu_wh": 11.53,
+          "cpu_wh": 1.32,
+          "energy_wh": 12.85,
+          "wall_hours": 13.159,
+          "cpu_core_hours": 4.892,
+          "gpu_hours": 12.702,
+          "energy_kwh": 2.3377,
+          "price_per_kwh": 0.2,
+          "energy_cost_usd": 0.469,
+          "cpu_wh_source": "estimate",
+          "source": "cost.json"
+        }
+      },
+      "eval_sec": 1.6,
+      "params": 50146
+    },
+    {
+      "label": "DQN: policy only [dqn_6x64]",
+      "method": "dqn",
+      "run": "dqn_6x64",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/dqn_6x64/model.npz",
+        "policy"
+      ],
+      "key": "[\"DQN: policy only [dqn_6x64]\", [\"nn\", \"runs/dqn_6x64/model.npz\", \"policy\"], 1791833224.298962, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1356.3,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 2.9,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 9,
+          "draw": 0,
+          "loss": 11,
+          "score": 0.45,
+          "a_ms": 2.88,
+          "b_ms": 0.22
+        },
+        "d4": {
+          "games": 20,
+          "win": 9,
+          "draw": 3,
+          "loss": 8,
+          "score": 0.525,
+          "a_ms": 2.93,
+          "b_ms": 1.62
+        },
+        "d6": {
+          "games": 20,
+          "win": 10,
+          "draw": 2,
+          "loss": 8,
+          "score": 0.55,
+          "a_ms": 2.86,
+          "b_ms": 8.46
+        },
+        "d8": {
+          "games": 20,
+          "win": 5,
+          "draw": 1,
+          "loss": 14,
+          "score": 0.275,
+          "a_ms": 2.52,
+          "b_ms": 31.25
+        }
+      },
+      "optimal": 0.838,
+      "keeps_nl": 0.9106,
+      "ms_per_move": 2.91,
+      "model_bytes": 1706344,
+      "cost": {
+        "wall_sec": 1878.9,
+        "cpu_core_sec": 2050.0,
+        "gpu_sec": 1878.9,
+        "gpu_wh": 46.96,
+        "cpu_wh": 3.7,
+        "energy_wh": 50.66,
+        "wall_hours": 0.522,
+        "cpu_core_hours": 0.569,
+        "gpu_hours": 0.522,
+        "energy_kwh": 0.0507,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.01,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 1.8,
+      "params": 458338
+    },
+    {
+      "label": "Evolution (CMA-ES) weights, minimax d4 [evo_d2]",
+      "method": "evolution",
+      "run": "evo_d2",
+      "search": "minimax d4",
+      "spec": [
+        "weights",
+        "runs/evo_d2/weights.json",
+        4
+      ],
+      "key": "[\"Evolution (CMA-ES) weights, minimax d4 [evo_d2]\", [\"weights\", \"runs/evo_d2/weights.json\", 4], 1791827749.039625, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1377.3,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 18,
+          "draw": 0,
+          "loss": 2,
+          "score": 0.9,
+          "a_ms": 2.74,
+          "b_ms": 0.07
+        },
+        "d2": {
+          "games": 20,
+          "win": 12,
+          "draw": 4,
+          "loss": 4,
+          "score": 0.7,
+          "a_ms": 2.58,
+          "b_ms": 0.19
+        },
+        "d4": {
+          "games": 20,
+          "win": 8,
+          "draw": 3,
+          "loss": 9,
+          "score": 0.475,
+          "a_ms": 2.84,
+          "b_ms": 1.62
+        },
+        "d6": {
+          "games": 20,
+          "win": 6,
+          "draw": 3,
+          "loss": 11,
+          "score": 0.375,
+          "a_ms": 2.63,
+          "b_ms": 7.19
+        },
+        "d8": {
+          "games": 20,
+          "win": 6,
+          "draw": 1,
+          "loss": 13,
+          "score": 0.325,
+          "a_ms": 2.42,
+          "b_ms": 27.84
+        }
+      },
+      "optimal": 0.872,
+      "keeps_nl": 0.9404,
+      "ms_per_move": 1.568,
+      "model_bytes": 538,
+      "cost": {
+        "wall_sec": 34.9,
+        "cpu_core_sec": 437.2,
+        "gpu_sec": 0,
+        "gpu_wh": 0,
+        "cpu_wh": 0.79,
+        "energy_wh": 0.79,
+        "wall_hours": 0.01,
+        "cpu_core_hours": 0.121,
+        "gpu_hours": 0.0,
+        "energy_kwh": 0.0008,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.0,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 1.7,
+      "params": 10
+    },
+    {
+      "label": "Hand-crafted weights, minimax d4 (reference)",
+      "method": "hand",
+      "run": null,
+      "search": "minimax d4",
+      "spec": [
+        "minimax",
+        4
+      ],
+      "key": "[\"Hand-crafted weights, minimax d4 (reference)\", [\"minimax\", 4], 0, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1415.3,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 18,
+          "draw": 0,
+          "loss": 2,
+          "score": 0.9,
+          "a_ms": 1.49,
+          "b_ms": 0.07
+        },
+        "d2": {
+          "games": 20,
+          "win": 13,
+          "draw": 0,
+          "loss": 7,
+          "score": 0.65,
+          "a_ms": 1.4,
+          "b_ms": 0.19
+        },
+        "d4": {
+          "games": 20,
+          "win": 7,
+          "draw": 6,
+          "loss": 7,
+          "score": 0.5,
+          "a_ms": 1.61,
+          "b_ms": 1.61
+        },
+        "d6": {
+          "games": 20,
+          "win": 8,
+          "draw": 4,
+          "loss": 8,
+          "score": 0.5,
+          "a_ms": 1.42,
+          "b_ms": 7.0
+        },
+        "d8": {
+          "games": 20,
+          "win": 8,
+          "draw": 2,
+          "loss": 10,
+          "score": 0.45,
+          "a_ms": 1.25,
+          "b_ms": 27.02
+        }
+      },
+      "optimal": 0.87,
+      "keeps_nl": 0.939,
+      "ms_per_move": 0.911,
+      "model_bytes": null,
+      "cost": null,
+      "eval_sec": 1.4,
+      "params": null
+    },
+    {
+      "label": "AlphaZero self-play: policy only [pilot_cpu_az]",
+      "method": "selfplay",
+      "run": "pilot_cpu_az",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/pilot_cpu_az/model.npz",
+        "policy"
+      ],
+      "key": "[\"AlphaZero self-play: policy only [pilot_cpu_az]\", [\"nn\", \"runs/pilot_cpu_az/model.npz\", \"policy\"], 1791143040.0356243, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 881.6,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 7,
+          "draw": 0,
+          "loss": 13,
+          "score": 0.35,
+          "a_ms": 1.45,
+          "b_ms": 0.07
+        },
+        "d2": {
+          "games": 20,
+          "win": 1,
+          "draw": 1,
+          "loss": 18,
+          "score": 0.075,
+          "a_ms": 1.44,
+          "b_ms": 0.22
+        },
+        "d4": {
+          "games": 20,
+          "win": 2,
+          "draw": 0,
+          "loss": 18,
+          "score": 0.1,
+          "a_ms": 1.43,
+          "b_ms": 1.58
+        },
+        "d6": {
+          "games": 20,
+          "win": 0,
+          "draw": 1,
+          "loss": 19,
+          "score": 0.025,
+          "a_ms": 1.38,
+          "b_ms": 8.38
+        },
+        "d8": {
+          "games": 20,
+          "win": 0,
+          "draw": 0,
+          "loss": 20,
+          "score": 0.0,
+          "a_ms": 1.26,
+          "b_ms": 36.56
+        }
+      },
+      "optimal": 0.439,
+      "keeps_nl": 0.6247,
+      "ms_per_move": 1.429,
+      "model_bytes": 328600,
+      "cost": {
+        "wall_hours": 0.445,
+        "gpu_hours": null,
+        "cpu_core_hours": null,
+        "energy_kwh": null,
+        "energy_cost_usd": null,
+        "source": "metrics elapsed_sec (no rl.meter)"
+      },
+      "eval_sec": 1.1,
+      "params": 87266
+    },
+    {
+      "label": "AlphaZero self-play + MCTS 200 [pilot_cpu_az]",
+      "method": "selfplay",
+      "run": "pilot_cpu_az",
+      "search": "mcts200",
+      "spec": [
+        "nn",
+        "runs/pilot_cpu_az/model.npz",
+        "mcts",
+        200
+      ],
+      "key": "[\"AlphaZero self-play + MCTS 200 [pilot_cpu_az]\", [\"nn\", \"runs/pilot_cpu_az/model.npz\", \"mcts\", 200], 1791143040.0356243, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1347.9,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 15,
+          "draw": 0,
+          "loss": 5,
+          "score": 0.75,
+          "a_ms": 219.76,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 12,
+          "draw": 0,
+          "loss": 8,
+          "score": 0.6,
+          "a_ms": 198.19,
+          "b_ms": 0.23
+        },
+        "d4": {
+          "games": 20,
+          "win": 10,
+          "draw": 3,
+          "loss": 7,
+          "score": 0.575,
+          "a_ms": 223.48,
+          "b_ms": 1.62
+        },
+        "d6": {
+          "games": 20,
+          "win": 8,
+          "draw": 1,
+          "loss": 11,
+          "score": 0.425,
+          "a_ms": 213.94,
+          "b_ms": 7.28
+        },
+        "d8": {
+          "games": 20,
+          "win": 4,
+          "draw": 2,
+          "loss": 14,
+          "score": 0.25,
+          "a_ms": 195.8,
+          "b_ms": 28.14
+        }
+      },
+      "optimal": 0.807,
+      "keeps_nl": 0.9282,
+      "ms_per_move": 164.647,
+      "model_bytes": 328600,
+      "cost": {
+        "wall_hours": 0.445,
+        "gpu_hours": null,
+        "cpu_core_hours": null,
+        "energy_kwh": null,
+        "energy_cost_usd": null,
+        "source": "metrics elapsed_sec (no rl.meter)"
+      },
+      "eval_sec": 34.4,
+      "params": 87266
+    },
+    {
+      "label": "Supervised (solver labels): policy only [pilot_cpu_sup]",
+      "method": "supervised",
+      "run": "pilot_cpu_sup",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/pilot_cpu_sup/best.npz",
+        "policy"
+      ],
+      "key": "[\"Supervised (solver labels): policy only [pilot_cpu_sup]\", [\"nn\", \"runs/pilot_cpu_sup/best.npz\", \"policy\"], 1791143040.0356243, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 946.3,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 7,
+          "draw": 0,
+          "loss": 13,
+          "score": 0.35,
+          "a_ms": 1.44,
+          "b_ms": 0.08
+        },
+        "d2": {
+          "games": 20,
+          "win": 5,
+          "draw": 0,
+          "loss": 15,
+          "score": 0.25,
+          "a_ms": 1.39,
+          "b_ms": 0.22
+        },
+        "d4": {
+          "games": 20,
+          "win": 2,
+          "draw": 0,
+          "loss": 18,
+          "score": 0.1,
+          "a_ms": 1.43,
+          "b_ms": 1.81
+        },
+        "d6": {
+          "games": 20,
+          "win": 0,
+          "draw": 0,
+          "loss": 20,
+          "score": 0.0,
+          "a_ms": 1.37,
+          "b_ms": 8.99
+        },
+        "d8": {
+          "games": 20,
+          "win": 0,
+          "draw": 1,
+          "loss": 19,
+          "score": 0.025,
+          "a_ms": 1.31,
+          "b_ms": 36.53
+        }
+      },
+      "optimal": 0.639,
+      "keeps_nl": 0.7751,
+      "ms_per_move": 1.426,
+      "model_bytes": 328744,
+      "cost": {
+        "wall_hours": 0.008,
+        "gpu_hours": null,
+        "cpu_core_hours": null,
+        "energy_kwh": null,
+        "energy_cost_usd": null,
+        "source": "metrics elapsed_sec (no rl.meter)"
+      },
+      "eval_sec": 1.2,
+      "params": 87266
+    },
+    {
+      "label": "Supervised (solver labels) + MCTS 200 [pilot_cpu_sup]",
+      "method": "supervised",
+      "run": "pilot_cpu_sup",
+      "search": "mcts200",
+      "spec": [
+        "nn",
+        "runs/pilot_cpu_sup/best.npz",
+        "mcts",
+        200
+      ],
+      "key": "[\"Supervised (solver labels) + MCTS 200 [pilot_cpu_sup]\", [\"nn\", \"runs/pilot_cpu_sup/best.npz\", \"mcts\", 200], 1791143040.0356243, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1467.2,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 19,
+          "draw": 1,
+          "loss": 0,
+          "score": 0.975,
+          "a_ms": 211.21,
+          "b_ms": 0.1
+        },
+        "d2": {
+          "games": 20,
+          "win": 14,
+          "draw": 1,
+          "loss": 5,
+          "score": 0.725,
+          "a_ms": 204.06,
+          "b_ms": 0.25
+        },
+        "d4": {
+          "games": 20,
+          "win": 10,
+          "draw": 2,
+          "loss": 8,
+          "score": 0.55,
+          "a_ms": 205.4,
+          "b_ms": 1.62
+        },
+        "d6": {
+          "games": 20,
+          "win": 8,
+          "draw": 3,
+          "loss": 9,
+          "score": 0.475,
+          "a_ms": 207.4,
+          "b_ms": 7.87
+        },
+        "d8": {
+          "games": 20,
+          "win": 10,
+          "draw": 3,
+          "loss": 7,
+          "score": 0.575,
+          "a_ms": 186.95,
+          "b_ms": 30.54
+        }
+      },
+      "optimal": 0.837,
+      "keeps_nl": 0.9444,
+      "ms_per_move": 145.057,
+      "model_bytes": 328744,
+      "cost": {
+        "wall_hours": 0.008,
+        "gpu_hours": null,
+        "cpu_core_hours": null,
+        "energy_kwh": null,
+        "energy_cost_usd": null,
+        "source": "metrics elapsed_sec (no rl.meter)"
+      },
+      "eval_sec": 35.7,
+      "params": 87266
+    },
+    {
+      "label": "PPO self-play: policy only [ppo_6x64]",
+      "method": "ppo",
+      "run": "ppo_6x64",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/ppo_6x64/model.npz",
+        "policy"
+      ],
+      "key": "[\"PPO self-play: policy only [ppo_6x64]\", [\"nn\", \"runs/ppo_6x64/model.npz\", \"policy\"], 1791830686.4218495, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1415.3,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 2.96,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 10,
+          "draw": 2,
+          "loss": 8,
+          "score": 0.55,
+          "a_ms": 3.04,
+          "b_ms": 0.24
+        },
+        "d4": {
+          "games": 20,
+          "win": 8,
+          "draw": 3,
+          "loss": 9,
+          "score": 0.475,
+          "a_ms": 2.92,
+          "b_ms": 1.56
+        },
+        "d6": {
+          "games": 20,
+          "win": 8,
+          "draw": 2,
+          "loss": 10,
+          "score": 0.45,
+          "a_ms": 2.81,
+          "b_ms": 8.0
+        },
+        "d8": {
+          "games": 20,
+          "win": 10,
+          "draw": 1,
+          "loss": 9,
+          "score": 0.525,
+          "a_ms": 2.54,
+          "b_ms": 28.62
+        }
+      },
+      "optimal": 0.602,
+      "keeps_nl": 0.7764,
+      "ms_per_move": 2.956,
+      "model_bytes": 1704016,
+      "cost": {
+        "wall_sec": 705.1,
+        "cpu_core_sec": 909.4,
+        "gpu_sec": 705.1,
+        "gpu_wh": 16.84,
+        "cpu_wh": 1.64,
+        "energy_wh": 18.48,
+        "wall_hours": 0.196,
+        "cpu_core_hours": 0.253,
+        "gpu_hours": 0.196,
+        "energy_kwh": 0.0185,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.004,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 1.9,
+      "params": 458338
+    },
+    {
+      "label": "PPO self-play + MCTS 200 [ppo_6x64]",
+      "method": "ppo",
+      "run": "ppo_6x64",
+      "search": "mcts200",
+      "spec": [
+        "nn",
+        "runs/ppo_6x64/model.npz",
+        "mcts",
+        200
+      ],
+      "key": "[\"PPO self-play + MCTS 200 [ppo_6x64]\", [\"nn\", \"runs/ppo_6x64/model.npz\", \"mcts\", 200], 1791830686.4218495, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1522.6,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 459.83,
+          "b_ms": 0.1
+        },
+        "d2": {
+          "games": 20,
+          "win": 16,
+          "draw": 1,
+          "loss": 3,
+          "score": 0.825,
+          "a_ms": 375.56,
+          "b_ms": 0.24
+        },
+        "d4": {
+          "games": 20,
+          "win": 12,
+          "draw": 1,
+          "loss": 7,
+          "score": 0.625,
+          "a_ms": 401.52,
+          "b_ms": 1.58
+        },
+        "d6": {
+          "games": 20,
+          "win": 12,
+          "draw": 0,
+          "loss": 8,
+          "score": 0.6,
+          "a_ms": 433.83,
+          "b_ms": 8.57
+        },
+        "d8": {
+          "games": 20,
+          "win": 12,
+          "draw": 4,
+          "loss": 4,
+          "score": 0.7,
+          "a_ms": 346.78,
+          "b_ms": 28.36
+        }
+      },
+      "optimal": 0.738,
+      "keeps_nl": 0.9241,
+      "ms_per_move": 319.998,
+      "model_bytes": 1704016,
+      "cost": {
+        "wall_sec": 705.1,
+        "cpu_core_sec": 909.4,
+        "gpu_sec": 705.1,
+        "gpu_wh": 16.84,
+        "cpu_wh": 1.64,
+        "energy_wh": 18.48,
+        "wall_hours": 0.196,
+        "cpu_core_hours": 0.253,
+        "gpu_hours": 0.196,
+        "energy_kwh": 0.0185,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.004,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 65.7,
+      "params": 458338
+    },
+    {
+      "label": "PPO self-play: policy only [ppo_from_sup]",
+      "method": "ppo",
+      "run": "ppo_from_sup",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/ppo_from_sup/model.npz",
+        "policy"
+      ],
+      "key": "[\"PPO self-play: policy only [ppo_from_sup]\", [\"nn\", \"runs/ppo_from_sup/model.npz\", \"policy\"], 1791834734.9270558, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1601.4,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 2.96,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 2.86,
+          "b_ms": 0.23
+        },
+        "d4": {
+          "games": 20,
+          "win": 13,
+          "draw": 3,
+          "loss": 4,
+          "score": 0.725,
+          "a_ms": 2.91,
+          "b_ms": 1.65
+        },
+        "d6": {
+          "games": 20,
+          "win": 15,
+          "draw": 0,
+          "loss": 5,
+          "score": 0.75,
+          "a_ms": 2.84,
+          "b_ms": 7.9
+        },
+        "d8": {
+          "games": 20,
+          "win": 11,
+          "draw": 4,
+          "loss": 5,
+          "score": 0.65,
+          "a_ms": 2.54,
+          "b_ms": 26.37
+        }
+      },
+      "optimal": 0.786,
+      "keeps_nl": 0.9106,
+      "ms_per_move": 2.942,
+      "model_bytes": 1707028,
+      "cost": {
+        "wall_sec": 810.5,
+        "cpu_core_sec": 1039.2,
+        "gpu_sec": 810.5,
+        "gpu_wh": 19.46,
+        "cpu_wh": 1.88,
+        "energy_wh": 21.34,
+        "wall_hours": 0.225,
+        "cpu_core_hours": 0.289,
+        "gpu_hours": 0.225,
+        "energy_kwh": 0.0213,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.004,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 1.9,
+      "params": 458338
+    },
+    {
+      "label": "PPO self-play + MCTS 200 [ppo_from_sup]",
+      "method": "ppo",
+      "run": "ppo_from_sup",
+      "search": "mcts200",
+      "spec": [
+        "nn",
+        "runs/ppo_from_sup/model.npz",
+        "mcts",
+        200
+      ],
+      "key": "[\"PPO self-play + MCTS 200 [ppo_from_sup]\", [\"nn\", \"runs/ppo_from_sup/model.npz\", \"mcts\", 200], 1791834734.9270558, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1931.8,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 436.6,
+          "b_ms": 0.1
+        },
+        "d2": {
+          "games": 20,
+          "win": 19,
+          "draw": 1,
+          "loss": 0,
+          "score": 0.975,
+          "a_ms": 336.57,
+          "b_ms": 0.24
+        },
+        "d4": {
+          "games": 20,
+          "win": 18,
+          "draw": 1,
+          "loss": 1,
+          "score": 0.925,
+          "a_ms": 346.63,
+          "b_ms": 1.66
+        },
+        "d6": {
+          "games": 20,
+          "win": 19,
+          "draw": 1,
+          "loss": 0,
+          "score": 0.975,
+          "a_ms": 351.43,
+          "b_ms": 7.79
+        },
+        "d8": {
+          "games": 20,
+          "win": 18,
+          "draw": 1,
+          "loss": 1,
+          "score": 0.925,
+          "a_ms": 320.42,
+          "b_ms": 27.94
+        }
+      },
+      "optimal": 0.834,
+      "keeps_nl": 0.9675,
+      "ms_per_move": 249.296,
+      "model_bytes": 1707028,
+      "cost": {
+        "wall_sec": 810.5,
+        "cpu_core_sec": 1039.2,
+        "gpu_sec": 810.5,
+        "gpu_wh": 19.46,
+        "cpu_wh": 1.88,
+        "energy_wh": 21.34,
+        "wall_hours": 0.225,
+        "cpu_core_hours": 0.289,
+        "gpu_hours": 0.225,
+        "energy_kwh": 0.0213,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.004,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 59.7,
+      "params": 458338
+    },
+    {
+      "label": "Supervised (solver labels): policy only [sup_6x64]",
+      "method": "supervised",
+      "run": "sup_6x64",
+      "search": "none",
+      "spec": [
+        "nn",
+        "runs/sup_6x64/best.npz",
+        "policy"
+      ],
+      "key": "[\"Supervised (solver labels): policy only [sup_6x64]\", [\"nn\", \"runs/sup_6x64/best.npz\", \"policy\"], 1791146105.1540523, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1527.5,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 3.03,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 17,
+          "draw": 0,
+          "loss": 3,
+          "score": 0.85,
+          "a_ms": 3.03,
+          "b_ms": 0.24
+        },
+        "d4": {
+          "games": 20,
+          "win": 12,
+          "draw": 0,
+          "loss": 8,
+          "score": 0.6,
+          "a_ms": 2.9,
+          "b_ms": 1.5
+        },
+        "d6": {
+          "games": 20,
+          "win": 13,
+          "draw": 1,
+          "loss": 6,
+          "score": 0.675,
+          "a_ms": 2.82,
+          "b_ms": 7.24
+        },
+        "d8": {
+          "games": 20,
+          "win": 10,
+          "draw": 0,
+          "loss": 10,
+          "score": 0.5,
+          "a_ms": 2.48,
+          "b_ms": 28.7
+        }
+      },
+      "optimal": 0.907,
+      "keeps_nl": 0.9472,
+      "ms_per_move": 2.931,
+      "model_bytes": 1706891,
+      "cost": {
+        "wall_hours": 0.757,
+        "gpu_hours": null,
+        "cpu_core_hours": null,
+        "energy_kwh": null,
+        "energy_cost_usd": null,
+        "source": "metrics elapsed_sec (no rl.meter)"
+      },
+      "eval_sec": 1.8,
+      "params": 458338
+    },
+    {
+      "label": "Supervised (solver labels) + MCTS 200 [sup_6x64]",
+      "method": "supervised",
+      "run": "sup_6x64",
+      "search": "mcts200",
+      "spec": [
+        "nn",
+        "runs/sup_6x64/best.npz",
+        "mcts",
+        200
+      ],
+      "key": "[\"Supervised (solver labels) + MCTS 200 [sup_6x64]\", [\"nn\", \"runs/sup_6x64/best.npz\", \"mcts\", 200], 1791146105.1540523, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 2180.2,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 463.41,
+          "b_ms": 0.11
+        },
+        "d2": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 396.63,
+          "b_ms": 0.24
+        },
+        "d4": {
+          "games": 20,
+          "win": 19,
+          "draw": 1,
+          "loss": 0,
+          "score": 0.975,
+          "a_ms": 432.82,
+          "b_ms": 1.8
+        },
+        "d6": {
+          "games": 20,
+          "win": 19,
+          "draw": 1,
+          "loss": 0,
+          "score": 0.975,
+          "a_ms": 430.22,
+          "b_ms": 8.07
+        },
+        "d8": {
+          "games": 20,
+          "win": 20,
+          "draw": 0,
+          "loss": 0,
+          "score": 1.0,
+          "a_ms": 394.4,
+          "b_ms": 28.66
+        }
+      },
+      "optimal": 0.94,
+      "keeps_nl": 0.9837,
+      "ms_per_move": 290.837,
+      "model_bytes": 1706891,
+      "cost": {
+        "wall_hours": 0.757,
+        "gpu_hours": null,
+        "cpu_core_hours": null,
+        "energy_kwh": null,
+        "energy_cost_usd": null,
+        "source": "metrics elapsed_sec (no rl.meter)"
+      },
+      "eval_sec": 68.6,
+      "params": 458338
+    },
+    {
+      "label": "TD(\u03bb) n-tuple: greedy, no search [td_ntuple]",
+      "method": "ntuple",
+      "run": "td_ntuple",
+      "search": "none",
+      "spec": [
+        "ntuple",
+        "runs/td_ntuple/ntuple.npz",
+        0
+      ],
+      "key": "[\"TD(\\u03bb) n-tuple: greedy, no search [td_ntuple]\", [\"ntuple\", \"runs/td_ntuple/ntuple.npz\", 0], 1791829192.0818343, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 696.1,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 3,
+          "draw": 0,
+          "loss": 17,
+          "score": 0.15,
+          "a_ms": 0.24,
+          "b_ms": 0.08
+        },
+        "d2": {
+          "games": 20,
+          "win": 1,
+          "draw": 0,
+          "loss": 19,
+          "score": 0.05,
+          "a_ms": 0.15,
+          "b_ms": 0.16
+        },
+        "d4": {
+          "games": 20,
+          "win": 0,
+          "draw": 0,
+          "loss": 20,
+          "score": 0.0,
+          "a_ms": 0.55,
+          "b_ms": 1.22
+        },
+        "d6": {
+          "games": 20,
+          "win": 0,
+          "draw": 0,
+          "loss": 20,
+          "score": 0.0,
+          "a_ms": 0.18,
+          "b_ms": 9.55
+        },
+        "d8": {
+          "games": 20,
+          "win": 0,
+          "draw": 1,
+          "loss": 19,
+          "score": 0.025,
+          "a_ms": 0.17,
+          "b_ms": 37.41
+        }
+      },
+      "optimal": 0.589,
+      "keeps_nl": 0.7371,
+      "ms_per_move": 0.184,
+      "model_bytes": 36705730,
+      "cost": {
+        "wall_sec": 1644.9,
+        "cpu_core_sec": 1722.4,
+        "gpu_sec": 0,
+        "gpu_wh": 0,
+        "cpu_wh": 3.11,
+        "energy_wh": 3.11,
+        "wall_hours": 0.457,
+        "cpu_core_hours": 0.478,
+        "gpu_hours": 0.0,
+        "energy_kwh": 0.0031,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.001,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 1.2,
+      "params": 9175040
+    },
+    {
+      "label": "TD(\u03bb) n-tuple + minimax d4 [td_ntuple]",
+      "method": "ntuple",
+      "run": "td_ntuple",
+      "search": "minimax d4",
+      "spec": [
+        "ntuple",
+        "runs/td_ntuple/ntuple.npz",
+        4
+      ],
+      "key": "[\"TD(\\u03bb) n-tuple + minimax d4 [td_ntuple]\", [\"ntuple\", \"runs/td_ntuple/ntuple.npz\", 4], 1791829192.0818343, [1, 2, 4, 6, 8], 10, 1000]",
+      "elo": 1177.4,
+      "vs_minimax": {
+        "d1": {
+          "games": 20,
+          "win": 14,
+          "draw": 1,
+          "loss": 5,
+          "score": 0.725,
+          "a_ms": 13.73,
+          "b_ms": 0.09
+        },
+        "d2": {
+          "games": 20,
+          "win": 8,
+          "draw": 2,
+          "loss": 10,
+          "score": 0.45,
+          "a_ms": 11.56,
+          "b_ms": 0.23
+        },
+        "d4": {
+          "games": 20,
+          "win": 2,
+          "draw": 1,
+          "loss": 17,
+          "score": 0.125,
+          "a_ms": 11.66,
+          "b_ms": 1.57
+        },
+        "d6": {
+          "games": 20,
+          "win": 3,
+          "draw": 1,
+          "loss": 16,
+          "score": 0.175,
+          "a_ms": 12.62,
+          "b_ms": 7.9
+        },
+        "d8": {
+          "games": 20,
+          "win": 3,
+          "draw": 1,
+          "loss": 16,
+          "score": 0.175,
+          "a_ms": 10.57,
+          "b_ms": 28.13
+        }
+      },
+      "optimal": 0.823,
+      "keeps_nl": 0.9065,
+      "ms_per_move": 8.03,
+      "model_bytes": 36705730,
+      "cost": {
+        "wall_sec": 1644.9,
+        "cpu_core_sec": 1722.4,
+        "gpu_sec": 0,
+        "gpu_wh": 0,
+        "cpu_wh": 3.11,
+        "energy_wh": 3.11,
+        "wall_hours": 0.457,
+        "cpu_core_hours": 0.478,
+        "gpu_hours": 0.0,
+        "energy_kwh": 0.0031,
+        "price_per_kwh": 0.2,
+        "energy_cost_usd": 0.001,
+        "cpu_wh_source": "estimate",
+        "source": "cost.json"
+      },
+      "eval_sec": 3.4,
+      "params": 9175040
+    }
+  ]
+}

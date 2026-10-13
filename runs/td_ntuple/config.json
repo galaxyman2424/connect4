@@ -1,0 +1,43 @@
+{
+  "phase": "ntuple",
+  "created": "2026-10-12T13:52:26",
+  "args": {
+    "run": "td_ntuple",
+    "resume": false,
+    "games": 3000000,
+    "games_per_gen": 50000,
+    "tuples": 70,
+    "length": 8,
+    "alpha": 0.004,
+    "alpha_final": 0.002,
+    "lam": 0.5,
+    "gamma": 0.98,
+    "eps": 0.1,
+    "eps_final": 0.02,
+    "parallel": 1024,
+    "eval_every": 4,
+    "eval_openings": 10,
+    "eval_depths": "2,4,6",
+    "workers": 14,
+    "seed": 1
+  },
+  "device": "cpu",
+  "model": {
+    "kind": "n-tuple",
+    "tuples": 70,
+    "length": 8,
+    "lut_entries": 9175040
+  },
+  "params": 9175040,
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce RTX 3050",
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}

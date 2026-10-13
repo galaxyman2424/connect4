@@ -1,0 +1,59 @@
+{
+  "phase": "distill",
+  "created": "2026-10-12T16:08:20",
+  "args": {
+    "run": "distill_az_2x32",
+    "teacher": [
+      "nn:runs/az_6x64/model.npz:mcts:100"
+    ],
+    "teacher_weights": null,
+    "labels": null,
+    "data": null,
+    "positions": 300000,
+    "temperature": 1.0,
+    "random_move": 0.1,
+    "policy_temp": 1.0,
+    "ntuple_beta": 8.0,
+    "epochs": 20,
+    "batch": 1024,
+    "lr": 0.002,
+    "weight_decay": 0.0001,
+    "value_weight": 1.0,
+    "blocks": 2,
+    "channels": 32,
+    "val_frac": 0.05,
+    "device": "auto",
+    "seed": 0
+  },
+  "device": "cuda:0",
+  "model": {
+    "blocks": 2,
+    "channels": 32,
+    "policy_channels": 2,
+    "value_channels": 4,
+    "value_hidden": 64
+  },
+  "params": 50146,
+  "teachers": [
+    "nn:runs/az_6x64/model.npz:mcts:100"
+  ],
+  "teacher_weights": [
+    1.0
+  ],
+  "positions": 300000,
+  "label_sec": 666.1,
+  "teacher_ms": {
+    "nn:runs/az_6x64/model.npz:mcts:100": 172.466
+  },
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce RTX 3050",
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}

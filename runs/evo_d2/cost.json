@@ -1,0 +1,39 @@
+{
+  "segments": [
+    {
+      "wall_sec": 34.9,
+      "cpu_core_sec": 437.2,
+      "gpu_sec": 0.0,
+      "gpu_util_avg": null,
+      "gpu_mem_max_mib": null,
+      "gpu_wh": 0.0,
+      "cpu_wh": 0.79,
+      "cpu_wh_source": "estimate",
+      "energy_wh": 0.79,
+      "id": "6551-1791827714",
+      "label": "rl.evolve evo_d2",
+      "ended": "2026-10-12T13:55:49",
+      "timeline": [
+        [
+          2.0,
+          0.03
+        ]
+      ]
+    }
+  ],
+  "total": {
+    "wall_sec": 34.9,
+    "cpu_core_sec": 437.2,
+    "gpu_sec": 0,
+    "gpu_wh": 0,
+    "cpu_wh": 0.79,
+    "energy_wh": 0.79,
+    "wall_hours": 0.01,
+    "cpu_core_hours": 0.121,
+    "gpu_hours": 0.0,
+    "energy_kwh": 0.0008,
+    "price_per_kwh": 0.2,
+    "energy_cost_usd": 0.0,
+    "cpu_wh_source": "estimate"
+  }
+}

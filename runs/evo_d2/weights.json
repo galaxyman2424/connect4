@@ -1,0 +1,43 @@
+{
+  "weights": [
+    5.1709,
+    9.7113,
+    4.6789,
+    -8.7003,
+    -5.0359,
+    -3.1385,
+    4.3029,
+    -4.049,
+    -0.6478,
+    -3.8553
+  ],
+  "features": [
+    "centre",
+    "three",
+    "two",
+    "opp_three",
+    "opp_two",
+    "near_centre",
+    "threats",
+    "opp_threats",
+    "good_threats",
+    "opp_good_threats"
+  ],
+  "hand_weights": [
+    3,
+    5,
+    2,
+    -4,
+    -2,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "search_depth": 2,
+  "gen": 60,
+  "fitness": "games",
+  "run": "evo_d2",
+  "saved": "2026-10-12T13:55:49"
+}

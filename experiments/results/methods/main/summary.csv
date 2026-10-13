@@ -1,0 +1,20 @@
+label,method,run,search,elo,optimal,keeps_nl,ms_per_move,params,wall_hours,gpu_hours,cpu_core_hours,energy_kwh,energy_cost_usd,energy_kwh_incl_teachers
+AlphaZero self-play: policy only [az_6x64],selfplay,az_6x64,none,1547.3,0.727,0.8604,2.943,458338,12.309,12.309,3.959,2.3032,0.461,
+AlphaZero self-play + MCTS 200 [az_6x64],selfplay,az_6x64,mcts200,1644.5,0.834,0.9783,318.153,458338,12.309,12.309,3.959,2.3032,0.461,
+Distillation: policy only [distill_az_2x32],distill,distill_az_2x32,none,1578.9,0.724,0.8862,0.822,50146,0.194,0.194,0.2,0.0127,0.003,2.3159
+Distillation: policy only [distill_ens_2x32],distill,distill_ens_2x32,none,1513.0,0.744,0.8848,0.824,50146,0.197,0.197,0.202,0.0129,0.003,2.3377
+DQN: policy only [dqn_6x64],dqn,dqn_6x64,none,1356.3,0.838,0.9106,2.91,458338,0.522,0.522,0.569,0.0507,0.01,
+"Evolution (CMA-ES) weights, minimax d4 [evo_d2]",evolution,evo_d2,minimax d4,1377.3,0.872,0.9404,1.568,10,0.01,0.0,0.121,0.0008,0.0,
+"Hand-crafted weights, minimax d4 (reference)",hand,,minimax d4,1415.3,0.87,0.939,0.911,,,,,,,
+AlphaZero self-play: policy only [pilot_cpu_az],selfplay,pilot_cpu_az,none,881.6,0.439,0.6247,1.429,87266,0.445,,,,,
+AlphaZero self-play + MCTS 200 [pilot_cpu_az],selfplay,pilot_cpu_az,mcts200,1347.9,0.807,0.9282,164.647,87266,0.445,,,,,
+Supervised (solver labels): policy only [pilot_cpu_sup],supervised,pilot_cpu_sup,none,946.3,0.639,0.7751,1.426,87266,0.008,,,,,
+Supervised (solver labels) + MCTS 200 [pilot_cpu_sup],supervised,pilot_cpu_sup,mcts200,1467.2,0.837,0.9444,145.057,87266,0.008,,,,,
+PPO self-play: policy only [ppo_6x64],ppo,ppo_6x64,none,1415.3,0.602,0.7764,2.956,458338,0.196,0.196,0.253,0.0185,0.004,
+PPO self-play + MCTS 200 [ppo_6x64],ppo,ppo_6x64,mcts200,1522.6,0.738,0.9241,319.998,458338,0.196,0.196,0.253,0.0185,0.004,
+PPO self-play: policy only [ppo_from_sup],ppo,ppo_from_sup,none,1601.4,0.786,0.9106,2.942,458338,0.225,0.225,0.289,0.0213,0.004,
+PPO self-play + MCTS 200 [ppo_from_sup],ppo,ppo_from_sup,mcts200,1931.8,0.834,0.9675,249.296,458338,0.225,0.225,0.289,0.0213,0.004,
+Supervised (solver labels): policy only [sup_6x64],supervised,sup_6x64,none,1527.5,0.907,0.9472,2.931,458338,0.757,,,,,
+Supervised (solver labels) + MCTS 200 [sup_6x64],supervised,sup_6x64,mcts200,2180.2,0.94,0.9837,290.837,458338,0.757,,,,,
+"TD(λ) n-tuple: greedy, no search [td_ntuple]",ntuple,td_ntuple,none,696.1,0.589,0.7371,0.184,9175040,0.457,0.0,0.478,0.0031,0.001,
+TD(λ) n-tuple + minimax d4 [td_ntuple],ntuple,td_ntuple,minimax d4,1177.4,0.823,0.9065,8.03,9175040,0.457,0.0,0.478,0.0031,0.001,

@@ -1,0 +1,152 @@
+nohup: ignoring input
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU1 NVIDIA GeForce GTX 750 Ti which is of compute capability (CC) 5.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:602: UserWarning: 
+NVIDIA GeForce GTX 750 Ti with CUDA capability sm_50 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA GeForce GTX 750 Ti GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+[13:55:15] gen 1/60  fitness best 0.546 mean 0.349  sigma 1.862  [1s]
+      weights centre 2.86  three 5.50  two 1.30  opp_three -3.33  opp_two -1.30  near_centre -0.37  threats -0.81  opp_threats -2.14  good_threats 0.72  opp_good_threats -0.76
+      bench optimal 0.862 at depth 2   vs minimax: d1 0.90  d2 0.60  d4 0.42  d6 0.33   Elo~1336.1
+[13:55:16] gen 2/60  fitness best 0.567 mean 0.381  sigma 1.731  [0s]
+      weights centre 3.22  three 5.05  two 1.68  opp_three -4.73  opp_two -2.39  near_centre -0.05  threats -0.02  opp_threats -2.08  good_threats 1.03  opp_good_threats -1.98
+[13:55:16] gen 3/60  fitness best 0.543 mean 0.385  sigma 1.534  [0s]
+      weights centre 4.36  three 5.36  two 2.08  opp_three -4.31  opp_two -2.36  near_centre 0.21  threats 0.29  opp_threats -0.79  good_threats 0.64  opp_good_threats -1.50
+[13:55:17] gen 4/60  fitness best 0.641 mean 0.429  sigma 1.419  [0s]
+      weights centre 2.95  three 6.01  two 2.20  opp_three -3.62  opp_two -1.16  near_centre 0.56  threats -0.29  opp_threats -0.38  good_threats 1.12  opp_good_threats -1.83
+[13:55:18] gen 5/60  fitness best 0.534 mean 0.425  sigma 1.364  [0s]
+      weights centre 3.30  three 6.01  two 2.24  opp_three -5.45  opp_two -2.20  near_centre -0.11  threats 0.63  opp_threats -0.94  good_threats 1.43  opp_good_threats -2.73
+      bench optimal 0.857 at depth 2   vs minimax: d1 1.00  d2 0.57  d4 0.68  d6 0.30   Elo~1400.0
+[13:55:18] gen 6/60  fitness best 0.627 mean 0.477  sigma 1.385  [0s]
+      weights centre 3.09  three 6.89  two 1.53  opp_three -6.40  opp_two -2.29  near_centre 0.08  threats 0.67  opp_threats -1.31  good_threats 1.84  opp_good_threats -3.11
+[13:55:19] gen 7/60  fitness best 0.523 mean 0.423  sigma 1.508  [1s]
+      weights centre 2.49  three 8.17  two 2.13  opp_three -6.83  opp_two -1.11  near_centre -0.91  threats 0.32  opp_threats -1.68  good_threats 2.29  opp_good_threats -3.67
+[13:55:19] gen 8/60  fitness best 0.556 mean 0.428  sigma 1.532  [1s]
+      weights centre 2.89  three 7.77  two 3.13  opp_three -6.49  opp_two -1.39  near_centre -1.85  threats 1.66  opp_threats -1.65  good_threats 1.75  opp_good_threats -3.01
+[13:55:20] gen 9/60  fitness best 0.672 mean 0.488  sigma 1.539  [0s]
+      weights centre 2.69  three 7.12  two 3.25  opp_three -5.88  opp_two -2.30  near_centre -2.66  threats 1.40  opp_threats -2.47  good_threats 0.70  opp_good_threats -3.25
+[13:55:21] gen 10/60  fitness best 0.630 mean 0.512  sigma 1.562  [0s]
+      weights centre 1.93  three 8.30  two 3.18  opp_three -6.49  opp_two -1.76  near_centre -1.37  threats 1.08  opp_threats -0.46  good_threats -0.28  opp_good_threats -4.09
+      bench optimal 0.850 at depth 2   vs minimax: d1 0.85  d2 0.40  d4 0.38  d6 0.30   Elo~1267.7
+[13:55:21] gen 11/60  fitness best 0.598 mean 0.472  sigma 1.542  [1s]
+      weights centre 1.83  three 8.22  two 3.30  opp_three -5.81  opp_two -2.13  near_centre -1.62  threats 2.51  opp_threats -0.90  good_threats -0.82  opp_good_threats -3.83
+[13:55:22] gen 12/60  fitness best 0.556 mean 0.443  sigma 1.516  [0s]
+      weights centre 1.88  three 8.09  two 3.58  opp_three -6.58  opp_two -2.73  near_centre -2.74  threats 2.56  opp_threats -0.97  good_threats -1.28  opp_good_threats -2.99
+[13:55:22] gen 13/60  fitness best 0.580 mean 0.457  sigma 1.584  [1s]
+      weights centre 2.03  three 8.00  two 2.89  opp_three -8.26  opp_two -2.06  near_centre -3.76  threats 2.23  opp_threats -0.02  good_threats -1.25  opp_good_threats -2.71
+[13:55:23] gen 14/60  fitness best 0.567 mean 0.441  sigma 1.652  [0s]
+      weights centre 2.01  three 7.89  two 3.78  opp_three -9.48  opp_two -2.89  near_centre -3.07  threats 1.36  opp_threats 0.95  good_threats -1.59  opp_good_threats -3.71
+[13:55:24] gen 15/60  fitness best 0.543 mean 0.425  sigma 1.505  [0s]
+      weights centre 2.52  three 8.46  two 4.03  opp_three -8.64  opp_two -2.75  near_centre -3.35  threats 1.20  opp_threats -0.20  good_threats -1.07  opp_good_threats -3.66
+      bench optimal 0.835 at depth 2   vs minimax: d1 0.80  d2 0.60  d4 0.33  d6 0.17   Elo~1262.4
+[13:55:24] gen 16/60  fitness best 0.589 mean 0.444  sigma 1.551  [0s]
+      weights centre 3.57  three 8.76  two 4.92  opp_three -7.11  opp_two -3.74  near_centre -3.95  threats 0.93  opp_threats -0.61  good_threats 0.08  opp_good_threats -3.55
+[13:55:25] gen 17/60  fitness best 0.659 mean 0.498  sigma 1.506  [0s]
+      weights centre 3.75  three 8.43  two 5.12  opp_three -6.96  opp_two -3.62  near_centre -3.61  threats 0.77  opp_threats -1.29  good_threats 0.67  opp_good_threats -3.88
+[13:55:25] gen 18/60  fitness best 0.673 mean 0.458  sigma 1.511  [0s]
+      weights centre 4.27  three 9.20  two 5.25  opp_three -6.66  opp_two -4.25  near_centre -4.17  threats 1.73  opp_threats -2.55  good_threats 0.29  opp_good_threats -3.73
+[13:55:26] gen 19/60  fitness best 0.672 mean 0.513  sigma 1.405  [0s]
+      weights centre 4.02  three 9.30  two 5.29  opp_three -7.46  opp_two -3.85  near_centre -4.05  threats 2.28  opp_threats -2.25  good_threats -0.26  opp_good_threats -4.55
+[13:55:27] gen 20/60  fitness best 0.587 mean 0.513  sigma 1.333  [0s]
+      weights centre 3.77  three 9.90  two 5.68  opp_three -6.92  opp_two -4.24  near_centre -3.96  threats 2.63  opp_threats -2.85  good_threats 0.26  opp_good_threats -4.54
+      bench optimal 0.835 at depth 2   vs minimax: d1 0.80  d2 0.57  d4 0.50  d6 0.23   Elo~1304.7
+[13:55:27] gen 21/60  fitness best 0.630 mean 0.489  sigma 1.285  [0s]
+      weights centre 4.42  three 9.91  two 5.05  opp_three -6.92  opp_two -4.70  near_centre -3.45  threats 2.60  opp_threats -2.53  good_threats 1.00  opp_good_threats -5.05
+[13:55:27] gen 22/60  fitness best 0.601 mean 0.483  sigma 1.275  [0s]
+      weights centre 4.71  three 9.76  two 5.29  opp_three -7.71  opp_two -5.75  near_centre -4.04  threats 2.71  opp_threats -3.37  good_threats 0.95  opp_good_threats -5.06
+[13:55:28] gen 23/60  fitness best 0.610 mean 0.489  sigma 1.232  [0s]
+      weights centre 4.66  three 9.58  two 4.88  opp_three -7.77  opp_two -5.96  near_centre -4.01  threats 3.44  opp_threats -3.04  good_threats 0.02  opp_good_threats -4.80
+[13:55:28] gen 24/60  fitness best 0.621 mean 0.530  sigma 1.205  [0s]
+      weights centre 4.00  three 9.42  two 4.72  opp_three -7.27  opp_two -6.42  near_centre -3.85  threats 3.44  opp_threats -4.07  good_threats 0.36  opp_good_threats -4.81
+[13:55:29] gen 25/60  fitness best 0.645 mean 0.528  sigma 1.133  [0s]
+      weights centre 3.55  three 10.48  two 5.08  opp_three -6.91  opp_two -5.60  near_centre -3.72  threats 3.64  opp_threats -2.87  good_threats -0.15  opp_good_threats -4.62
+      bench optimal 0.837 at depth 2   vs minimax: d1 0.85  d2 0.60  d4 0.35  d6 0.30   Elo~1304.7
+[13:55:30] gen 26/60  fitness best 0.548 mean 0.489  sigma 1.156  [0s]
+      weights centre 2.39  three 10.70  two 5.23  opp_three -7.33  opp_two -4.79  near_centre -3.67  threats 3.87  opp_threats -2.41  good_threats 0.25  opp_good_threats -4.78
+[13:55:30] gen 27/60  fitness best 0.559 mean 0.465  sigma 1.186  [0s]
+      weights centre 2.79  three 10.17  two 4.64  opp_three -7.67  opp_two -3.59  near_centre -3.65  threats 3.87  opp_threats -1.12  good_threats 0.09  opp_good_threats -4.53
+[13:55:31] gen 28/60  fitness best 0.662 mean 0.538  sigma 1.095  [0s]
+      weights centre 3.96  three 9.79  two 4.46  opp_three -7.76  opp_two -4.03  near_centre -3.45  threats 3.82  opp_threats -1.82  good_threats 0.03  opp_good_threats -4.62
+[13:55:31] gen 29/60  fitness best 0.681 mean 0.529  sigma 1.066  [0s]
+      weights centre 4.23  three 9.94  two 3.91  opp_three -8.08  opp_two -3.88  near_centre -4.03  threats 3.86  opp_threats -2.11  good_threats -0.02  opp_good_threats -5.27
+[13:55:32] gen 30/60  fitness best 0.672 mean 0.575  sigma 1.025  [0s]
+      weights centre 4.65  three 10.35  two 5.07  opp_three -7.83  opp_two -4.89  near_centre -4.68  threats 4.29  opp_threats -2.45  good_threats -0.45  opp_good_threats -4.94
+      bench optimal 0.848 at depth 2   vs minimax: d1 0.85  d2 0.65  d4 0.50  d6 0.33   Elo~1351.9
+[13:55:33] gen 31/60  fitness best 0.566 mean 0.462  sigma 0.921  [0s]
+      weights centre 4.57  three 10.65  two 5.16  opp_three -7.62  opp_two -4.76  near_centre -4.47  threats 3.99  opp_threats -2.23  good_threats -0.11  opp_good_threats -4.75
+[13:55:33] gen 32/60  fitness best 0.563 mean 0.472  sigma 0.793  [0s]
+      weights centre 4.32  three 10.39  two 4.89  opp_three -7.73  opp_two -4.76  near_centre -4.17  threats 3.45  opp_threats -2.49  good_threats 0.24  opp_good_threats -5.06
+[13:55:33] gen 33/60  fitness best 0.575 mean 0.502  sigma 0.767  [0s]
+      weights centre 5.02  three 10.39  two 5.35  opp_three -7.24  opp_two -4.97  near_centre -4.23  threats 3.52  opp_threats -3.14  good_threats 0.32  opp_good_threats -4.47
+[13:55:34] gen 34/60  fitness best 0.599 mean 0.518  sigma 0.760  [0s]
+      weights centre 5.34  three 10.09  two 5.03  opp_three -8.16  opp_two -5.22  near_centre -4.18  threats 3.48  opp_threats -3.18  good_threats 0.15  opp_good_threats -4.29
+[13:55:35] gen 35/60  fitness best 0.610 mean 0.532  sigma 0.741  [0s]
+      weights centre 4.85  three 10.07  two 5.31  opp_three -7.83  opp_two -5.85  near_centre -4.27  threats 3.75  opp_threats -3.65  good_threats 0.02  opp_good_threats -4.28
+      bench optimal 0.845 at depth 2   vs minimax: d1 0.85  d2 0.55  d4 0.35  d6 0.25   Elo~1283.6
+[13:55:35] gen 36/60  fitness best 0.585 mean 0.505  sigma 0.736  [0s]
+      weights centre 5.43  three 9.52  two 5.64  opp_three -7.45  opp_two -5.57  near_centre -4.21  threats 3.55  opp_threats -3.32  good_threats -0.16  opp_good_threats -3.83
+[13:55:36] gen 37/60  fitness best 0.660 mean 0.573  sigma 0.660  [0s]
+      weights centre 5.08  three 9.98  two 5.27  opp_three -7.82  opp_two -5.47  near_centre -3.98  threats 3.97  opp_threats -3.49  good_threats -0.34  opp_good_threats -4.35
+[13:55:36] gen 38/60  fitness best 0.635 mean 0.565  sigma 0.643  [0s]
+      weights centre 5.56  three 9.82  two 5.10  opp_three -8.05  opp_two -5.06  near_centre -3.72  threats 4.15  opp_threats -3.14  good_threats -0.63  opp_good_threats -4.11
+[13:55:37] gen 39/60  fitness best 0.566 mean 0.419  sigma 0.635  [1s]
+      weights centre 5.56  three 9.91  two 4.87  opp_three -7.82  opp_two -4.94  near_centre -4.01  threats 3.65  opp_threats -3.36  good_threats -0.79  opp_good_threats -3.80
+[13:55:38] gen 40/60  fitness best 0.552 mean 0.506  sigma 0.664  [0s]
+      weights centre 5.71  three 9.91  two 5.07  opp_three -7.73  opp_two -4.83  near_centre -4.41  threats 3.67  opp_threats -3.64  good_threats -1.06  opp_good_threats -3.48
+      bench optimal 0.842 at depth 2   vs minimax: d1 0.80  d2 0.45  d4 0.42  d6 0.25   Elo~1267.7
+[13:55:38] gen 41/60  fitness best 0.652 mean 0.558  sigma 0.635  [0s]
+      weights centre 5.48  three 9.91  two 5.16  opp_three -7.55  opp_two -4.92  near_centre -4.54  threats 4.03  opp_threats -3.74  good_threats -0.97  opp_good_threats -3.46
+[13:55:39] gen 42/60  fitness best 0.651 mean 0.498  sigma 0.618  [0s]
+      weights centre 5.45  three 9.84  two 5.22  opp_three -7.36  opp_two -4.42  near_centre -4.54  threats 4.21  opp_threats -3.45  good_threats -0.68  opp_good_threats -3.48
+[13:55:39] gen 43/60  fitness best 0.599 mean 0.500  sigma 0.610  [0s]
+      weights centre 5.34  three 9.84  two 5.23  opp_three -6.98  opp_two -4.90  near_centre -4.43  threats 4.36  opp_threats -3.74  good_threats -0.19  opp_good_threats -3.37
+[13:55:39] gen 44/60  fitness best 0.596 mean 0.504  sigma 0.600  [0s]
+      weights centre 5.77  three 9.58  two 5.01  opp_three -6.90  opp_two -4.58  near_centre -4.57  threats 4.52  opp_threats -3.82  good_threats -0.72  opp_good_threats -2.99
+[13:55:40] gen 45/60  fitness best 0.598 mean 0.491  sigma 0.542  [0s]
+      weights centre 5.39  three 9.50  two 4.77  opp_three -7.38  opp_two -4.50  near_centre -4.20  threats 4.30  opp_threats -3.45  good_threats -0.67  opp_good_threats -3.06
+      bench optimal 0.843 at depth 2   vs minimax: d1 0.85  d2 0.47  d4 0.42  d6 0.25   Elo~1283.6
+[13:55:41] gen 46/60  fitness best 0.639 mean 0.518  sigma 0.545  [0s]
+      weights centre 5.06  three 9.63  two 4.42  opp_three -7.39  opp_two -4.64  near_centre -4.02  threats 4.48  opp_threats -3.54  good_threats -0.65  opp_good_threats -3.73
+[13:55:41] gen 47/60  fitness best 0.654 mean 0.576  sigma 0.554  [0s]
+      weights centre 5.29  three 9.56  two 4.19  opp_three -7.61  opp_two -4.45  near_centre -3.85  threats 4.32  opp_threats -3.52  good_threats -0.48  opp_good_threats -4.05
+[13:55:42] gen 48/60  fitness best 0.611 mean 0.541  sigma 0.552  [0s]
+      weights centre 4.87  three 9.58  two 4.10  opp_three -7.93  opp_two -4.39  near_centre -3.68  threats 4.05  opp_threats -3.43  good_threats -0.50  opp_good_threats -4.10
+[13:55:42] gen 49/60  fitness best 0.643 mean 0.579  sigma 0.534  [1s]
+      weights centre 4.86  three 9.88  two 4.21  opp_three -7.84  opp_two -4.61  near_centre -3.71  threats 3.92  opp_threats -3.63  good_threats -0.15  opp_good_threats -4.39
+[13:55:43] gen 50/60  fitness best 0.652 mean 0.537  sigma 0.535  [0s]
+      weights centre 4.40  three 9.91  two 3.94  opp_three -7.68  opp_two -4.54  near_centre -3.44  threats 4.04  opp_threats -3.51  good_threats -0.05  opp_good_threats -4.53
+      bench optimal 0.850 at depth 2   vs minimax: d1 0.85  d2 0.60  d4 0.45  d6 0.28   Elo~1320.4
+[13:55:44] gen 51/60  fitness best 0.621 mean 0.569  sigma 0.546  [0s]
+      weights centre 4.14  three 9.66  two 3.95  opp_three -7.92  opp_two -4.44  near_centre -3.18  threats 4.00  opp_threats -3.34  good_threats -0.22  opp_good_threats -4.79
+[13:55:44] gen 52/60  fitness best 0.608 mean 0.503  sigma 0.556  [1s]
+      weights centre 4.57  three 9.22  two 3.95  opp_three -8.16  opp_two -4.08  near_centre -2.92  threats 4.00  opp_threats -3.01  good_threats -0.46  opp_good_threats -4.17
+[13:55:45] gen 53/60  fitness best 0.640 mean 0.588  sigma 0.587  [0s]
+      weights centre 4.45  three 9.20  two 3.73  opp_three -8.47  opp_two -4.20  near_centre -2.46  threats 3.78  opp_threats -3.16  good_threats -0.36  opp_good_threats -4.67
+[13:55:45] gen 54/60  fitness best 0.657 mean 0.574  sigma 0.596  [0s]
+      weights centre 4.71  three 9.19  two 3.92  opp_three -8.44  opp_two -3.80  near_centre -2.58  threats 3.84  opp_threats -3.29  good_threats -0.66  opp_good_threats -4.21
+[13:55:46] gen 55/60  fitness best 0.544 mean 0.496  sigma 0.575  [0s]
+      weights centre 4.91  three 9.73  two 4.18  opp_three -8.75  opp_two -4.02  near_centre -3.04  threats 3.98  opp_threats -3.25  good_threats -0.68  opp_good_threats -4.35
+      bench optimal 0.862 at depth 2   vs minimax: d1 0.90  d2 0.50  d4 0.47  d6 0.25   Elo~1309.9
+[13:55:47] gen 56/60  fitness best 0.589 mean 0.516  sigma 0.569  [0s]
+      weights centre 4.93  three 9.40  two 4.45  opp_three -8.48  opp_two -4.71  near_centre -2.94  threats 3.88  opp_threats -3.39  good_threats -0.83  opp_good_threats -4.11
+[13:55:47] gen 57/60  fitness best 0.586 mean 0.516  sigma 0.559  [0s]
+      weights centre 5.16  three 9.41  two 4.56  opp_three -8.52  opp_two -4.70  near_centre -3.00  threats 4.12  opp_threats -3.55  good_threats -0.93  opp_good_threats -3.72
+[13:55:48] gen 58/60  fitness best 0.611 mean 0.530  sigma 0.549  [0s]
+      weights centre 5.40  three 9.47  two 4.57  opp_three -8.35  opp_two -4.65  near_centre -3.15  threats 4.19  opp_threats -3.86  good_threats -0.99  opp_good_threats -3.42
+[13:55:48] gen 59/60  fitness best 0.587 mean 0.509  sigma 0.548  [0s]
+      weights centre 5.42  three 9.62  two 4.69  opp_three -8.68  opp_two -4.99  near_centre -3.13  threats 4.37  opp_threats -3.92  good_threats -0.72  opp_good_threats -3.60
+[13:55:49] gen 60/60  fitness best 0.650 mean 0.522  sigma 0.511  [1s]
+      weights centre 5.17  three 9.71  two 4.68  opp_three -8.70  opp_two -5.04  near_centre -3.14  threats 4.30  opp_threats -4.05  good_threats -0.65  opp_good_threats -3.86
+      bench optimal 0.850 at depth 2   vs minimax: d1 0.90  d2 0.65  d4 0.45  d6 0.20   Elo~1325.6
+[13:55:49] done. weights in /home/connor/projects/introAI/connect4/runs/evo_d2/weights.json. Next: python -m rl.compare
