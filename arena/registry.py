@@ -97,6 +97,33 @@ def _ours_minimax(depth):
     return A.Ours(MinimaxAgent(depth), "ours_minimax_d%d" % depth)
 
 
+class _TestBot:
+    """Misbehaving bots for tests/test_arena_watchdog.py only (C4_ARENA_TEST=1)."""
+
+    def __init__(self, mode):
+        self.mode = mode
+        self.name = "test_" + mode
+        self.last_result = None
+
+    def choose(self, board):
+        import signal
+        import time
+        if board.moves_played >= 6:
+            if self.mode == "hang":                  # like a bot stuck in C code: ignores the per-move alarm
+                signal.signal(signal.SIGALRM, signal.SIG_IGN)
+                while True:
+                    time.sleep(1)
+            if self.mode == "crash":                 # like a worker killed by the OS (out of memory)
+                os._exit(3)
+        return board.legal_moves()[0]
+
+
+if os.environ.get("C4_ARENA_TEST") == "1":
+    for _m in ("hang", "crash", "ok"):
+        BOTS["test_" + _m] = {"label": "test bot (%s)" % _m, "group": "baseline", "params": {},
+                              "make": (lambda m: (lambda: _TestBot(m)))(_m)}
+
+
 def _level(level):
     from engine.agents import agent_for_level
     return agent_for_level(level)

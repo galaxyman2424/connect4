@@ -16,8 +16,13 @@ Protocol (same as experiments/tournament.py, so results are comparable):
   seeded from (seed, pairing, opening, colour) -> reproducible.
 * An exception or an illegal move from a bot = it forfeits that game
   (recorded with the reason).
+* A bot that takes longer than --move-timeout (default 300 s) on one move
+  forfeits.  A watchdog in the parent also kills any worker whose bot has not
+  moved for --watchdog seconds (default move-timeout + 60), or whose process
+  died, and records a forfeit - so one stuck game can never hang the run.
 * Games are appended to games.csv as they finish, so a stopped run can be
-  resumed with --resume.
+  resumed with --resume.  --summary-only writes summary.json from the games
+  finished so far without playing any more.
 
 Outputs in experiments/results/arena/<name>/:
   games.csv     one row per game (bots, opening, who started, result, moves, ms/move)
@@ -32,6 +37,7 @@ import csv
 import json
 import multiprocessing as mp
 import os
+import signal
 import random
 import sys
 import time
@@ -82,8 +88,22 @@ def _seed_all(seed):
         pass
 
 
-def play(task):
+class MoveTimeout(Exception):
+    pass
+
+
+def _alarm(signum, frame):
+    raise MoveTimeout("no move within %ss" % os.environ.get("C4_MOVE_TIMEOUT"))
+
+
+def play(task, beat=None):
+    """Play one game.  beat(name) is called before every move (the supervisor's
+    watchdog uses it to know which bot is thinking and since when)."""
     a, b, oid, opening, a_first, seed = task
+    limit = float(os.environ.get("C4_MOVE_TIMEOUT", "0") or 0)
+    use_alarm = limit > 0 and hasattr(signal, "setitimer")
+    if use_alarm:
+        signal.signal(signal.SIGALRM, _alarm)
     _seed_all(seed)
     board = Board.from_moves(opening)
     color = {a: 1 if a_first else -1, b: -1 if a_first else 1}
@@ -93,12 +113,21 @@ def play(task):
     winner = None
     while True:
         name = who[board.to_move]
+        if beat is not None:
+            beat(name, board.moves_played)
         t0 = time.perf_counter()
         try:
-            col = _bot(name).choose(board.copy())
-        except Exception as e:  # noqa: BLE001
+            if use_alarm:
+                signal.setitimer(signal.ITIMER_REAL, limit)
+            try:
+                col = _bot(name).choose(board.copy())
+            finally:
+                if use_alarm:
+                    signal.setitimer(signal.ITIMER_REAL, 0)
+        except Exception as e:  # noqa: BLE001  (MoveTimeout included)
             forfeit = "%s: %s: %s" % (name, type(e).__name__, str(e)[:200])
             winner = b if name == a else a
+            _BOTS.pop(name, None)          # rebuild that bot for its next game (it may be in a bad state)
             break
         times[name].append((time.perf_counter() - t0) * 1000)
         if not isinstance(col, (int, np.integer)) or int(col) not in board.legal_moves():
@@ -121,6 +150,118 @@ def play(task):
             "a_max_ms": round(max(times[a]), 1) if times[a] else 0.0,
             "b_max_ms": round(max(times[b]), 1) if times[b] else 0.0,
             "forfeit": forfeit, "seed": seed, "_color_a": color[a]}
+
+
+# ------------------------------------------------------- supervised workers
+# multiprocessing.Pool waits forever if a worker dies (out of memory, segfault)
+# or is stuck inside C code, where the per-move SIGALRM cannot interrupt it.
+# Instead each worker reports every move to the parent; a worker that has not
+# moved for --watchdog seconds (or has died) is killed and replaced, and the
+# bot that was thinking forfeits that game.
+
+def _sup_worker(wid, entries, task_q, res_q, hb):
+    """hb = shared array [task idx (-1 idle), side thinking (0 = a, 1 = b), ply, time]:
+    written directly to shared memory, so it is never lost if this process dies."""
+    _init(entries)
+    while True:
+        item = task_q.get()
+        if item is None:
+            return
+        idx, task = item
+        hb[0], hb[1], hb[2], hb[3] = idx, -1, len(task[3]), time.time()
+
+        def beat(name, ply, _a=task[0]):
+            hb[1], hb[2], hb[3] = (0 if name == _a else 1), ply, time.time()
+        try:
+            g = play(task, beat=beat)
+        except Exception as e:  # noqa: BLE001  - never lose a game silently
+            g = _forfeit_game(task, task[0], "worker error: %s: %s" % (type(e).__name__, str(e)[:200]))
+        res_q.put((idx, g))
+        hb[0] = -1
+
+
+def _forfeit_game(task, loser, reason, plies=None):
+    a, b, oid, opening, a_first, seed = task
+    winner = b if loser == a else a
+    return {"a": a, "b": b, "opening_id": oid, "opening": opening, "a_first": int(a_first),
+            "winner": winner, "score_a": 1.0 if winner == a else 0.0,
+            "plies": plies if plies is not None else len(opening), "moves": opening,
+            "a_ms": 0.0, "b_ms": 0.0, "a_max_ms": 0.0, "b_max_ms": 0.0,
+            "forfeit": "%s: %s" % (loser, reason), "seed": seed}
+
+
+def _first_mover(task):
+    a, b, oid, opening, a_first, seed = task
+    p1_to_move = len(opening) % 2 == 0
+    return a if p1_to_move == bool(a_first) else b
+
+
+def run_supervised(tasks, workers, entries, watchdog):
+    """Yield finished games (dicts) like Pool.imap_unordered, but never hang."""
+    import queue as _queue
+    ctx = mp.get_context("spawn")
+    task_q, res_q = ctx.Queue(), ctx.Queue()
+    for i, t in enumerate(tasks):
+        task_q.put((i, t))
+    ent = entries_picklable(entries)
+    procs, hbs, last_idx = {}, {}, {}
+
+    def spawn(wid):
+        hb = ctx.Array("d", [-1, -1, 0, time.time()], lock=False)
+        p = ctx.Process(target=_sup_worker, args=(wid, ent, task_q, res_q, hb), daemon=True)
+        p.start()
+        procs[wid], hbs[wid] = p, hb
+
+    n0 = min(workers, len(tasks))
+    for w in range(n0):
+        spawn(w)
+        task_q.put(None)                     # one stop signal per worker, after all tasks
+    next_wid = n0
+    finished = set()
+    while len(finished) < len(tasks):
+        try:
+            idx, g = res_q.get(timeout=5)
+            if idx not in finished:
+                finished.add(idx)
+                yield g
+            continue
+        except _queue.Empty:
+            pass
+        now = time.time()
+        for wid in list(procs):
+            p, hb = procs[wid], hbs[wid]
+            cur = int(hb[0])
+            if cur >= 0:
+                last_idx[wid] = cur
+            stuck = cur >= 0 and watchdog > 0 and now - hb[3] > watchdog
+            if p.is_alive() and not stuck:
+                continue
+            if not p.is_alive() and cur < 0 and last_idx.get(wid, -1) in finished | {-1}:
+                procs.pop(wid)               # finished normally (got its stop signal)
+                continue
+            if p.is_alive():
+                p.kill()
+            p.join(timeout=10)
+            procs.pop(wid)
+            idx = cur if cur >= 0 else last_idx.get(wid, -1)
+            if idx >= 0 and idx not in finished:
+                task = tasks[idx]
+                side = int(hb[1]) if cur >= 0 else -1
+                loser = task[0] if side == 0 else task[1] if side == 1 else _first_mover(task)
+                why = ("watchdog: no move within %ds, worker killed" % watchdog) if stuck else \
+                      ("worker process died (exit code %s)" % p.exitcode)
+                print("  [watchdog] %s vs %s, opening %d: %s - %s forfeits" % (task[0], task[1], task[2], why, loser),
+                      flush=True)
+                finished.add(idx)
+                yield _forfeit_game(task, loser, why, int(hb[2]) if cur >= 0 else None)
+            if len(finished) < len(tasks):   # replacement worker (needs its own stop signal)
+                spawn(next_wid)
+                task_q.put(None)
+                next_wid += 1
+    for p in procs.values():
+        p.join(timeout=5)
+        if p.is_alive():
+            p.kill()
 
 
 def random_openings(n, seed):
@@ -198,6 +339,13 @@ def main():
     ap.add_argument("--anchor", default="kaggle_negamax", help="bot fixed at Elo 1000")
     ap.add_argument("--boot", type=int, default=500, help="bootstrap resamples for Elo CIs")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--move-timeout", type=float, default=300.0,
+                    help="seconds a bot may think about one move before it forfeits the game (0 = no limit)")
+    ap.add_argument("--watchdog", type=float, default=None,
+                    help="kill a worker whose bot has not moved for this many seconds, even if it is stuck in "
+                         "C code or the process died; that bot forfeits (default: move-timeout + 60; 0 = off)")
+    ap.add_argument("--summary-only", action="store_true",
+                    help="play nothing: write summary.json from the games already in games.csv")
     ap.add_argument("--list", action="store_true")
     a = ap.parse_args()
 
@@ -216,12 +364,24 @@ def main():
         print("plus rl/ players: evo:runs/<run>/weights.json[:depth]  ntuple:runs/<run>/ntuple.npz[:depth]")
         return
 
+    os.environ["C4_MOVE_TIMEOUT"] = str(a.move_timeout)        # read by play() in every worker
+    if a.watchdog is None:
+        a.watchdog = (a.move_timeout + 60) if a.move_timeout > 0 else 600
     names = [x.strip() for x in a.bots.split(",") if x.strip()] + a.add_nn
     overrides = dict(s.split("=", 1) for s in a.set)
     entries = registry.resolve(names, overrides)
     out_dir = os.path.join(OUT_ROOT, a.name)
     os.makedirs(out_dir, exist_ok=True)
     games_path = os.path.join(out_dir, "games.csv")
+
+    if a.summary_only:
+        if not os.path.isfile(games_path):
+            sys.exit("no %s yet" % games_path)
+        with open(games_path, newline="", encoding="utf-8") as f:
+            done = [r for r in csv.DictReader(f) if r["a"] in entries and r["b"] in entries]
+        print("summary from %d finished games (pairings with missing games just count fewer)" % len(done))
+        write_summary(done, entries, a, out_dir, 0.0)
+        return
 
     # check every bot can be built here before starting
     from .adapters import BotUnavailable
@@ -261,12 +421,11 @@ def main():
         w = csv.DictWriter(f, fieldnames=FIELDS, extrasaction="ignore")
         if new_file:
             w.writeheader()
-        if a.workers <= 1:
+        if a.workers <= 1 and a.watchdog <= 0:
             _init(entries)
             it = map(play, tasks)
         else:
-            pool = mp.get_context("spawn").Pool(a.workers, initializer=_init, initargs=(entries_picklable(entries),))
-            it = pool.imap_unordered(play, tasks)
+            it = run_supervised(tasks, max(1, a.workers), entries, a.watchdog)
         for k, g in enumerate(it, 1):
             w.writerow(g)
             f.flush()
@@ -275,13 +434,15 @@ def main():
                 el = time.time() - t0
                 print("  %d/%d games  %.0fs elapsed, ~%.0f min left" % (
                     k, len(tasks), el, el / k * (len(tasks) - k) / 60), flush=True)
-        if a.workers > 1:
-            pool.close()
-            pool.join()
 
+    write_summary(done, entries, a, out_dir, time.time() - t0)
+
+
+def write_summary(done, entries, a, out_dir, seconds):
+    openings = random_openings(a.openings, a.seed)
     summ = summarize(done, entries, a.anchor, a.boot)
     summ["meta"] = {"name": a.name, "openings": openings, "seed": a.seed, "created": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                    "seconds": round(time.time() - t0, 1), "workers": a.workers, "command": " ".join(sys.argv),
+                    "seconds": round(seconds, 1), "workers": a.workers, "command": " ".join(sys.argv),
                     "machine": machine()}
     summ["bot_info"] = {n: {k: v for k, v in e.items() if k not in ("make", "spec")} for n, e in entries.items()}
     with open(os.path.join(out_dir, "summary.json"), "w", encoding="utf-8") as f:
