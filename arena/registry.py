@@ -91,6 +91,41 @@ BOTS = {
 DEFAULT_LINEUP = ["pons_perfect", "bruneton_az", "plkmo_az", "alfo_mcts", "galli_minimax",
                   "easyai_negamax", "kaggle_negamax", "ours_minimax_d4", "ours_minimax_d8"]
 
+# Short names for our trained players (= the names the tournament gives them), so a
+# line-up can be written as names only: `--bots nn_sup_6x64_mcts200,...`.
+ALIASES = {
+    "nn_az_6x64_mcts200": "nn:runs/az_6x64/model.npz:mcts:200",
+    "nn_sup_6x64_mcts200": "nn:runs/sup_6x64/best.npz:mcts:200",
+    "nn_ppo_6x64_policy": "nn:runs/ppo_6x64/model.npz:policy",
+    "nn_ppo_6x64_mcts200": "nn:runs/ppo_6x64/model.npz:mcts:200",
+    "nn_ppo_from_sup_policy": "nn:runs/ppo_from_sup/model.npz:policy",
+    "nn_dqn_6x64_policy": "nn:runs/dqn_6x64/model.npz:policy",
+    "nn_distill_az_2x32_policy": "nn:runs/distill_az_2x32/best.npz:policy",
+    "nn_distill_ens_2x32_policy": "nn:runs/distill_ens_2x32/best.npz:policy",
+    "evo_evo_d2_d4": "evo:runs/evo_d2/weights.json:4",
+    "ntuple_td_ntuple_d0": "ntuple:runs/td_ntuple/ntuple.npz:0",
+    "ntuple_td_ntuple_d4": "ntuple:runs/td_ntuple/ntuple.npz:4",
+}
+
+# Preset line-ups for `python -m arena.tournament --roster NAME`.
+ROSTERS = {
+    # the 20-bot field of experiments/results/arena/part3 (Elo anchor kaggle_negamax = 1000)
+    "part3": {"bots": DEFAULT_LINEUP + [
+        "nn_az_6x64_mcts200", "nn_sup_6x64_mcts200", "nn_ppo_6x64_policy", "nn_ppo_6x64_mcts200",
+        "nn_ppo_from_sup_policy", "nn_dqn_6x64_policy", "nn_distill_az_2x32_policy",
+        "nn_distill_ens_2x32_policy", "evo_evo_d2_d4", "ntuple_td_ntuple_d0", "ntuple_td_ntuple_d4"],
+        "elo_anchor": "kaggle_negamax:1000"},
+    # research phase: part3's top 15 by Elo (dropped: ntuple_td_ntuple_d4, easyai_negamax,
+    # kaggle_negamax, ntuple_td_ntuple_d0, plkmo_az).  kaggle_negamax, the old anchor, is
+    # gone, so ours_minimax_d4 is pinned to its part3 Elo (1409) to keep the scales comparable.
+    "top15": {"bots": [
+        "pons_perfect", "nn_sup_6x64_mcts200", "nn_az_6x64_mcts200", "nn_ppo_from_sup_policy", "bruneton_az",
+        "nn_ppo_6x64_mcts200", "nn_distill_az_2x32_policy", "nn_distill_ens_2x32_policy", "alfo_mcts",
+        "ours_minimax_d8", "evo_evo_d2_d4", "ours_minimax_d4", "galli_minimax", "nn_ppo_6x64_policy",
+        "nn_dqn_6x64_policy"],
+        "elo_anchor": "ours_minimax_d4:1409"},
+}
+
 
 def _ours_minimax(depth):
     from engine.agents import MinimaxAgent
@@ -98,7 +133,12 @@ def _ours_minimax(depth):
 
 
 class _TestBot:
-    """Misbehaving bots for tests/test_arena_watchdog.py only (C4_ARENA_TEST=1)."""
+    """Misbehaving bots for tests/test_arena_timeouts.py only (C4_ARENA_TEST=1).
+    ok: plays at once.  sleep: sleeps forever (the per-move alarm stops it).
+    hang: ignores the alarm and sleeps (like a bot stuck in C code).
+    busy: ignores the alarm and spins the CPU.  crash: kills its own process
+    (like an out-of-memory kill).  slow: 0.3 s per move (for the game cap).
+    threads: forfeits (raises) unless the worker's BLAS thread limit is 1."""
 
     def __init__(self, mode):
         self.mode = mode
@@ -108,18 +148,33 @@ class _TestBot:
     def choose(self, board):
         import signal
         import time
+        if self.mode == "slow":
+            time.sleep(0.3)
+        if self.mode == "threads":
+            from threadpoolctl import threadpool_info
+            bad = [(i["internal_api"], i["num_threads"]) for i in threadpool_info() if i["num_threads"] != 1]
+            if bad or os.environ.get("OPENBLAS_NUM_THREADS") != "1":
+                raise RuntimeError("thread limit not applied: %s" % bad)
         if board.moves_played >= 6:
-            if self.mode == "hang":                  # like a bot stuck in C code: ignores the per-move alarm
+            if self.mode == "sleep":
+                while True:
+                    time.sleep(1)
+            if self.mode == "hang":
                 signal.signal(signal.SIGALRM, signal.SIG_IGN)
                 while True:
                     time.sleep(1)
-            if self.mode == "crash":                 # like a worker killed by the OS (out of memory)
+            if self.mode == "busy":
+                signal.signal(signal.SIGALRM, signal.SIG_IGN)
+                x = 0
+                while True:
+                    x += 1
+            if self.mode == "crash":
                 os._exit(3)
         return board.legal_moves()[0]
 
 
 if os.environ.get("C4_ARENA_TEST") == "1":
-    for _m in ("hang", "crash", "ok"):
+    for _m in ("hang", "crash", "ok", "sleep", "busy", "slow", "threads"):
         BOTS["test_" + _m] = {"label": "test bot (%s)" % _m, "group": "baseline", "params": {},
                               "make": (lambda m: (lambda: _TestBot(m)))(_m)}
 
@@ -193,6 +248,7 @@ def resolve(names, overrides=None):
     out = {}
     overrides = overrides or {}
     for n in names:
+        n = ALIASES.get(n, n)
         if n.startswith("nn:"):
             key, entry = nn_entry(n)
         elif n.startswith("evo:") or n.startswith("ntuple:"):

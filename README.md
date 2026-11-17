@@ -3,35 +3,41 @@
 A local website where you play Connect 4 against a minimax bot (negamax + alpha-beta, transposition
 table, iterative deepening, hand-crafted window heuristic) with a 10-level difficulty slider, plus the
 experiments that measure how much stronger the bot gets as it searches deeper and what that costs.
+Part 2 adds our own neural network (supervised + AlphaZero-style self-play), five other learning
+methods (evolution, TD n-tuple, DQN, PPO, distillation), and a tournament against open-source bots.
 
-* Project statement: [`connect4-project-statement.md`](connect4-project-statement.md)
-* Results write-up: [`docs/REPORT.md`](docs/REPORT.md)
+* Project statement: [`connect4-project-statement.md`](connect4-project-statement.md) (original proposal)
 * Engine API shared by the website and the experiments: [`CONTRACT.md`](CONTRACT.md)
-* **Part 2: our own neural network + open-source bot arena**
-  * [`docs/NEURAL_NET.md`](docs/NEURAL_NET.md): design, method, metrics
-  * [`docs/TRAINING_RUNBOOK.md`](docs/TRAINING_RUNBOOK.md): copy-paste steps for the GPU training PC
-  * [`docs/ARENA.md`](docs/ARENA.md): the open-source bots, adapters, tournament protocol
-  * [`docs/PRESENTATION_GUIDE.md`](docs/PRESENTATION_GUIDE.md): the story, slide plan, numbers to fill in, likely questions
-  * Lab page: `python server/app.py`, then open http://localhost:5000/lab
+* Every command in order: [`COMMANDS.md`](COMMANDS.md)
+* Docs: [`docs/NEURAL_NET.md`](docs/NEURAL_NET.md) (design, method, metrics),
+  [`docs/OTHER_METHODS.md`](docs/OTHER_METHODS.md) (evolution, n-tuple, DQN, PPO, distillation, cost),
+  [`docs/TRAINING_RUNBOOK.md`](docs/TRAINING_RUNBOOK.md) (steps for the GPU PC),
+  [`docs/ARENA.md`](docs/ARENA.md) (open-source bots, tournament protocol),
+  [`docs/PRESENTATION_GUIDE.md`](docs/PRESENTATION_GUIDE.md) (story, slide plan, likely questions)
+* Research write-up for the paper: `docs/RESEARCH.md` and the `/research` page of the site
+  (`research/` package, `experiments/results/research/`); being written, may not exist yet
 
 ```
 engine/       board (bitboards), heuristic, minimax search, agents + slider levels
-server/       Flask app: GET / serves web/, POST /api/move {board, level}
-web/          index.html, app.js, style.css
-tests/        pytest suite (rules, search, server)
-experiments/  tournament, tactics, accuracy, cost, odd/even, embedding, analysis.ipynb
+server/       Flask app: serves web/, /api/move, /api/status, and the Lab API (lab_api.py)
+web/          play page (index.html, app.js, style.css) and Lab page (lab.html, lab.js, lab.css)
+tests/        pytest suite (rules, search, server, lab, nn, rl, arena, research)
+experiments/  tournament, tactics, accuracy, cost, odd/even, embedding, plots, analysis.ipynb;
+              data_prep/ (solver labelling scripts); results/ (CSV/JSON, committed); figures/ (PNGs)
 data/         solver-labeled accuracy set (committed) + dataset download script
-tools/        Pascal Pons' perfect-play solver (C++ source, AGPL-3.0) + Python wrapper
-docs/         REPORT.md, screenshots, NEURAL_NET.md, TRAINING_RUNBOOK.md, ARENA.md, PRESENTATION_GUIDE.md
+tools/        Pascal Pons' perfect-play solver (C++ source, AGPL-3.0) + Python wrapper (solver.py)
 nn/           neural network: model, MCTS, numpy inference, datasets, supervised + self-play training, evaluation
-runs/         one folder per training run (metrics + exported model; shown on the Lab page)
+rl/           other methods: evolve, ntuple, ppo, dqn, distill; cost meter; method comparison
 arena/        open-source bot adapters, fetch script, round-robin tournament
-web/lab.*     the Lab (data) page
+research/     research-phase helpers (e.g. teachers) used by the paper experiments
+runs/         one folder per training run (metrics + exported model; shown on the Lab page)
+nn_data/      generated training datasets (.npz; git-ignored)
+docs/         guides listed above, screenshots/
 ```
 
 ## Setup
 
-Python 3.10 or newer.
+Python 3.10 or newer (the training box runs 3.12).
 
 ```bash
 python -m venv .venv
@@ -71,7 +77,7 @@ python -m arena.fetch && python -m arena.tournament --add-nn nn:runs/az_6x64/mod
 ## Tests
 
 ```bash
-python -m pytest -q                # 243 tests, ~15 s (the PyTorch test is skipped if torch isn't installed)
+python -m pytest -q                # ~255 tests (+ arena/research), ~10 s; PyTorch tests are skipped if torch isn't installed
 ```
 
 ## Reproduce the experiments

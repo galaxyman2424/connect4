@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect 4 Research</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/lab.css">
+<link rel="stylesheet" href="/research.css">
+</head>
+<body>
+<nav class="topnav" aria-label="Pages"><a href="/">Play</a><a href="/lab">Lab</a><a href="/research" class="on" aria-current="page">Research</a></nav>
+<main class="lab-main">
+  <header>
+    <h1>Connect <span class="four">4</span> Research</h1>
+    <p class="sub">The data behind the paper: the 20-bot arena re-analysed, the supervised size &times; teacher sweep, and what the network computes inside. Tick the findings, bots and runs you want to use; the Paper builder turns your choice into a Markdown outline. Everything is read from <code>experiments/results/research/</code> and refreshes when those files change.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Research sections">
+    <button type="button" role="tab" id="tb-overview" aria-controls="tab-overview" data-tab="overview" class="on">Overview</button>
+    <button type="button" role="tab" id="tb-roster" aria-controls="tab-roster" data-tab="roster">Roster</button>
+    <button type="button" role="tab" id="tb-best" aria-controls="tab-best" data-tab="best">Why ours is the best net</button>
+    <button type="button" role="tab" id="tb-sweep" aria-controls="tab-sweep" data-tab="sweep">Size &amp; teachers</button>
+    <button type="button" role="tab" id="tb-interp" aria-controls="tab-interp" data-tab="interp">Inside the net</button>
+    <button type="button" role="tab" id="tb-paper" aria-controls="tab-paper" data-tab="paper">Paper builder</button>
+  </div>
+
+  <section id="tab-overview" class="tab on" role="tabpanel" aria-labelledby="tb-overview"><div id="overviewBody" class="loading">Loading&hellip;</div></section>
+  <section id="tab-roster" class="tab" role="tabpanel" aria-labelledby="tb-roster"><div id="rosterBody"></div></section>
+  <section id="tab-best" class="tab" role="tabpanel" aria-labelledby="tb-best"><div id="bestBody"></div></section>
+  <section id="tab-sweep" class="tab" role="tabpanel" aria-labelledby="tb-sweep"><div id="sweepBody"></div></section>
+  <section id="tab-interp" class="tab" role="tabpanel" aria-labelledby="tb-interp"><div id="interpBody"></div></section>
+  <section id="tab-paper" class="tab" role="tabpanel" aria-labelledby="tb-paper"><div id="paperBody"></div></section>
+
+  <p id="saveState" class="savestate" role="status" aria-live="polite"></p>
+</main>
+<div id="tip" class="tip" role="tooltip" hidden></div>
+<script src="/research.js"></script>
+</body>
+</html>

@@ -27,7 +27,7 @@ Entries found automatically (per run folder, by its config "phase"):
   distill      student policy (best.npz)
 
 Output: experiments/results/methods/<name>/summary.json, summary.csv,
-elo_vs_cost.png, elo_vs_speed.png.  The Lab page's "Method comparison" tab
+elo_vs_cost.png, elo_vs_time.png, elo_vs_speed.png.  The Lab page's "Method comparison" tab
 reads summary.json.  Results are cached per entry (same spec + same model
 file = not re-run); --force re-runs everything.
 """
@@ -41,6 +41,7 @@ import time
 
 from nn import bench
 from nn.common import RESULTS, RUNS, log, now_iso
+from nn.evaluate import parse_list            # "1,2,4-6" -> [1, 2, 4, 5, 6]
 
 from .evalhook import ladder, spec_accuracy
 
@@ -48,17 +49,6 @@ OUT = os.path.join(RESULTS, "methods")
 PHASE_LABEL = {"supervised": "Supervised (solver labels)", "selfplay": "AlphaZero self-play",
                "evolution": "Evolution (CMA-ES)", "ntuple": "TD(λ) n-tuple", "dqn": "DQN",
                "ppo": "PPO self-play", "distill": "Distillation"}
-
-
-def parse_list(s):
-    out = []
-    for part in s.split(","):
-        if "-" in part:
-            lo, hi = part.split("-")
-            out += list(range(int(lo), int(hi) + 1))
-        elif part:
-            out.append(int(part))
-    return out
 
 
 def _cfg(run):

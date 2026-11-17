@@ -8,7 +8,7 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from engine.board import Board  # noqa: E402
-from engine.minimax import search, plain_negamax, WIN, is_win_score  # noqa: E402
+from engine.minimax import search, plain_negamax, WIN  # noqa: E402
 from engine.agents import (RandomAgent, MinimaxAgent, SolverAgent,  # noqa: E402
                            SolverUnavailable, LEVELS, LEVEL_TIME_LIMITS,
                            agent_for_level)

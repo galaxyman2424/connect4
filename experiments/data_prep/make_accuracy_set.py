@@ -20,7 +20,7 @@ BUCKETS = [(8, 11), (12, 15), (16, 19), (20, 23), (24, 27), (28, 30)]
 W, H = 7, 6
 
 def board_key(moves):
-    heights = [0] * W; cols = [[] for _ in range(W)]
+    cols = [[] for _ in range(W)]
     for i, ch in enumerate(moves):
         c = int(ch) - 1; cols[c].append(i % 2)
     k = tuple(tuple(c) for c in cols)

@@ -1,0 +1,338 @@
+{
+  "bots": [
+    "nn_sup_6x64_mcts200",
+    "pons_perfect",
+    "bruneton_az",
+    "alfo_mcts",
+    "ours_minimax_d4"
+  ],
+  "matrix": [
+    [
+      null,
+      0.5,
+      0.625,
+      1.0,
+      1.0
+    ],
+    [
+      0.5,
+      null,
+      0.75,
+      1.0,
+      1.0
+    ],
+    [
+      0.375,
+      0.25,
+      null,
+      0.75,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.25,
+      null,
+      0.75
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.25,
+      null
+    ]
+  ],
+  "wdl": {
+    "nn_sup_6x64_mcts200": {
+      "bruneton_az": [
+        2,
+        1,
+        1
+      ],
+      "alfo_mcts": [
+        4,
+        0,
+        0
+      ],
+      "pons_perfect": [
+        2,
+        0,
+        2
+      ],
+      "ours_minimax_d4": [
+        4,
+        0,
+        0
+      ]
+    },
+    "bruneton_az": {
+      "nn_sup_6x64_mcts200": [
+        1,
+        1,
+        2
+      ],
+      "alfo_mcts": [
+        3,
+        0,
+        1
+      ],
+      "pons_perfect": [
+        1,
+        0,
+        3
+      ],
+      "ours_minimax_d4": [
+        4,
+        0,
+        0
+      ]
+    },
+    "alfo_mcts": {
+      "bruneton_az": [
+        1,
+        0,
+        3
+      ],
+      "nn_sup_6x64_mcts200": [
+        0,
+        0,
+        4
+      ],
+      "pons_perfect": [
+        0,
+        0,
+        4
+      ],
+      "ours_minimax_d4": [
+        3,
+        0,
+        1
+      ]
+    },
+    "pons_perfect": {
+      "bruneton_az": [
+        3,
+        0,
+        1
+      ],
+      "nn_sup_6x64_mcts200": [
+        2,
+        0,
+        2
+      ],
+      "alfo_mcts": [
+        4,
+        0,
+        0
+      ],
+      "ours_minimax_d4": [
+        4,
+        0,
+        0
+      ]
+    },
+    "ours_minimax_d4": {
+      "bruneton_az": [
+        0,
+        0,
+        4
+      ],
+      "nn_sup_6x64_mcts200": [
+        0,
+        0,
+        4
+      ],
+      "alfo_mcts": [
+        1,
+        0,
+        3
+      ],
+      "pons_perfect": [
+        0,
+        0,
+        4
+      ]
+    }
+  },
+  "per_bot": {
+    "nn_sup_6x64_mcts200": {
+      "games": 16,
+      "score": 0.7812,
+      "wins": 12,
+      "draws": 1,
+      "losses": 3,
+      "score_moving_first": 0.6875,
+      "avg_ms": 307.9,
+      "max_ms": 496.1,
+      "forfeits": 0
+    },
+    "pons_perfect": {
+      "games": 16,
+      "score": 0.8125,
+      "wins": 13,
+      "draws": 0,
+      "losses": 3,
+      "score_moving_first": 0.75,
+      "avg_ms": 32.0,
+      "max_ms": 386.2,
+      "forfeits": 0
+    },
+    "bruneton_az": {
+      "games": 16,
+      "score": 0.5938,
+      "wins": 9,
+      "draws": 1,
+      "losses": 6,
+      "score_moving_first": 0.375,
+      "avg_ms": 308.0,
+      "max_ms": 596.7,
+      "forfeits": 0
+    },
+    "alfo_mcts": {
+      "games": 16,
+      "score": 0.25,
+      "wins": 4,
+      "draws": 0,
+      "losses": 12,
+      "score_moving_first": 0.125,
+      "avg_ms": 609.7,
+      "max_ms": 1264.1,
+      "forfeits": 0
+    },
+    "ours_minimax_d4": {
+      "games": 16,
+      "score": 0.0625,
+      "wins": 1,
+      "draws": 0,
+      "losses": 15,
+      "score_moving_first": 0.0,
+      "avg_ms": 1.1,
+      "max_ms": 4.8,
+      "forfeits": 0
+    }
+  },
+  "elo": {
+    "nn_sup_6x64_mcts200": {
+      "elo": 1168.2,
+      "lo": 1052.6,
+      "hi": 1349.2
+    },
+    "pons_perfect": {
+      "elo": 1197.5,
+      "lo": 1029.2,
+      "hi": 1420.8
+    },
+    "bruneton_az": {
+      "elo": 1000.0,
+      "lo": 1000.0,
+      "hi": 1000.0
+    },
+    "alfo_mcts": {
+      "elo": 641.6,
+      "lo": -1214.4,
+      "hi": 874.5
+    },
+    "ours_minimax_d4": {
+      "elo": 398.5,
+      "lo": -2981.2,
+      "hi": 643.7
+    }
+  },
+  "elo_anchor": "bruneton_az",
+  "elo_anchor_value": 1000.0,
+  "unrated": [],
+  "first_player_score": 0.3875,
+  "games": 40,
+  "decisive": 39,
+  "forfeits": [],
+  "meta": {
+    "name": "smoke_hangfix",
+    "openings": [
+      "71",
+      "643"
+    ],
+    "seed": 4150,
+    "created": "2026-11-16T00:18:14",
+    "seconds": 78.5,
+    "workers": 4,
+    "threads_per_worker": 1,
+    "move_timeout": 10.0,
+    "game_timeout": 300.0,
+    "roster": null,
+    "elo_anchor": "kaggle_negamax:1000",
+    "scheduled": 40,
+    "recorded": 40,
+    "missing": 0,
+    "duplicates": 0,
+    "command": "/home/connor/projects/introAI/connect4/arena/tournament.py --bots nn_sup_6x64_mcts200,pons_perfect,bruneton_az,alfo_mcts,ours_minimax_d4 --openings 2 --workers 4 --name smoke_hangfix",
+    "machine": {
+      "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "cpus": 16
+    }
+  },
+  "bot_info": {
+    "nn_sup_6x64_mcts200": {
+      "label": "Our neural net (sup_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/sup_6x64/best.npz"
+      }
+    },
+    "pons_perfect": {
+      "label": "Pons solver (perfect play)",
+      "group": "open source",
+      "author": "Pascal Pons",
+      "url": "https://github.com/PascalPons/connect4",
+      "commit": "d6ba50d",
+      "license": "AGPL-3.0",
+      "lang": "C++",
+      "algorithm": "Exact solver: negamax + alpha-beta on bitboards, transposition table, iterative null-window search, opening book. Never makes a mistake.",
+      "params": {}
+    },
+    "bruneton_az": {
+      "label": "AlphaZero (Bruneton et al.)",
+      "group": "open source",
+      "author": "J.-P. Bruneton, A. Douin, V. Reverdy",
+      "url": "https://github.com/jpbruneton/Alpha-Zero-algorithm-for-Connect-4-game",
+      "commit": "6cd76be",
+      "license": "BSD-3-Clause",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (1 block x 256 filters, 1.2 M params) policy+value net trained by self-play, PUCT MCTS. Pretrained weights from the repo.",
+      "params": {
+        "sims": 200
+      }
+    },
+    "alfo_mcts": {
+      "label": "UCT MCTS, random roll-outs (Alfo5123)",
+      "group": "open source",
+      "author": "Alfredo de la Fuente",
+      "url": "https://github.com/Alfo5123/Connect4",
+      "commit": "d371203",
+      "license": "MIT",
+      "lang": "Python 2 (run under 3)",
+      "algorithm": "Classic Monte Carlo Tree Search (UCT) with uniformly random play-outs; no heuristic, no neural network.",
+      "params": {
+        "iterations": 3000
+      }
+    },
+    "ours_minimax_d4": {
+      "label": "Our minimax, depth 4 (slider level 5)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python",
+      "algorithm": "Negamax + alpha-beta, transposition table, move ordering, iterative deepening, bit-parallel window heuristic.",
+      "params": {
+        "depth": 4
+      }
+    }
+  }
+}

@@ -26,3 +26,5 @@ nn_data/
 # arena: third-party bots are downloaded by `python -m arena.fetch`, not committed
 arena/third_party/
 experiments/results/arena/*/games.csv.old
+.ruff_cache/
+.mypy_cache/

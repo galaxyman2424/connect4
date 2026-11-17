@@ -56,7 +56,7 @@ def main(argv=None):
     ap.add_argument("--no-tt", action="store_true")
     ap.add_argument("--no-ordering", action="store_true")
     ap.add_argument("--levels", action="store_true", help="time every slider level")
-    ap.add_argument("--moves", help="benchmark one extra position (Pons move string)")
+    ap.add_argument("--moves", help="benchmark only this position (Pons move string) instead of the built-in ones")
     args = ap.parse_args(argv)
     positions = list(POSITIONS)
     if args.moves is not None:

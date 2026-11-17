@@ -156,7 +156,6 @@ def main():
                 learner = np.where(rng.random(B) < 0.5, 1, -1)          # colour the learner plays
             else:
                 learner = np.zeros(B, dtype=np.int64)                   # self-play: learn from both sides
-            start_ply = g.ply.copy()
             steps = []                                                  # (game, colour, cur, mask, act, logp, val)
             alive = np.ones(B, dtype=bool)
             won_by = np.zeros(B, dtype=np.int64)                        # +1 first player, -1 second, 0 draw

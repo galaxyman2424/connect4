@@ -11,11 +11,13 @@ from flask import Flask, jsonify, request, send_from_directory  # noqa: E402
 from engine.board import Board, ROWS, COLS  # noqa: E402
 from engine.agents import agent_for_level  # noqa: E402
 from server.lab_api import bp as lab_bp, nn_evaluator  # noqa: E402
+from server.research_api import bp as research_bp  # noqa: E402
 
 WEB_DIR = os.path.join(ROOT, "web")
 STATIC = ("app.js", "style.css", "lab.js", "lab.css")
 app = Flask(__name__, static_folder=None)
 app.register_blueprint(lab_bp)
+app.register_blueprint(research_bp)
 
 
 class BadRequest(Exception):
@@ -43,7 +45,10 @@ def parse_board(grid):
                 seen_empty = True
             elif seen_empty:
                 raise BadRequest("floating piece in column %d" % (c + 1))
-    board = Board.from_grid(grid)
+    try:
+        board = Board.from_grid(grid)
+    except ValueError as e:               # e.g. both players have four in a row
+        raise BadRequest(str(e)) from e
     if board.is_terminal():
         raise BadRequest("game is already over")
     return board
@@ -131,8 +136,8 @@ def api_move():
 
 @app.post("/api/status")
 def api_status():
-    data = request.get_json(silent=True) or {}
-    grid = data.get("board")
+    data = request.get_json(silent=True)
+    grid = data.get("board") if isinstance(data, dict) else None
     try:
         # same validation, but finished games are allowed here
         if not isinstance(grid, list) or len(grid) != ROWS or any(

@@ -4,10 +4,10 @@ Layout
   encode.py          board bitboards -> input planes (numpy), mirror augmentation
   model.py           PyTorch ResNet with a policy head (7 moves) and a WDL value head
   numpy_net.py       numpy-only inference of an exported model (.npz) - no torch needed
-  evaluator.py       load a model (.npz or .pt) -> batched evaluate(curs, masks)
   mcts.py            batched PUCT Monte Carlo Tree Search (AlphaZero style)
   agents.py          PolicyAgent, MCTSAgent, NNMinimaxAgent (same interface as engine.agents)
-  common.py          paths, run folders, metrics logging, GPU selection
+  common.py          paths, run folders, metrics logging, GPU selection, and
+                     load_evaluator(): model file (.npz or .pt) -> batched evaluate(curs, masks)
   bench.py           benchmarks: accuracy vs perfect play, value accuracy, quick matches
   make_dataset.py    Phase A data: positions labelled by the Pons solver
   train_supervised.py  Phase A training (learn from perfect-play labels)

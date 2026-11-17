@@ -9,6 +9,7 @@ training loop can step 1,024 games with a handful of numpy calls.
 import numpy as np
 
 from engine.board import BOARD_MASK, BOTTOM_MASK, COLS, H1, ROWS
+from nn.encode import mirror_bits
 
 U = np.uint64
 _BOTTOM_COL = np.array([1 << (c * H1) for c in range(COLS)], dtype=U)
@@ -83,12 +84,7 @@ def popcount(x):
 
 def mirror(bb):
     """Mirror bitboards left-right (column c -> 6 - c)."""
-    bb = np.asarray(bb, dtype=U)
-    out = np.zeros_like(bb)
-    colmask = U((1 << H1) - 1)
-    for c in range(COLS):
-        out |= ((bb >> U(c * H1)) & colmask) << U((COLS - 1 - c) * H1)
-    return out
+    return mirror_bits(bb)
 
 
 def masked_sample(probs, legal_mask, rng):

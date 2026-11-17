@@ -94,9 +94,10 @@ def machine_info():
 
 # --------------------------------------------------------------- devices
 def pick_device(requested="auto"):
-    """'auto' -> the CUDA GPU with the most memory (on Connor's box: the
-    RTX 3050 8 GB, not the GTX 750 Ti 2 GB, which recent PyTorch builds do
-    not support anyway), else CPU.  'cpu', 'cuda', 'cuda:1' are honoured."""
+    """'auto' (or None) -> the CUDA GPU with the most memory among those this
+    PyTorch build can actually run a kernel on (so an unsupported old card,
+    like the GTX 750 Ti that used to sit next to the RTX 3050, is skipped),
+    else CPU.  'cpu', 'cuda', 'cuda:1' are honoured as given."""
     import torch
     if requested and requested != "auto":
         return torch.device(requested)
@@ -112,6 +113,8 @@ def pick_device(requested="auto"):
         if mem > best_mem:
             best, best_mem = i, mem
     if best is None:
+        log("WARNING: CUDA reports %d GPU(s) but none can run this PyTorch build - using the CPU"
+            % torch.cuda.device_count())
         return torch.device("cpu")
     return torch.device("cuda:%d" % best)
 
