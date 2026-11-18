@@ -1,6 +1,5 @@
 """Enumerate all distinct legal 8-ply Connect-4 positions (as boards) with no winner yet.
 Reports counts under several definitions of 'forced next move'."""
-import itertools, sys
 W, H = 7, 6
 
 def wins(cols, p, c):

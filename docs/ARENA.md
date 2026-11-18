@@ -64,13 +64,45 @@ Those are both real findings worth a sentence in the presentation.
   (seed, pairing, opening, colour), so results are reproducible. One exception: Bruneton's
   MCTS re-seeds itself from the OS on every call (their code), so its tie-breaks aren't
   reproducible.
-* **Forfeits:** an exception or illegal move loses that game and is listed.
-* **Parallel and resumable:** `--workers` processes. Every finished game is appended to
-  `games.csv`, and `--resume` skips what's done.
+* **Forfeits:** an exception, an illegal move, a timeout or a crashed worker loses that
+  game; the reason is in the `forfeit` column of `games.csv`.
+* **Time limits** (defaults; a hang is impossible by construction):
+  * `--move-timeout 10` s per move. Enforced by SIGALRM inside the worker, and by the parent,
+    which kills the worker's whole process group `--kill-grace 5` s later if the bot is
+    stuck in C code or ignores signals. The bot that was thinking forfeits.
+  * `--game-timeout 300` s wall clock per game; the bot that used more thinking time forfeits.
+  * `--build-timeout 120` s to load a bot (networks, solver); loading is off the game clock.
+  * A worker that dies (segfault, out-of-memory kill) costs the bot that was thinking that
+    game; the worker is replaced.
+* **One thread per worker:** `--threads 1` (default) is put in the environment
+  (`OMP/MKL/OPENBLAS/NUMEXPR_NUM_THREADS`) *before* a worker imports numpy or torch, then
+  re-applied with threadpoolctl and `torch.set_num_threads`. Keep workers x threads <= cores.
+* **Parallel and resumable:** `--workers` processes; the parent hands each worker one game
+  at a time over its own pipe, so it always knows which game a worker holds. Every finished
+  game is appended to `games.csv` at once, and `--resume` skips what's done (a half-written
+  last line is dropped). At the end the run checks **scheduled == recorded** games and prints
+  a loud error (exit code 3) otherwise; `summary.json` `meta` records both counts.
+
+**Why part3 took 44 h and lost a game** (fixed in this version):
+1. Thread oversubscription. `OMP_NUM_THREADS=1` was set inside each worker *after* numpy had
+   loaded, so OpenBLAS still started 16 threads per worker (~350% CPU per worker was
+   observed). Small matrix products (our numpy nets, batch 1) then spend their time in
+   spinning BLAS threads fighting 13 other workers. Measured on this machine: 4 copies of
+   `nn_sup_6x64_mcts200` at once took 12-14 s/move with 16 BLAS threads vs 0.42-0.46 s with
+   1 thread (one copy alone: ~0.5 s); in a 4-worker tournament it was 5.4 s/move before the
+   fix and 0.43 s after. That explains the 67 s/move of the MCTS nets and the 490 ms/move of
+   the 6x64 policy nets (2-3 ms alone) in part3.
+2. part3 was run with `multiprocessing.Pool.imap_unordered` (no timeouts). When a pool
+   worker dies, Pool silently replaces it and the game it held is lost; `imap` then waits
+   forever. That is the missing `bruneton_az` vs `nn_sup_6x64_mcts200`, opening 0 game
+   (scheduled ~1,080th): the other 7,599 games finished on Oct 19, then the run hung until
+   it was killed on Oct 21 and summarised with `--summary-only`. (Why the worker died is not
+   recorded; the kernel log from that week is gone.)
 * **Statistics:**
   * score = (wins + draws/2) / games;
   * head-to-head matrix;
-  * **Bradley-Terry Elo** (max likelihood), `kaggle_negamax` = 1000, with **95% bootstrap
+  * **Bradley-Terry Elo** (max likelihood), anchor `--elo-anchor name[:value]` (default
+    `kaggle_negamax` = 1000; the `top15` roster pins `ours_minimax_d4` = 1409, its part3 Elo), with **95% bootstrap
     CIs**: 500 resamples of whole openings within each pairing, the same method as
     `experiments/tournament.py`;
   * time per move (mean, max).
@@ -93,7 +125,27 @@ python -m arena.tournament --openings 20 --add-nn nn:runs/az_6x64/model.npz:mcts
 ```
 
 Useful options: `--bots a,b,c` (custom line-up), `--set plkmo_az.reads=200` (change a
-setting; it's recorded in the results), `--name x` (separate results folder), `--resume`.
+setting; it's recorded in the results), `--name x` (separate results folder), `--resume`,
+`--move-timeout / --game-timeout / --build-timeout / --kill-grace` (seconds), `--threads`,
+`--elo-anchor name[:value]` (`--anchor` still works).
+
+**Rosters** (`--roster NAME`, listed by `--list`; `--bots`/`--add-nn` add to a roster). Our
+trained players can be named directly (`nn_sup_6x64_mcts200` = `nn:runs/sup_6x64/best.npz:mcts:200`,
+see `ALIASES` in `arena/registry.py`).
+* `part3`: the 20-bot field of `experiments/results/arena/part3`.
+* `top15`: the research-phase line-up, part3's top 15 by Elo: pons_perfect,
+  nn_sup_6x64_mcts200, nn_az_6x64_mcts200, nn_ppo_from_sup_policy, bruneton_az,
+  nn_ppo_6x64_mcts200, nn_distill_az_2x32_policy, nn_distill_ens_2x32_policy, alfo_mcts,
+  ours_minimax_d8, evo_evo_d2_d4, ours_minimax_d4, galli_minimax, nn_ppo_6x64_policy,
+  nn_dqn_6x64_policy (dropped, still in the registry: ntuple_td_ntuple_d4, easyai_negamax,
+  kaggle_negamax, ntuple_td_ntuple_d0, plkmo_az). Elo anchor `ours_minimax_d4:1409`.
+
+```bash
+python -m arena.tournament --roster top15 --name top15 --openings 20 --workers 14
+```
+
+Tests: `tests/test_arena_timeouts.py` (fake bots that sleep forever, ignore signals and
+busy-loop, kill their own process, or exceed the game cap).
 
 Results: `experiments/results/arena/<name>/games.csv` and `summary.json`, shown on the
 Lab page's **Bot arena** tab: leaderboard with Elo and CIs, Elo chart, strength vs time

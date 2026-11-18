@@ -1,6 +1,6 @@
 """Negamax with alpha-beta pruning over bitboards.
 
-search(board, depth, time_limit=None, use_tt=True, ordering=True) -> SearchResult
+search(board, depth, time_limit=None, use_tt=True, ordering=True, evaluator=None) -> SearchResult
 
 Semantics (identical for every combination of use_tt / ordering, so the
 experiments can switch them freely):

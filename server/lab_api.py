@@ -208,7 +208,7 @@ _NETS = {}
 
 def nn_evaluator(run_name):
     """Cached NumpyNet for runs/<run>/model.npz (reloaded when the file changes)."""
-    if not SAFE.match(run_name or ""):
+    if not isinstance(run_name, str) or not SAFE.match(run_name) or run_name.startswith("."):
         raise ValueError("bad run name")
     p = os.path.join(RUNS, run_name, "model.npz")
     if not os.path.isfile(p):

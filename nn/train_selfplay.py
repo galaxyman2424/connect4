@@ -82,7 +82,6 @@ def selfplay_worker(task):
     n_total, par = task["games"], max(1, min(task["parallel"], task["games"]))
     sims, temp_moves = task["sims"], task["temp_moves"]
     started = 0
-    games = []
 
     def new_game():
         return {"root": mcts.Node(0, 0), "ply": 0, "hist": [], "first": None}

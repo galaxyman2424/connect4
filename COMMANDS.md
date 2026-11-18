@@ -83,9 +83,14 @@ python data/download_data.py --book     # or copy tools/pons/7x6.book from the W
 ```bash
 cd connect4
 source .venv/bin/activate
+# only needed if the PC has more than one GPU (e.g. an old GTX 750 Ti next to the RTX 3050):
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 export CUDA_VISIBLE_DEVICES=0           # the RTX 3050's number in `nvidia-smi -L`
 ```
+
+`--device auto` (the default) uses the CUDA GPU with the most memory that this PyTorch build can
+actually run, and falls back to the CPU (with a warning) if there is none. Check which device a
+run used in `runs/<run>/config.json` (`"device"`).
 
 ### 1. Smoke test (about 10 min, checks that everything works)
 
@@ -170,7 +175,7 @@ On Windows (PowerShell): `Remove-Item -Recurse -Force runs\pilot_cpu_az, runs\pi
 
 ## E. More learning methods + training cost (Linux PC)
 
-Same terminal setup as Part B (`source .venv/bin/activate`, `CUDA_VISIBLE_DEVICES=0`).
+Same terminal setup as Part B (`source .venv/bin/activate`).
 Each trainer measures its own time, CPU core-hours, GPU energy and cost into
 `runs/<run>/cost.json`. Times below are rough guesses; check the log's first lines.
 

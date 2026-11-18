@@ -1,0 +1,67 @@
+nohup: ignoring input
+10 bots, 45 pairings, 1800 games (20 openings x 2 colours), 14 workers x 1 threads, move limit 300s, game limit 0s, Elo anchor ours_minimax_d8=1444 -> /home/connor/projects/introAI/connect4/experiments/results/arena/top10
+  36/1800 games  42s elapsed, ~34 min left
+  72/1800 games  80s elapsed, ~32 min left
+  108/1800 games  120s elapsed, ~31 min left
+  144/1800 games  167s elapsed, ~32 min left
+  180/1800 games  193s elapsed, ~29 min left
+  216/1800 games  219s elapsed, ~27 min left
+  252/1800 games  247s elapsed, ~25 min left
+  288/1800 games  284s elapsed, ~25 min left
+  324/1800 games  324s elapsed, ~25 min left
+  360/1800 games  353s elapsed, ~24 min left
+  396/1800 games  401s elapsed, ~24 min left
+  432/1800 games  446s elapsed, ~24 min left
+  468/1800 games  465s elapsed, ~22 min left
+  504/1800 games  483s elapsed, ~21 min left
+  540/1800 games  498s elapsed, ~19 min left
+  576/1800 games  523s elapsed, ~19 min left
+  612/1800 games  548s elapsed, ~18 min left
+  648/1800 games  571s elapsed, ~17 min left
+  684/1800 games  595s elapsed, ~16 min left
+  720/1800 games  620s elapsed, ~15 min left
+  756/1800 games  641s elapsed, ~15 min left
+  792/1800 games  658s elapsed, ~14 min left
+  828/1800 games  673s elapsed, ~13 min left
+  864/1800 games  690s elapsed, ~12 min left
+  900/1800 games  708s elapsed, ~12 min left
+  936/1800 games  723s elapsed, ~11 min left
+  972/1800 games  738s elapsed, ~10 min left
+  1008/1800 games  753s elapsed, ~10 min left
+  1044/1800 games  768s elapsed, ~9 min left
+  1080/1800 games  784s elapsed, ~9 min left
+  1116/1800 games  800s elapsed, ~8 min left
+  1152/1800 games  830s elapsed, ~8 min left
+  1188/1800 games  846s elapsed, ~7 min left
+  1224/1800 games  860s elapsed, ~7 min left
+  1260/1800 games  876s elapsed, ~6 min left
+  1296/1800 games  900s elapsed, ~6 min left
+  1332/1800 games  931s elapsed, ~5 min left
+  1368/1800 games  960s elapsed, ~5 min left
+  1404/1800 games  975s elapsed, ~5 min left
+  1440/1800 games  979s elapsed, ~4 min left
+  1476/1800 games  981s elapsed, ~4 min left
+  1512/1800 games  983s elapsed, ~3 min left
+  1548/1800 games  985s elapsed, ~3 min left
+  1584/1800 games  986s elapsed, ~2 min left
+  1620/1800 games  986s elapsed, ~2 min left
+  1656/1800 games  987s elapsed, ~1 min left
+  1692/1800 games  987s elapsed, ~1 min left
+  1728/1800 games  988s elapsed, ~1 min left
+  1764/1800 games  989s elapsed, ~0 min left
+  1800/1800 games  990s elapsed, ~0 min left
+
+bot                             Elo  score     W     D     L   ms/move    max ms  forfeit
+pons_perfect                 1843.4  0.762   252    45    63      41.8     966.1        0
+nn_sup_6x64_mcts200          1812.3  0.726   239    45    76     408.0     829.6        0
+nn_az_6x64_mcts200           1787.4  0.696   236    29    95     394.4     877.9        0
+nn_ppo_from_sup_policy       1647.4  0.506   155    54   151       3.2     355.3        0
+nn_ppo_6x64_mcts200          1629.8  0.481   144    58   158     419.8     807.5        0
+bruneton_az                  1625.8  0.475   150    42   168     537.9    1304.5        0
+nn_distill_ens_2x32_policy   1579.5  0.410   128    39   193       1.0     211.2        0
+nn_distill_az_2x32_policy    1574.5  0.403   121    48   191       1.0       8.9        0
+alfo_mcts                    1501.6  0.306   104    12   244     818.0    2093.7        0
+ours_minimax_d8              1444.0  0.236    73    24   263      26.1     230.4        0
+first player scored 0.492 overall
+wrote /home/connor/projects/introAI/connect4/experiments/results/arena/top10/summary.json
+scheduled 1800 games, recorded 1800

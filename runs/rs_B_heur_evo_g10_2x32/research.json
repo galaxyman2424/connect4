@@ -1,0 +1,177 @@
+{
+ "name": "rs_B_heur_evo_g10_2x32",
+ "group": "B",
+ "teacher": "heur_evo_g10",
+ "blocks": 2,
+ "channels": 32,
+ "seed": 0,
+ "epochs": 40,
+ "optional": false,
+ "params": 50146,
+ "train": {
+  "params": 50146,
+  "device": "cuda:0",
+  "device_name": "NVIDIA GeForce RTX 3050",
+  "train_sec": 76.4,
+  "train_loop_sec": 72.4,
+  "gpu_sec": 72.4,
+  "best_epoch": 38,
+  "best_val_loss": 0.61385,
+  "val_teacher_agree": 0.9465,
+  "val_pons_acc": 0.7272,
+  "val_value_acc": 0.5998,
+  "epochs": 40,
+  "finished": "2026-11-16T01:10:19"
+ },
+ "train_sec": 76.4,
+ "gpu_sec": 72.4,
+ "device": "NVIDIA GeForce RTX 3050",
+ "teacher_agreement": 0.9465,
+ "best_epoch": 38,
+ "bench": {
+  "optimal": 0.7563,
+  "keeps_nl": 0.8688,
+  "value_acc": 0.663,
+  "n": 3000,
+  "by_bucket": {
+   "8-11": {
+    "n": 500,
+    "optimal": 0.678,
+    "keeps_nl": 0.8437,
+    "n_not_lost": 339
+   },
+   "12-15": {
+    "n": 500,
+    "optimal": 0.74,
+    "keeps_nl": 0.8663,
+    "n_not_lost": 344
+   },
+   "16-19": {
+    "n": 500,
+    "optimal": 0.75,
+    "keeps_nl": 0.8539,
+    "n_not_lost": 356
+   },
+   "20-23": {
+    "n": 500,
+    "optimal": 0.762,
+    "keeps_nl": 0.8596,
+    "n_not_lost": 349
+   },
+   "24-27": {
+    "n": 500,
+    "optimal": 0.81,
+    "keeps_nl": 0.8907,
+    "n_not_lost": 375
+   },
+   "28-30": {
+    "n": 500,
+    "optimal": 0.798,
+    "keeps_nl": 0.8949,
+    "n_not_lost": 371
+   }
+  },
+  "value_acc_by_bucket": {
+   "8-11": 0.5,
+   "12-15": 0.642,
+   "16-19": 0.686,
+   "20-23": 0.688,
+   "24-27": 0.746,
+   "28-30": 0.716
+  }
+ },
+ "ms_per_pos": 0.6195,
+ "gauntlet": {
+  "opponents": {
+   "mm_d1": {
+    "games": 80,
+    "win": 52,
+    "draw": 0,
+    "loss": 28,
+    "score": 0.65,
+    "ci95": [
+     0.5448,
+     0.7552
+    ]
+   },
+   "mm_d2": {
+    "games": 80,
+    "win": 21,
+    "draw": 0,
+    "loss": 59,
+    "score": 0.2625,
+    "ci95": [
+     0.1655,
+     0.3595
+    ]
+   },
+   "mm_d4": {
+    "games": 80,
+    "win": 8,
+    "draw": 1,
+    "loss": 71,
+    "score": 0.1062,
+    "ci95": [
+     0.0394,
+     0.1731
+    ]
+   },
+   "mm_d6": {
+    "games": 80,
+    "win": 11,
+    "draw": 1,
+    "loss": 68,
+    "score": 0.1437,
+    "ci95": [
+     0.0674,
+     0.2201
+    ]
+   },
+   "mm_d4_evo60": {
+    "games": 80,
+    "win": 9,
+    "draw": 2,
+    "loss": 69,
+    "score": 0.125,
+    "ci95": [
+     0.0542,
+     0.1958
+    ]
+   },
+   "distill_az_2x32": {
+    "games": 80,
+    "win": 11,
+    "draw": 0,
+    "loss": 69,
+    "score": 0.1375,
+    "ci95": [
+     0.0616,
+     0.2134
+    ]
+   },
+   "sup_6x64": {
+    "games": 80,
+    "win": 4,
+    "draw": 1,
+    "loss": 75,
+    "score": 0.0563,
+    "ci95": [
+     0.007,
+     0.1055
+    ]
+   }
+  },
+  "mean_score": 0.2116,
+  "games": 560,
+  "ci95": [
+   0.178,
+   0.2452
+  ],
+  "openings": 40,
+  "opening_seed": 4150,
+  "sec": 2.4
+ },
+ "eval_sec": 3.4,
+ "status": "done",
+ "finished": "2026-11-16T01:10:22"
+}

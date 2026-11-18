@@ -1,0 +1,1837 @@
+{
+  "bots": [
+    "pons_perfect",
+    "nn_sup_6x64_mcts200",
+    "nn_az_6x64_mcts200",
+    "nn_ppo_from_sup_policy",
+    "bruneton_az",
+    "nn_ppo_6x64_mcts200",
+    "nn_distill_az_2x32_policy",
+    "nn_distill_ens_2x32_policy",
+    "alfo_mcts",
+    "ours_minimax_d8",
+    "evo_evo_d2_d4",
+    "ours_minimax_d4",
+    "galli_minimax",
+    "nn_ppo_6x64_policy",
+    "nn_dqn_6x64_policy"
+  ],
+  "matrix": [
+    [
+      null,
+      0.5875,
+      0.6375,
+      0.7625,
+      0.7875,
+      0.75,
+      0.75,
+      0.7875,
+      0.8625,
+      0.9375,
+      0.9375,
+      0.925,
+      0.925,
+      0.8,
+      0.925
+    ],
+    [
+      0.4125,
+      null,
+      0.6,
+      0.65,
+      0.75,
+      0.7375,
+      0.75,
+      0.775,
+      0.925,
+      0.9375,
+      0.9125,
+      0.9375,
+      0.925,
+      0.825,
+      0.9
+    ],
+    [
+      0.3625,
+      0.4,
+      null,
+      0.7125,
+      0.825,
+      0.775,
+      0.8,
+      0.8125,
+      0.7875,
+      0.7875,
+      0.875,
+      0.85,
+      0.85,
+      0.8375,
+      0.875
+    ],
+    [
+      0.2375,
+      0.35,
+      0.2875,
+      null,
+      0.5125,
+      0.525,
+      0.5625,
+      0.675,
+      0.6625,
+      0.7375,
+      0.725,
+      0.7625,
+      0.775,
+      0.7625,
+      0.85
+    ],
+    [
+      0.2125,
+      0.25,
+      0.175,
+      0.4875,
+      null,
+      0.45,
+      0.575,
+      0.65,
+      0.65,
+      0.7875,
+      0.7625,
+      0.7375,
+      0.825,
+      0.6875,
+      0.775
+    ],
+    [
+      0.25,
+      0.2625,
+      0.225,
+      0.475,
+      0.55,
+      null,
+      0.6,
+      0.6625,
+      0.6,
+      0.7,
+      0.6,
+      0.65,
+      0.7375,
+      0.9,
+      0.8125
+    ],
+    [
+      0.25,
+      0.25,
+      0.2,
+      0.4375,
+      0.425,
+      0.4,
+      null,
+      0.4375,
+      0.55,
+      0.675,
+      0.725,
+      0.7125,
+      0.7625,
+      0.675,
+      0.7375
+    ],
+    [
+      0.2125,
+      0.225,
+      0.1875,
+      0.325,
+      0.35,
+      0.3375,
+      0.5625,
+      null,
+      0.825,
+      0.6375,
+      0.6875,
+      0.6375,
+      0.7,
+      0.525,
+      0.7375
+    ],
+    [
+      0.1375,
+      0.075,
+      0.2125,
+      0.3375,
+      0.35,
+      0.4,
+      0.45,
+      0.175,
+      null,
+      0.675,
+      0.5125,
+      0.525,
+      0.5125,
+      0.6125,
+      0.4625
+    ],
+    [
+      0.0625,
+      0.0625,
+      0.2125,
+      0.2625,
+      0.2125,
+      0.3,
+      0.325,
+      0.3625,
+      0.325,
+      null,
+      0.6125,
+      0.6,
+      0.7125,
+      0.5125,
+      0.6625
+    ],
+    [
+      0.0625,
+      0.0875,
+      0.125,
+      0.275,
+      0.2375,
+      0.4,
+      0.275,
+      0.3125,
+      0.4875,
+      0.3875,
+      null,
+      0.525,
+      0.4625,
+      0.5125,
+      0.5375
+    ],
+    [
+      0.075,
+      0.0625,
+      0.15,
+      0.2375,
+      0.2625,
+      0.35,
+      0.2875,
+      0.3625,
+      0.475,
+      0.4,
+      0.475,
+      null,
+      0.4625,
+      0.4625,
+      0.4625
+    ],
+    [
+      0.075,
+      0.075,
+      0.15,
+      0.225,
+      0.175,
+      0.2625,
+      0.2375,
+      0.3,
+      0.4875,
+      0.2875,
+      0.5375,
+      0.5375,
+      null,
+      0.5,
+      0.575
+    ],
+    [
+      0.2,
+      0.175,
+      0.1625,
+      0.2375,
+      0.3125,
+      0.1,
+      0.325,
+      0.475,
+      0.3875,
+      0.4875,
+      0.4875,
+      0.5375,
+      0.5,
+      null,
+      0.6875
+    ],
+    [
+      0.075,
+      0.1,
+      0.125,
+      0.15,
+      0.225,
+      0.1875,
+      0.2625,
+      0.2625,
+      0.5375,
+      0.3375,
+      0.4625,
+      0.5375,
+      0.425,
+      0.3125,
+      null
+    ]
+  ],
+  "wdl": {
+    "nn_sup_6x64_mcts200": {
+      "bruneton_az": [
+        27,
+        6,
+        7
+      ],
+      "nn_az_6x64_mcts200": [
+        23,
+        2,
+        15
+      ],
+      "nn_ppo_6x64_mcts200": [
+        26,
+        7,
+        7
+      ],
+      "alfo_mcts": [
+        36,
+        2,
+        2
+      ],
+      "pons_perfect": [
+        13,
+        7,
+        20
+      ],
+      "nn_ppo_from_sup_policy": [
+        22,
+        8,
+        10
+      ],
+      "nn_distill_az_2x32_policy": [
+        27,
+        6,
+        7
+      ],
+      "nn_distill_ens_2x32_policy": [
+        28,
+        6,
+        6
+      ],
+      "ours_minimax_d8": [
+        37,
+        1,
+        2
+      ],
+      "evo_evo_d2_d4": [
+        36,
+        1,
+        3
+      ],
+      "ours_minimax_d4": [
+        37,
+        1,
+        2
+      ],
+      "galli_minimax": [
+        36,
+        2,
+        2
+      ],
+      "nn_ppo_6x64_policy": [
+        29,
+        8,
+        3
+      ],
+      "nn_dqn_6x64_policy": [
+        35,
+        2,
+        3
+      ]
+    },
+    "bruneton_az": {
+      "nn_sup_6x64_mcts200": [
+        7,
+        6,
+        27
+      ],
+      "nn_az_6x64_mcts200": [
+        6,
+        2,
+        32
+      ],
+      "nn_ppo_6x64_mcts200": [
+        14,
+        8,
+        18
+      ],
+      "alfo_mcts": [
+        26,
+        0,
+        14
+      ],
+      "pons_perfect": [
+        6,
+        5,
+        29
+      ],
+      "nn_ppo_from_sup_policy": [
+        17,
+        5,
+        18
+      ],
+      "nn_distill_az_2x32_policy": [
+        20,
+        6,
+        14
+      ],
+      "nn_distill_ens_2x32_policy": [
+        24,
+        4,
+        12
+      ],
+      "ours_minimax_d8": [
+        29,
+        5,
+        6
+      ],
+      "evo_evo_d2_d4": [
+        30,
+        1,
+        9
+      ],
+      "ours_minimax_d4": [
+        29,
+        1,
+        10
+      ],
+      "galli_minimax": [
+        33,
+        0,
+        7
+      ],
+      "nn_ppo_6x64_policy": [
+        24,
+        7,
+        9
+      ],
+      "nn_dqn_6x64_policy": [
+        29,
+        4,
+        7
+      ]
+    },
+    "nn_az_6x64_mcts200": {
+      "bruneton_az": [
+        32,
+        2,
+        6
+      ],
+      "nn_sup_6x64_mcts200": [
+        15,
+        2,
+        23
+      ],
+      "nn_ppo_6x64_mcts200": [
+        27,
+        8,
+        5
+      ],
+      "alfo_mcts": [
+        31,
+        1,
+        8
+      ],
+      "pons_perfect": [
+        13,
+        3,
+        24
+      ],
+      "nn_ppo_from_sup_policy": [
+        26,
+        5,
+        9
+      ],
+      "nn_distill_az_2x32_policy": [
+        31,
+        2,
+        7
+      ],
+      "nn_distill_ens_2x32_policy": [
+        30,
+        5,
+        5
+      ],
+      "ours_minimax_d8": [
+        31,
+        1,
+        8
+      ],
+      "evo_evo_d2_d4": [
+        35,
+        0,
+        5
+      ],
+      "ours_minimax_d4": [
+        33,
+        2,
+        5
+      ],
+      "galli_minimax": [
+        34,
+        0,
+        6
+      ],
+      "nn_ppo_6x64_policy": [
+        30,
+        7,
+        3
+      ],
+      "nn_dqn_6x64_policy": [
+        35,
+        0,
+        5
+      ]
+    },
+    "nn_ppo_6x64_mcts200": {
+      "bruneton_az": [
+        18,
+        8,
+        14
+      ],
+      "nn_sup_6x64_mcts200": [
+        7,
+        7,
+        26
+      ],
+      "nn_az_6x64_mcts200": [
+        5,
+        8,
+        27
+      ],
+      "alfo_mcts": [
+        23,
+        2,
+        15
+      ],
+      "pons_perfect": [
+        7,
+        6,
+        27
+      ],
+      "nn_ppo_from_sup_policy": [
+        13,
+        12,
+        15
+      ],
+      "nn_distill_az_2x32_policy": [
+        20,
+        8,
+        12
+      ],
+      "nn_distill_ens_2x32_policy": [
+        25,
+        3,
+        12
+      ],
+      "ours_minimax_d8": [
+        26,
+        4,
+        10
+      ],
+      "evo_evo_d2_d4": [
+        24,
+        0,
+        16
+      ],
+      "ours_minimax_d4": [
+        25,
+        2,
+        13
+      ],
+      "galli_minimax": [
+        29,
+        1,
+        10
+      ],
+      "nn_ppo_6x64_policy": [
+        32,
+        8,
+        0
+      ],
+      "nn_dqn_6x64_policy": [
+        31,
+        3,
+        6
+      ]
+    },
+    "alfo_mcts": {
+      "bruneton_az": [
+        14,
+        0,
+        26
+      ],
+      "nn_sup_6x64_mcts200": [
+        2,
+        2,
+        36
+      ],
+      "nn_az_6x64_mcts200": [
+        8,
+        1,
+        31
+      ],
+      "nn_ppo_6x64_mcts200": [
+        15,
+        2,
+        23
+      ],
+      "pons_perfect": [
+        4,
+        3,
+        33
+      ],
+      "nn_ppo_from_sup_policy": [
+        12,
+        3,
+        25
+      ],
+      "nn_distill_az_2x32_policy": [
+        18,
+        0,
+        22
+      ],
+      "nn_distill_ens_2x32_policy": [
+        7,
+        0,
+        33
+      ],
+      "ours_minimax_d8": [
+        27,
+        0,
+        13
+      ],
+      "evo_evo_d2_d4": [
+        20,
+        1,
+        19
+      ],
+      "ours_minimax_d4": [
+        20,
+        2,
+        18
+      ],
+      "galli_minimax": [
+        20,
+        1,
+        19
+      ],
+      "nn_ppo_6x64_policy": [
+        24,
+        1,
+        15
+      ],
+      "nn_dqn_6x64_policy": [
+        18,
+        1,
+        21
+      ]
+    },
+    "pons_perfect": {
+      "bruneton_az": [
+        29,
+        5,
+        6
+      ],
+      "nn_sup_6x64_mcts200": [
+        20,
+        7,
+        13
+      ],
+      "nn_az_6x64_mcts200": [
+        24,
+        3,
+        13
+      ],
+      "nn_ppo_6x64_mcts200": [
+        27,
+        6,
+        7
+      ],
+      "alfo_mcts": [
+        33,
+        3,
+        4
+      ],
+      "nn_ppo_from_sup_policy": [
+        28,
+        5,
+        7
+      ],
+      "nn_distill_az_2x32_policy": [
+        26,
+        8,
+        6
+      ],
+      "nn_distill_ens_2x32_policy": [
+        28,
+        7,
+        5
+      ],
+      "ours_minimax_d8": [
+        37,
+        1,
+        2
+      ],
+      "evo_evo_d2_d4": [
+        37,
+        1,
+        2
+      ],
+      "ours_minimax_d4": [
+        36,
+        2,
+        2
+      ],
+      "galli_minimax": [
+        36,
+        2,
+        2
+      ],
+      "nn_ppo_6x64_policy": [
+        30,
+        4,
+        6
+      ],
+      "nn_dqn_6x64_policy": [
+        36,
+        2,
+        2
+      ]
+    },
+    "nn_ppo_from_sup_policy": {
+      "bruneton_az": [
+        18,
+        5,
+        17
+      ],
+      "nn_sup_6x64_mcts200": [
+        10,
+        8,
+        22
+      ],
+      "nn_az_6x64_mcts200": [
+        9,
+        5,
+        26
+      ],
+      "nn_ppo_6x64_mcts200": [
+        15,
+        12,
+        13
+      ],
+      "alfo_mcts": [
+        25,
+        3,
+        12
+      ],
+      "pons_perfect": [
+        7,
+        5,
+        28
+      ],
+      "nn_distill_az_2x32_policy": [
+        19,
+        7,
+        14
+      ],
+      "nn_distill_ens_2x32_policy": [
+        25,
+        4,
+        11
+      ],
+      "ours_minimax_d8": [
+        27,
+        5,
+        8
+      ],
+      "evo_evo_d2_d4": [
+        28,
+        2,
+        10
+      ],
+      "ours_minimax_d4": [
+        29,
+        3,
+        8
+      ],
+      "galli_minimax": [
+        30,
+        2,
+        8
+      ],
+      "nn_ppo_6x64_policy": [
+        29,
+        3,
+        8
+      ],
+      "nn_dqn_6x64_policy": [
+        33,
+        2,
+        5
+      ]
+    },
+    "nn_distill_az_2x32_policy": {
+      "bruneton_az": [
+        14,
+        6,
+        20
+      ],
+      "nn_sup_6x64_mcts200": [
+        7,
+        6,
+        27
+      ],
+      "nn_az_6x64_mcts200": [
+        7,
+        2,
+        31
+      ],
+      "nn_ppo_6x64_mcts200": [
+        12,
+        8,
+        20
+      ],
+      "alfo_mcts": [
+        22,
+        0,
+        18
+      ],
+      "pons_perfect": [
+        6,
+        8,
+        26
+      ],
+      "nn_ppo_from_sup_policy": [
+        14,
+        7,
+        19
+      ],
+      "nn_distill_ens_2x32_policy": [
+        14,
+        7,
+        19
+      ],
+      "ours_minimax_d8": [
+        25,
+        4,
+        11
+      ],
+      "evo_evo_d2_d4": [
+        28,
+        2,
+        10
+      ],
+      "ours_minimax_d4": [
+        27,
+        3,
+        10
+      ],
+      "galli_minimax": [
+        30,
+        1,
+        9
+      ],
+      "nn_ppo_6x64_policy": [
+        24,
+        6,
+        10
+      ],
+      "nn_dqn_6x64_policy": [
+        29,
+        1,
+        10
+      ]
+    },
+    "nn_distill_ens_2x32_policy": {
+      "bruneton_az": [
+        12,
+        4,
+        24
+      ],
+      "nn_sup_6x64_mcts200": [
+        6,
+        6,
+        28
+      ],
+      "nn_az_6x64_mcts200": [
+        5,
+        5,
+        30
+      ],
+      "nn_ppo_6x64_mcts200": [
+        12,
+        3,
+        25
+      ],
+      "alfo_mcts": [
+        33,
+        0,
+        7
+      ],
+      "pons_perfect": [
+        5,
+        7,
+        28
+      ],
+      "nn_ppo_from_sup_policy": [
+        11,
+        4,
+        25
+      ],
+      "nn_distill_az_2x32_policy": [
+        19,
+        7,
+        14
+      ],
+      "ours_minimax_d8": [
+        24,
+        3,
+        13
+      ],
+      "evo_evo_d2_d4": [
+        26,
+        3,
+        11
+      ],
+      "ours_minimax_d4": [
+        25,
+        1,
+        14
+      ],
+      "galli_minimax": [
+        27,
+        2,
+        11
+      ],
+      "nn_ppo_6x64_policy": [
+        18,
+        6,
+        16
+      ],
+      "nn_dqn_6x64_policy": [
+        29,
+        1,
+        10
+      ]
+    },
+    "ours_minimax_d8": {
+      "bruneton_az": [
+        6,
+        5,
+        29
+      ],
+      "nn_sup_6x64_mcts200": [
+        2,
+        1,
+        37
+      ],
+      "nn_az_6x64_mcts200": [
+        8,
+        1,
+        31
+      ],
+      "nn_ppo_6x64_mcts200": [
+        10,
+        4,
+        26
+      ],
+      "alfo_mcts": [
+        13,
+        0,
+        27
+      ],
+      "pons_perfect": [
+        2,
+        1,
+        37
+      ],
+      "nn_ppo_from_sup_policy": [
+        8,
+        5,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        11,
+        4,
+        25
+      ],
+      "nn_distill_ens_2x32_policy": [
+        13,
+        3,
+        24
+      ],
+      "evo_evo_d2_d4": [
+        22,
+        5,
+        13
+      ],
+      "ours_minimax_d4": [
+        22,
+        4,
+        14
+      ],
+      "galli_minimax": [
+        28,
+        1,
+        11
+      ],
+      "nn_ppo_6x64_policy": [
+        20,
+        1,
+        19
+      ],
+      "nn_dqn_6x64_policy": [
+        25,
+        3,
+        12
+      ]
+    },
+    "evo_evo_d2_d4": {
+      "bruneton_az": [
+        9,
+        1,
+        30
+      ],
+      "nn_sup_6x64_mcts200": [
+        3,
+        1,
+        36
+      ],
+      "nn_az_6x64_mcts200": [
+        5,
+        0,
+        35
+      ],
+      "nn_ppo_6x64_mcts200": [
+        16,
+        0,
+        24
+      ],
+      "alfo_mcts": [
+        19,
+        1,
+        20
+      ],
+      "pons_perfect": [
+        2,
+        1,
+        37
+      ],
+      "nn_ppo_from_sup_policy": [
+        10,
+        2,
+        28
+      ],
+      "nn_distill_az_2x32_policy": [
+        10,
+        2,
+        28
+      ],
+      "nn_distill_ens_2x32_policy": [
+        11,
+        3,
+        26
+      ],
+      "ours_minimax_d8": [
+        13,
+        5,
+        22
+      ],
+      "ours_minimax_d4": [
+        18,
+        6,
+        16
+      ],
+      "galli_minimax": [
+        17,
+        3,
+        20
+      ],
+      "nn_ppo_6x64_policy": [
+        19,
+        3,
+        18
+      ],
+      "nn_dqn_6x64_policy": [
+        20,
+        3,
+        17
+      ]
+    },
+    "ours_minimax_d4": {
+      "bruneton_az": [
+        10,
+        1,
+        29
+      ],
+      "nn_sup_6x64_mcts200": [
+        2,
+        1,
+        37
+      ],
+      "nn_az_6x64_mcts200": [
+        5,
+        2,
+        33
+      ],
+      "nn_ppo_6x64_mcts200": [
+        13,
+        2,
+        25
+      ],
+      "alfo_mcts": [
+        18,
+        2,
+        20
+      ],
+      "pons_perfect": [
+        2,
+        2,
+        36
+      ],
+      "nn_ppo_from_sup_policy": [
+        8,
+        3,
+        29
+      ],
+      "nn_distill_az_2x32_policy": [
+        10,
+        3,
+        27
+      ],
+      "nn_distill_ens_2x32_policy": [
+        14,
+        1,
+        25
+      ],
+      "ours_minimax_d8": [
+        14,
+        4,
+        22
+      ],
+      "evo_evo_d2_d4": [
+        16,
+        6,
+        18
+      ],
+      "galli_minimax": [
+        16,
+        5,
+        19
+      ],
+      "nn_ppo_6x64_policy": [
+        17,
+        3,
+        20
+      ],
+      "nn_dqn_6x64_policy": [
+        16,
+        5,
+        19
+      ]
+    },
+    "galli_minimax": {
+      "bruneton_az": [
+        7,
+        0,
+        33
+      ],
+      "nn_sup_6x64_mcts200": [
+        2,
+        2,
+        36
+      ],
+      "nn_az_6x64_mcts200": [
+        6,
+        0,
+        34
+      ],
+      "nn_ppo_6x64_mcts200": [
+        10,
+        1,
+        29
+      ],
+      "alfo_mcts": [
+        19,
+        1,
+        20
+      ],
+      "pons_perfect": [
+        2,
+        2,
+        36
+      ],
+      "nn_ppo_from_sup_policy": [
+        8,
+        2,
+        30
+      ],
+      "nn_distill_az_2x32_policy": [
+        9,
+        1,
+        30
+      ],
+      "nn_distill_ens_2x32_policy": [
+        11,
+        2,
+        27
+      ],
+      "ours_minimax_d8": [
+        11,
+        1,
+        28
+      ],
+      "evo_evo_d2_d4": [
+        20,
+        3,
+        17
+      ],
+      "ours_minimax_d4": [
+        19,
+        5,
+        16
+      ],
+      "nn_ppo_6x64_policy": [
+        19,
+        2,
+        19
+      ],
+      "nn_dqn_6x64_policy": [
+        22,
+        2,
+        16
+      ]
+    },
+    "nn_ppo_6x64_policy": {
+      "bruneton_az": [
+        9,
+        7,
+        24
+      ],
+      "nn_sup_6x64_mcts200": [
+        3,
+        8,
+        29
+      ],
+      "nn_az_6x64_mcts200": [
+        3,
+        7,
+        30
+      ],
+      "nn_ppo_6x64_mcts200": [
+        0,
+        8,
+        32
+      ],
+      "alfo_mcts": [
+        15,
+        1,
+        24
+      ],
+      "pons_perfect": [
+        6,
+        4,
+        30
+      ],
+      "nn_ppo_from_sup_policy": [
+        8,
+        3,
+        29
+      ],
+      "nn_distill_az_2x32_policy": [
+        10,
+        6,
+        24
+      ],
+      "nn_distill_ens_2x32_policy": [
+        16,
+        6,
+        18
+      ],
+      "ours_minimax_d8": [
+        19,
+        1,
+        20
+      ],
+      "evo_evo_d2_d4": [
+        18,
+        3,
+        19
+      ],
+      "ours_minimax_d4": [
+        20,
+        3,
+        17
+      ],
+      "galli_minimax": [
+        19,
+        2,
+        19
+      ],
+      "nn_dqn_6x64_policy": [
+        27,
+        1,
+        12
+      ]
+    },
+    "nn_dqn_6x64_policy": {
+      "bruneton_az": [
+        7,
+        4,
+        29
+      ],
+      "nn_sup_6x64_mcts200": [
+        3,
+        2,
+        35
+      ],
+      "nn_az_6x64_mcts200": [
+        5,
+        0,
+        35
+      ],
+      "nn_ppo_6x64_mcts200": [
+        6,
+        3,
+        31
+      ],
+      "alfo_mcts": [
+        21,
+        1,
+        18
+      ],
+      "pons_perfect": [
+        2,
+        2,
+        36
+      ],
+      "nn_ppo_from_sup_policy": [
+        5,
+        2,
+        33
+      ],
+      "nn_distill_az_2x32_policy": [
+        10,
+        1,
+        29
+      ],
+      "nn_distill_ens_2x32_policy": [
+        10,
+        1,
+        29
+      ],
+      "ours_minimax_d8": [
+        12,
+        3,
+        25
+      ],
+      "evo_evo_d2_d4": [
+        17,
+        3,
+        20
+      ],
+      "ours_minimax_d4": [
+        19,
+        5,
+        16
+      ],
+      "galli_minimax": [
+        16,
+        2,
+        22
+      ],
+      "nn_ppo_6x64_policy": [
+        12,
+        1,
+        27
+      ]
+    }
+  },
+  "per_bot": {
+    "pons_perfect": {
+      "games": 560,
+      "score": 0.8125,
+      "wins": 427,
+      "draws": 56,
+      "losses": 77,
+      "score_moving_first": 0.8321,
+      "avg_ms": 36.6,
+      "max_ms": 956.0,
+      "forfeits": 0
+    },
+    "nn_sup_6x64_mcts200": {
+      "games": 560,
+      "score": 0.7884,
+      "wins": 412,
+      "draws": 59,
+      "losses": 89,
+      "score_moving_first": 0.8089,
+      "avg_ms": 305.1,
+      "max_ms": 1224.5,
+      "forfeits": 0
+    },
+    "nn_az_6x64_mcts200": {
+      "games": 560,
+      "score": 0.7536,
+      "wins": 403,
+      "draws": 38,
+      "losses": 119,
+      "score_moving_first": 0.7357,
+      "avg_ms": 303.7,
+      "max_ms": 1356.5,
+      "forfeits": 0
+    },
+    "nn_ppo_from_sup_policy": {
+      "games": 560,
+      "score": 0.6018,
+      "wins": 304,
+      "draws": 66,
+      "losses": 190,
+      "score_moving_first": 0.6,
+      "avg_ms": 2.5,
+      "max_ms": 191.3,
+      "forfeits": 0
+    },
+    "bruneton_az": {
+      "games": 560,
+      "score": 0.5732,
+      "wins": 294,
+      "draws": 54,
+      "losses": 212,
+      "score_moving_first": 0.5625,
+      "avg_ms": 357.9,
+      "max_ms": 1462.0,
+      "forfeits": 0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "games": 560,
+      "score": 0.5732,
+      "wins": 285,
+      "draws": 72,
+      "losses": 203,
+      "score_moving_first": 0.5411,
+      "avg_ms": 349.9,
+      "max_ms": 1185.3,
+      "forfeits": 0
+    },
+    "nn_distill_az_2x32_policy": {
+      "games": 560,
+      "score": 0.517,
+      "wins": 259,
+      "draws": 61,
+      "losses": 240,
+      "score_moving_first": 0.5089,
+      "avg_ms": 0.8,
+      "max_ms": 117.1,
+      "forfeits": 0
+    },
+    "nn_distill_ens_2x32_policy": {
+      "games": 560,
+      "score": 0.4964,
+      "wins": 252,
+      "draws": 52,
+      "losses": 256,
+      "score_moving_first": 0.4786,
+      "avg_ms": 0.8,
+      "max_ms": 3.0,
+      "forfeits": 0
+    },
+    "alfo_mcts": {
+      "games": 560,
+      "score": 0.3884,
+      "wins": 209,
+      "draws": 17,
+      "losses": 334,
+      "score_moving_first": 0.3518,
+      "avg_ms": 609.7,
+      "max_ms": 1914.2,
+      "forfeits": 0
+    },
+    "ours_minimax_d8": {
+      "games": 560,
+      "score": 0.3732,
+      "wins": 190,
+      "draws": 38,
+      "losses": 332,
+      "score_moving_first": 0.3786,
+      "avg_ms": 18.8,
+      "max_ms": 209.6,
+      "forfeits": 0
+    },
+    "evo_evo_d2_d4": {
+      "games": 560,
+      "score": 0.3348,
+      "wins": 172,
+      "draws": 31,
+      "losses": 357,
+      "score_moving_first": 0.3,
+      "avg_ms": 1.9,
+      "max_ms": 13.1,
+      "forfeits": 0
+    },
+    "ours_minimax_d4": {
+      "games": 560,
+      "score": 0.3232,
+      "wins": 161,
+      "draws": 40,
+      "losses": 359,
+      "score_moving_first": 0.2946,
+      "avg_ms": 1.1,
+      "max_ms": 120.7,
+      "forfeits": 0
+    },
+    "galli_minimax": {
+      "games": 560,
+      "score": 0.3161,
+      "wins": 165,
+      "draws": 24,
+      "losses": 371,
+      "score_moving_first": 0.3429,
+      "avg_ms": 131.3,
+      "max_ms": 863.2,
+      "forfeits": 0
+    },
+    "nn_ppo_6x64_policy": {
+      "games": 560,
+      "score": 0.3625,
+      "wins": 173,
+      "draws": 60,
+      "losses": 327,
+      "score_moving_first": 0.3429,
+      "avg_ms": 2.5,
+      "max_ms": 96.9,
+      "forfeits": 0
+    },
+    "nn_dqn_6x64_policy": {
+      "games": 560,
+      "score": 0.2857,
+      "wins": 145,
+      "draws": 30,
+      "losses": 385,
+      "score_moving_first": 0.2732,
+      "avg_ms": 2.5,
+      "max_ms": 137.1,
+      "forfeits": 0
+    }
+  },
+  "elo": {
+    "pons_perfect": {
+      "elo": 1811.5,
+      "lo": 1770.3,
+      "hi": 1851.1
+    },
+    "nn_sup_6x64_mcts200": {
+      "elo": 1785.6,
+      "lo": 1751.6,
+      "hi": 1824.6
+    },
+    "nn_az_6x64_mcts200": {
+      "elo": 1750.9,
+      "lo": 1714.1,
+      "hi": 1792.4
+    },
+    "nn_ppo_from_sup_policy": {
+      "elo": 1621.6,
+      "lo": 1585.7,
+      "hi": 1660.1
+    },
+    "bruneton_az": {
+      "elo": 1599.5,
+      "lo": 1566.4,
+      "hi": 1637.9
+    },
+    "nn_ppo_6x64_mcts200": {
+      "elo": 1599.5,
+      "lo": 1562.4,
+      "hi": 1636.1
+    },
+    "nn_distill_az_2x32_policy": {
+      "elo": 1556.9,
+      "lo": 1518.6,
+      "hi": 1594.6
+    },
+    "nn_distill_ens_2x32_policy": {
+      "elo": 1541.5,
+      "lo": 1508.9,
+      "hi": 1578.3
+    },
+    "alfo_mcts": {
+      "elo": 1460.3,
+      "lo": 1425.3,
+      "hi": 1495.0
+    },
+    "ours_minimax_d8": {
+      "elo": 1448.6,
+      "lo": 1414.0,
+      "hi": 1484.4
+    },
+    "evo_evo_d2_d4": {
+      "elo": 1418.4,
+      "lo": 1377.1,
+      "hi": 1458.5
+    },
+    "ours_minimax_d4": {
+      "elo": 1409.0,
+      "lo": 1409.0,
+      "hi": 1409.0
+    },
+    "galli_minimax": {
+      "elo": 1403.2,
+      "lo": 1366.2,
+      "hi": 1439.9
+    },
+    "nn_ppo_6x64_policy": {
+      "elo": 1440.3,
+      "lo": 1403.6,
+      "hi": 1476.5
+    },
+    "nn_dqn_6x64_policy": {
+      "elo": 1377.8,
+      "lo": 1339.4,
+      "hi": 1415.7
+    }
+  },
+  "elo_anchor": "ours_minimax_d4",
+  "elo_anchor_value": 1409.0,
+  "unrated": [],
+  "first_player_score": 0.4901,
+  "games": 4200,
+  "decisive": 3851,
+  "forfeits": [],
+  "meta": {
+    "name": "top15",
+    "openings": [
+      "71",
+      "643",
+      "232",
+      "262",
+      "44",
+      "2763",
+      "22",
+      "1473",
+      "24",
+      "2537",
+      "3257",
+      "243",
+      "5466",
+      "72",
+      "3117",
+      "75",
+      "273",
+      "374",
+      "3344",
+      "4626"
+    ],
+    "seed": 4150,
+    "created": "2026-11-16T01:07:55",
+    "seconds": 2850.2,
+    "workers": 6,
+    "threads_per_worker": 1,
+    "move_timeout": 10.0,
+    "game_timeout": 300.0,
+    "roster": "top15",
+    "elo_anchor": "ours_minimax_d4:1409",
+    "scheduled": 4200,
+    "recorded": 4200,
+    "missing": 0,
+    "duplicates": 0,
+    "command": "/home/connor/projects/introAI/connect4/arena/tournament.py --roster top15 --name top15 --openings 20 --workers 6",
+    "machine": {
+      "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "cpus": 16
+    }
+  },
+  "bot_info": {
+    "pons_perfect": {
+      "label": "Pons solver (perfect play)",
+      "group": "open source",
+      "author": "Pascal Pons",
+      "url": "https://github.com/PascalPons/connect4",
+      "commit": "d6ba50d",
+      "license": "AGPL-3.0",
+      "lang": "C++",
+      "algorithm": "Exact solver: negamax + alpha-beta on bitboards, transposition table, iterative null-window search, opening book. Never makes a mistake.",
+      "params": {}
+    },
+    "nn_sup_6x64_mcts200": {
+      "label": "Our neural net (sup_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/sup_6x64/best.npz"
+      }
+    },
+    "nn_az_6x64_mcts200": {
+      "label": "Our neural net (az_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/az_6x64/model.npz"
+      }
+    },
+    "nn_ppo_from_sup_policy": {
+      "label": "Our neural net (ppo_from_sup, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/ppo_from_sup/model.npz"
+      }
+    },
+    "bruneton_az": {
+      "label": "AlphaZero (Bruneton et al.)",
+      "group": "open source",
+      "author": "J.-P. Bruneton, A. Douin, V. Reverdy",
+      "url": "https://github.com/jpbruneton/Alpha-Zero-algorithm-for-Connect-4-game",
+      "commit": "6cd76be",
+      "license": "BSD-3-Clause",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (1 block x 256 filters, 1.2 M params) policy+value net trained by self-play, PUCT MCTS. Pretrained weights from the repo.",
+      "params": {
+        "sims": 200
+      }
+    },
+    "nn_ppo_6x64_mcts200": {
+      "label": "Our neural net (ppo_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/ppo_6x64/model.npz"
+      }
+    },
+    "nn_distill_az_2x32_policy": {
+      "label": "Our neural net (distill_az_2x32, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/distill_az_2x32/best.npz"
+      }
+    },
+    "nn_distill_ens_2x32_policy": {
+      "label": "Our neural net (distill_ens_2x32, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/distill_ens_2x32/best.npz"
+      }
+    },
+    "alfo_mcts": {
+      "label": "UCT MCTS, random roll-outs (Alfo5123)",
+      "group": "open source",
+      "author": "Alfredo de la Fuente",
+      "url": "https://github.com/Alfo5123/Connect4",
+      "commit": "d371203",
+      "license": "MIT",
+      "lang": "Python 2 (run under 3)",
+      "algorithm": "Classic Monte Carlo Tree Search (UCT) with uniformly random play-outs; no heuristic, no neural network.",
+      "params": {
+        "iterations": 3000
+      }
+    },
+    "ours_minimax_d8": {
+      "label": "Our minimax, depth 8 (slider level 9)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python",
+      "algorithm": "Same search as above, 8 plies deep.",
+      "params": {
+        "depth": 8
+      }
+    },
+    "evo_evo_d2_d4": {
+      "label": "Evolved heuristic (evo_d2), minimax d4",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our minimax + alpha-beta (depth 4) with heuristic weights tuned by CMA-ES.",
+      "params": {
+        "model": "runs/evo_d2/weights.json"
+      }
+    },
+    "ours_minimax_d4": {
+      "label": "Our minimax, depth 4 (slider level 5)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python",
+      "algorithm": "Negamax + alpha-beta, transposition table, move ordering, iterative deepening, bit-parallel window heuristic.",
+      "params": {
+        "depth": 4
+      }
+    },
+    "galli_minimax": {
+      "label": "Minimax (Keith Galli tutorial)",
+      "group": "open source",
+      "author": "Keith Galli",
+      "url": "https://github.com/KeithGalli/Connect4-Python",
+      "commit": "503c0b4",
+      "license": "MIT",
+      "lang": "Python / numpy",
+      "algorithm": "Minimax + alpha-beta, window heuristic (center 3, three 5, two 2, opponent three -4), no move ordering or transposition table.",
+      "params": {
+        "depth": 5
+      }
+    },
+    "nn_ppo_6x64_policy": {
+      "label": "Our neural net (ppo_6x64, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/ppo_6x64/model.npz"
+      }
+    },
+    "nn_dqn_6x64_policy": {
+      "label": "Our neural net (dqn_6x64, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/dqn_6x64/model.npz"
+      }
+    }
+  }
+}

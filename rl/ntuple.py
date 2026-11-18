@@ -44,7 +44,7 @@ cost.json.  Lab page: accuracy vs perfect play, value accuracy, Elo.
 """
 
 import argparse
-import math
+import json
 import os
 import time
 
@@ -146,12 +146,11 @@ class NTupleNet:
     def save(self, path, meta=None):
         tmp = path + ".tmp.npz"
         np.savez(tmp, tuples=self.tuples, lut=self.lut.astype(np.float32),
-                 meta_json=np.array(__import__("json").dumps(meta or {})))
+                 meta_json=np.array(json.dumps(meta or {})))
         os.replace(tmp, path)
 
     @classmethod
     def load(cls, path):
-        import json
         with np.load(path, allow_pickle=False) as z:
             net = cls(z["tuples"], z["lut"].astype(np.float32))
             net.meta = json.loads(str(z["meta_json"])) if "meta_json" in z.files else {}

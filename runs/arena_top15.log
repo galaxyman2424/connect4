@@ -1,0 +1,71 @@
+15 bots, 105 pairings, 4200 games (20 openings x 2 colours), 6 workers x 1 threads, move limit 10s, game limit 300s, Elo anchor ours_minimax_d4=1409 -> /home/connor/projects/introAI/connect4/experiments/results/arena/top15
+  84/4200 games  137s elapsed, ~112 min left
+  168/4200 games  300s elapsed, ~120 min left
+  252/4200 games  409s elapsed, ~107 min left
+  336/4200 games  570s elapsed, ~109 min left
+  420/4200 games  745s elapsed, ~112 min left
+  504/4200 games  854s elapsed, ~104 min left
+  588/4200 games  948s elapsed, ~97 min left
+  672/4200 games  1050s elapsed, ~92 min left
+  756/4200 games  1123s elapsed, ~85 min left
+  840/4200 games  1197s elapsed, ~80 min left
+  924/4200 games  1278s elapsed, ~76 min left
+  1008/4200 games  1349s elapsed, ~71 min left
+  1092/4200 games  1411s elapsed, ~67 min left
+  1176/4200 games  1475s elapsed, ~63 min left
+  1260/4200 games  1546s elapsed, ~60 min left
+  1344/4200 games  1608s elapsed, ~57 min left
+  1428/4200 games  1668s elapsed, ~54 min left
+  1512/4200 games  1740s elapsed, ~52 min left
+  1596/4200 games  1810s elapsed, ~49 min left
+  1680/4200 games  1879s elapsed, ~47 min left
+  1764/4200 games  1972s elapsed, ~45 min left
+  1848/4200 games  2032s elapsed, ~43 min left
+  1932/4200 games  2099s elapsed, ~41 min left
+  2016/4200 games  2182s elapsed, ~39 min left
+  2100/4200 games  2292s elapsed, ~38 min left
+  2184/4200 games  2410s elapsed, ~37 min left
+  2268/4200 games  2524s elapsed, ~36 min left
+  2352/4200 games  2637s elapsed, ~35 min left
+  2436/4200 games  2700s elapsed, ~33 min left
+  2520/4200 games  2706s elapsed, ~30 min left
+  2604/4200 games  2715s elapsed, ~28 min left
+  2688/4200 games  2731s elapsed, ~26 min left
+  2772/4200 games  2737s elapsed, ~24 min left
+  2856/4200 games  2739s elapsed, ~21 min left
+  2940/4200 games  2741s elapsed, ~20 min left
+  3024/4200 games  2753s elapsed, ~18 min left
+  3108/4200 games  2754s elapsed, ~16 min left
+  3192/4200 games  2756s elapsed, ~15 min left
+  3276/4200 games  2766s elapsed, ~13 min left
+  3360/4200 games  2767s elapsed, ~12 min left
+  3444/4200 games  2770s elapsed, ~10 min left
+  3528/4200 games  2780s elapsed, ~9 min left
+  3612/4200 games  2782s elapsed, ~8 min left
+  3696/4200 games  2792s elapsed, ~6 min left
+  3780/4200 games  2801s elapsed, ~5 min left
+  3864/4200 games  2809s elapsed, ~4 min left
+  3948/4200 games  2813s elapsed, ~3 min left
+  4032/4200 games  2824s elapsed, ~2 min left
+  4116/4200 games  2835s elapsed, ~1 min left
+  4200/4200 games  2849s elapsed, ~0 min left
+
+bot                             Elo  score     W     D     L   ms/move    max ms  forfeit
+pons_perfect                 1811.5  0.812   427    56    77      36.6     956.0        0
+nn_sup_6x64_mcts200          1785.6  0.788   412    59    89     305.1    1224.5        0
+nn_az_6x64_mcts200           1750.9  0.754   403    38   119     303.7    1356.5        0
+nn_ppo_from_sup_policy       1621.6  0.602   304    66   190       2.5     191.3        0
+bruneton_az                  1599.5  0.573   294    54   212     357.9    1462.0        0
+nn_ppo_6x64_mcts200          1599.5  0.573   285    72   203     349.9    1185.3        0
+nn_distill_az_2x32_policy    1556.9  0.517   259    61   240       0.8     117.1        0
+nn_distill_ens_2x32_policy   1541.5  0.496   252    52   256       0.8       3.0        0
+alfo_mcts                    1460.3  0.388   209    17   334     609.7    1914.2        0
+ours_minimax_d8              1448.6  0.373   190    38   332      18.8     209.6        0
+nn_ppo_6x64_policy           1440.3  0.362   173    60   327       2.5      96.9        0
+evo_evo_d2_d4                1418.4  0.335   172    31   357       1.9      13.1        0
+ours_minimax_d4              1409.0  0.323   161    40   359       1.1     120.7        0
+galli_minimax                1403.2  0.316   165    24   371     131.3     863.2        0
+nn_dqn_6x64_policy           1377.8  0.286   145    30   385       2.5     137.1        0
+first player scored 0.490 overall
+wrote /home/connor/projects/introAI/connect4/experiments/results/arena/top15/summary.json
+scheduled 4200 games, recorded 4200

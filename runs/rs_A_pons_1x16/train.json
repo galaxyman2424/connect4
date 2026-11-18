@@ -1,0 +1,15 @@
+{
+ "params": 16994,
+ "device": "cuda:0",
+ "device_name": "NVIDIA GeForce RTX 3050",
+ "train_sec": 33.1,
+ "train_loop_sec": 31.5,
+ "gpu_sec": 31.5,
+ "best_epoch": 40,
+ "best_val_loss": 1.42375,
+ "val_teacher_agree": 0.7997,
+ "val_pons_acc": 0.7997,
+ "val_value_acc": 0.8446,
+ "epochs": 40,
+ "finished": "2026-11-16T00:11:00"
+}
