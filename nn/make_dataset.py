@@ -41,10 +41,15 @@ ILLEGAL = -128
 
 
 def canon(board):
-    g = board.to_grid()
-    a = tuple(map(tuple, g))
-    b = tuple(tuple(r[::-1]) for r in g)
-    return min(a, b)
+    """Key that is the same for a position and its left-right mirror: the smaller of
+    (current-player bits, mask) and its mirror.  Two ints, so millions fit in memory."""
+    cur, mask = board.current_bits(), board.mask
+    mc = mm = 0
+    for c in range(7):
+        col = (1 << 7) - 1
+        mc |= ((cur >> (c * 7)) & col) << ((6 - c) * 7)
+        mm |= ((mask >> (c * 7)) & col) << ((6 - c) * 7)
+    return min((cur, mask), (mc, mm))
 
 
 def gen_game(seed):

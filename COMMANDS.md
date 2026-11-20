@@ -248,6 +248,40 @@ Writes `docs/PAPER_OUTLINE.md` (gitignored, local only).
 
 ---
 
+## G. Score-head nets: aiming for 95%+ (Linux PC, branch `eval-bar-and-accuracy`)
+
+Everything in one go (resumable; ~15-18 h):
+
+```bash
+cd ~/projects/introAI/connect4 && source .venv/bin/activate
+tmux new -s c4train
+bash tools/train_95.sh              # SIZE=6x64 or SEEDS="0" to make it shorter
+#   detach: Ctrl+b then d    re-attach: tmux attach -t c4train    progress: tail -f logs/*.log
+```
+
+Or step by step:
+
+```bash
+# 1. 3M solver-labelled positions (~3.5 h, CPU)
+python -m nn.make_dataset --positions 3000000 --workers 14 --seed 2027 --out nn_data/solver_3m.npz
+# 2. score-head net (~5 min/epoch for 8x128 on the 3050); repeat with --seed 1, 2 for the ensemble
+python -m nn.train_score --data nn_data/solver_3m.npz --run score_8x128_s0 --blocks 8 --channels 128 --epochs 30 --seed 0
+# 3. positions it gets wrong in its own games (~1 h)
+python -m nn.mine_hard --run score_8x128_s0 --positions 600000 --out nn_data/hard_8x128_s0.npz
+# 4. fine-tune with them
+python -m nn.train_score --data nn_data/solver_3m.npz --hard nn_data/hard_8x128_s0.npz --hard-weight 2 \
+    --init runs/score_8x128_s0/checkpoints/best.pt --run score_8x128_s0_r1 --epochs 10 --lr 6e-4
+# 5. benchmark (per head, + ensemble, + 1-ply lookahead)
+python -m nn.eval_score --runs score_8x128_s0,score_8x128_s0_r1 --lookahead
+python -m nn.eval_score --runs score_8x128_s0_r1,score_8x128_s1_r1,score_8x128_s2_r1 --lookahead
+```
+
+Watch `BENCH ...` in each epoch line. Quick start without the 3.5 h of labelling: train on
+`nn_data/solver_300k.npz`, or warm-start from the old net with
+`--init runs/rs_A_pons_8x128/checkpoints/best.pt` (its score head starts from scratch).
+
+---
+
 ## Where things end up
 
 | what | where |

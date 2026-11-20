@@ -69,3 +69,24 @@ A version that *would* be a fair, small paper experiment: use the interpretabili
 policy when patched) and try **hand-designed / LLM-proposed localized edits** to fix one
 measured failure class (e.g. missed blocks), then compare against fine-tuning on the same
 positions with the same budget. Expect fine-tuning to win; the comparison itself is the result.
+
+## Implemented (2026-11-20)
+
+| file | what |
+|---|---|
+| `nn/model.py` | optional score head (7 outputs = Pons score per column); `forward()` unchanged |
+| `nn/train_score.py` | soft policy target softmax(score/T), WDL, score regression + listwise ranking loss, mirroring, EMA, `--hard`, `--init`; picks the playing head on validation plies 8-30 |
+| `nn/mine_hard.py` | batched GPU self-play of a trained net, solver labels, keeps what it gets wrong |
+| `nn/eval_score.py` | benchmark per head, mirror, ensembles, 1-ply score lookahead |
+| `nn/numpy_net.py`, `nn/export.py` | score head in model.npz; meta `play_head` + `play_mirror` so website/arena use the best head |
+| `tools/train_95.sh` | the whole pipeline, resumable |
+
+Validation split is a fixed hash of each (mirror-canonical) position, so seeds, dataset sizes
+and hard-mining rounds all hold out the same positions.
+
+**Smoke test, same 2x32 size and same 285k data as `rs_A_pons_2x32`, 40 epochs:**
+old method 0.873, score-head method 0.898 with mirror (0.890 without). +2.5 points before any
+extra data. That 2x32 net was only 0.829 optimal on positions from its own games
+(`nn/mine_hard.py`), which is what the hard-mining round targets.
+
+Commands: `COMMANDS.md`, section G.

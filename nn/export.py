@@ -41,7 +41,12 @@ def export_model(model, path, meta=None):
     arrays["pol.w"], arrays["pol.b"] = w[:, :, 0, 0], b
     w, b = _fold(model.val_conv, model.val_bn)
     arrays["val.w"], arrays["val.b"] = w[:, :, 0, 0], b
-    for name, lin in (("pol_fc", model.pol_fc), ("val_fc1", model.val_fc1), ("val_fc2", model.val_fc2)):
+    lins = [("pol_fc", model.pol_fc), ("val_fc1", model.val_fc1), ("val_fc2", model.val_fc2)]
+    if getattr(model, "has_score", False):
+        w, b = _fold(model.sc_conv, model.sc_bn)
+        arrays["sc.w"], arrays["sc.b"] = w[:, :, 0, 0], b
+        lins += [("sc_fc1", model.sc_fc1), ("sc_fc2", model.sc_fc2)]
+    for name, lin in lins:
         arrays[name + ".w"] = lin.weight.detach().cpu().float().numpy()
         arrays[name + ".b"] = lin.bias.detach().cpu().float().numpy()
     arrays["config_json"] = np.array(json.dumps(model.config))

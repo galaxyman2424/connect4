@@ -42,8 +42,19 @@ def _softmax(z, axis=1):
     return e / e.sum(axis=axis, keepdims=True)
 
 
+SCORE_SCALE = 10.0     # same as nn/model.py
+
+
 class NumpyNet:
-    """Loads model.npz.  forward(planes) -> (policy_logits (B,7), wdl_logits (B,3))."""
+    """Loads model.npz.  forward(planes) -> (policy_logits (B,7), wdl_logits (B,3)).
+
+    Nets trained by nn/train_score.py also have a score head (predicted Pons score per
+    column).  Their meta says which head should choose moves ("play_head"):
+      policy  softmax of the policy head (all older nets)
+      score   softmax(score / play_temp)
+      combo   softmax(score / play_temp + play_policy_weight * log policy)
+    evaluate() returns those priors, so the website, arena, PolicyAgent and MCTS use the
+    better head without any change on their side."""
 
     def __init__(self, path):
         with np.load(path, allow_pickle=False) as z:
@@ -52,8 +63,17 @@ class NumpyNet:
             self.meta = json.loads(str(z["meta_json"])) if "meta_json" in z.files else {}
         self.path = path
         self.blocks = int(self.config["blocks"])
+        self.has_score = "sc.w" in self.w
+        self.play_head = self.meta.get("play_head", "policy") if self.has_score else "policy"
+        self.play_temp = float(self.meta.get("play_temp", 0.5))
+        self.play_policy_weight = float(self.meta.get("play_policy_weight", 0.0))
 
     def forward(self, x):
+        p, v, _ = self.forward_all(x)
+        return p, v
+
+    def forward_all(self, x):
+        """(policy logits, wdl logits, scores in Pons units or None)."""
         w = self.w
         x = np.ascontiguousarray(x, dtype=np.float32)
         h = _relu(_conv3x3(x, w["stem.w"], w["stem.b"]))
@@ -67,7 +87,12 @@ class NumpyNet:
         v = _relu(_conv1x1(h, w["val.w"], w["val.b"])).reshape(bsz, -1)
         v = _relu(v @ w["val_fc1.w"].T + w["val_fc1.b"])
         v = v @ w["val_fc2.w"].T + w["val_fc2.b"]
-        return p, v
+        s = None
+        if self.has_score:
+            s = _relu(_conv1x1(h, w["sc.w"], w["sc.b"])).reshape(bsz, -1)
+            s = _relu(s @ w["sc_fc1.w"].T + w["sc_fc1.b"])
+            s = (s @ w["sc_fc2.w"].T + w["sc_fc2.b"]) * SCORE_SCALE
+        return p, v, s
 
     def evaluate(self, curs, masks):
         """Batched evaluation for MCTS / agents.
@@ -75,8 +100,21 @@ class NumpyNet:
                  values (B,) = P(win) - P(loss) for the side to move,
                  wdl (B,3) probabilities)."""
         x = encode(curs, masks)
-        logits, wdl_logits = self.forward(x)
+        logits, wdl_logits, scores = self.forward_all(x)
+        if self.meta.get("play_mirror"):      # average with the mirror image (+1-1.5 points measured)
+            l2, w2, s2 = self.forward_all(x[..., ::-1])
+            logits, wdl_logits = (logits + l2[:, ::-1]) / 2, (wdl_logits + w2) / 2
+            if scores is not None:
+                scores = (scores + s2[:, ::-1]) / 2
         legal = legal_mask(masks)
+        if self.play_head in ("score", "combo") and scores is not None:
+            z = scores / self.play_temp
+            if self.play_head == "combo" and self.play_policy_weight:
+                lp = np.where(legal, logits, -np.inf)
+                lp = lp - lp.max(1, keepdims=True)
+                lp = lp - np.log(np.exp(lp).sum(1, keepdims=True))
+                z = z + self.play_policy_weight * np.where(legal, lp, 0.0)
+            logits = z
         logits = np.where(legal, logits, -np.inf)
         pri = _softmax(logits)
         wdl = _softmax(wdl_logits)

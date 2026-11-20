@@ -14,6 +14,14 @@ labels and self-play results are naturally win/draw/loss, cross-entropy on
 three classes trains more smoothly than MSE, and we can still read a scalar
 value  v = P(win) - P(loss)  in [-1, 1] for MCTS / minimax.
 
+Optional score head (score_head=True, nn/train_score.py):
+    -> score head:  1x1 conv (8) + BN + ReLU -> linear(128) + ReLU -> 7 outputs
+                    = predicted Pons score of each column for the side to move
+                    (scaled by SCORE_SCALE; >0 win, 0 draw, <0 loss, bigger = faster win).
+The WDL head cannot tell a fast win from a slow one; this head can, and that is most of
+what separates ~93% from 95%+ "optimal" on the benchmark.  forward() still returns
+(policy, wdl) so every existing caller keeps working; forward_all() adds the scores.
+
 Default size (6 blocks x 64 channels) has ~0.46 M parameters: plenty for a
 6x7 board, and fast enough that self-play is limited by the CPU, not the GPU.
 """
@@ -26,6 +34,7 @@ from .encode import COLS, PLANES, ROWS
 
 DEFAULT_CONFIG = {"blocks": 6, "channels": 64, "policy_channels": 2,
                   "value_channels": 4, "value_hidden": 64}
+SCORE_SCALE = 10.0     # network output * SCORE_SCALE = Pons score
 
 
 class ResBlock(nn.Module):
@@ -44,11 +53,13 @@ class ResBlock(nn.Module):
 
 class C4Net(nn.Module):
     def __init__(self, blocks=6, channels=64, policy_channels=2, value_channels=4,
-                 value_hidden=64):
+                 value_hidden=64, score_head=False, score_channels=8, score_hidden=128):
         super().__init__()
         self.config = {"blocks": blocks, "channels": channels,
                        "policy_channels": policy_channels,
                        "value_channels": value_channels, "value_hidden": value_hidden}
+        if score_head:
+            self.config.update(score_head=True, score_channels=score_channels, score_hidden=score_hidden)
         self.stem_conv = nn.Conv2d(PLANES, channels, 3, padding=1, bias=False)
         self.stem_bn = nn.BatchNorm2d(channels)
         self.blocks = nn.ModuleList([ResBlock(channels) for _ in range(blocks)])
@@ -60,8 +71,15 @@ class C4Net(nn.Module):
         self.val_bn = nn.BatchNorm2d(value_channels)
         self.val_fc1 = nn.Linear(value_channels * n, value_hidden)
         self.val_fc2 = nn.Linear(value_hidden, 3)
+        self.has_score = bool(score_head)
+        if self.has_score:
+            self.sc_conv = nn.Conv2d(channels, score_channels, 1, bias=False)
+            self.sc_bn = nn.BatchNorm2d(score_channels)
+            self.sc_fc1 = nn.Linear(score_channels * n, score_hidden)
+            self.sc_fc2 = nn.Linear(score_hidden, COLS)
 
-    def forward(self, x):
+    def forward_all(self, x):
+        """(policy logits (B,7), WDL logits (B,3), scores (B,7) or None)."""
         x = F.relu(self.stem_bn(self.stem_conv(x)))
         for b in self.blocks:
             x = b(x)
@@ -69,6 +87,14 @@ class C4Net(nn.Module):
         p = self.pol_fc(p)
         v = F.relu(self.val_bn(self.val_conv(x))).flatten(1)
         v = self.val_fc2(F.relu(self.val_fc1(v)))
+        s = None
+        if self.has_score:
+            s = F.relu(self.sc_bn(self.sc_conv(x))).flatten(1)
+            s = self.sc_fc2(F.relu(self.sc_fc1(s)))
+        return p, v, s
+
+    def forward(self, x):
+        p, v, _ = self.forward_all(x)
         return p, v          # policy logits (B,7), WDL logits (B,3)
 
 

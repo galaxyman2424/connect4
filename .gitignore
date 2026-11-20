@@ -35,3 +35,6 @@ mcp_server/
 
 # paper outline: local working draft, regenerate with `python -m research.paper_outline`
 docs/PAPER_OUTLINE.md
+
+# training logs from tools/train_95.sh
+logs/
