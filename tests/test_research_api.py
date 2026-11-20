@@ -141,9 +141,7 @@ def test_outline_has_selected_and_omits_unselected(env):
                                                          "arena-b": {"include": False, "note": "hidden"},
                                                          "sweep-size": {"include": True, "note": ""}},
                                             "roster": {"pons_perfect": True}, "runs": {"rs_A_pons_1x16": True}})
-    r = c.get("/api/research/outline.md")
-    assert r.status_code == 200 and r.mimetype == "text/markdown"
-    md = r.get_data(as_text=True)
+    md = ra.build_outline()
     assert "Finding A" in md and "Claim A holds." in md and "cav A" in md and "my own remark" in md
     assert "Finding B" not in md and "Claim B holds." not in md and "hidden" not in md
     assert "Size helps" in md and "Sweep claim." in md
@@ -153,16 +151,22 @@ def test_outline_has_selected_and_omits_unselected(env):
     assert md.index("Finding A") < md.index("Size helps")  # arena section before sweep section
 
 
-def test_outline_save_writes_docs(env):
+def test_outline_include_all_ignores_selection(env):
+    _write(env["res"], "sweep", SWEEP)
+    md = ra.build_outline(include_all=True)
+    assert "Finding A" in md and "Finding B" in md and "Size helps" in md
+    assert "pons_perfect" in md and "rs_A_pons_1x16" in md
+
+
+def test_outline_routes_removed_and_cli_writes_docs(env):
     c = env["client"]
-    c.post("/api/research/selection", json={"findings": {"arena-a": {"include": True, "note": ""}}})
-    assert not os.path.exists(os.path.join(env["docs"], "PAPER_OUTLINE.md"))   # GET alone never writes
-    c.get("/api/research/outline.md")
-    assert not os.path.exists(os.path.join(env["docs"], "PAPER_OUTLINE.md"))
-    r = c.post("/api/research/outline/save")
-    assert r.status_code == 200
+    assert c.get("/api/research/outline.md").status_code == 404
+    assert c.post("/api/research/outline/save").status_code in (404, 405)
+    from research.paper_outline import main
+    main([])
     with open(os.path.join(env["docs"], "PAPER_OUTLINE.md"), encoding="utf-8") as f:
-        assert "Finding A" in f.read()
+        text = f.read()
+    assert "Finding A" in text and "Finding B" in text
 
 
 def test_works_with_no_data_at_all(env):
@@ -170,7 +174,7 @@ def test_works_with_no_data_at_all(env):
         os.remove(os.path.join(env["res"], n + ".json"))
     c = env["client"]
     assert all(not v["exists"] for v in c.get("/api/research/index").get_json()["datasets"].values())
-    md = c.get("/api/research/outline.md").get_data(as_text=True)
+    md = ra.build_outline()
     assert "Research questions" in md and "not available yet" in md
 
 

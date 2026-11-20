@@ -12,12 +12,14 @@ from engine.board import Board, ROWS, COLS  # noqa: E402
 from engine.agents import agent_for_level  # noqa: E402
 from server.lab_api import bp as lab_bp, nn_evaluator  # noqa: E402
 from server.research_api import bp as research_bp  # noqa: E402
+from server.eval_api import bp as eval_bp  # noqa: E402
 
 WEB_DIR = os.path.join(ROOT, "web")
 STATIC = ("app.js", "style.css", "lab.js", "lab.css")
 app = Flask(__name__, static_folder=None)
 app.register_blueprint(lab_bp)
 app.register_blueprint(research_bp)
+app.register_blueprint(eval_bp)
 
 
 class BadRequest(Exception):

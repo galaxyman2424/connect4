@@ -86,24 +86,8 @@ table.sortable td:nth-child(2),table.sortable th:nth-child(2){text-align:left}
 .boards7 figure{margin:0;text-align:center}
 .boards7 figcaption{font-size:.72rem;color:var(--muted)}
 
-/* paper builder */
-.pb{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
-.fcard{background:var(--panel);border-radius:14px;padding:12px 14px;margin-bottom:10px;border:1px solid transparent}
-.fcard.inc{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
-.fcard header{display:flex;gap:10px;align-items:flex-start;text-align:left;margin:0}
-.fcard h3{margin:0;font-size:.98rem;flex:1}
-.fcard .sec{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.fcard .claim{margin:6px 0;line-height:1.45;font-size:.9rem}
-.fcard .ev{margin:4px 0;color:var(--muted);font-size:.8rem;line-height:1.4;word-break:break-word}
-.fcard .cav{margin:6px 0;background:#2a2410;border-left:3px solid #E69F00;border-radius:6px;padding:6px 10px;font-size:.84rem;color:#ffe2b0;line-height:1.4}
-.fcard .cav b{color:#E69F00}
-.fcard label.inc{display:inline-flex;gap:6px;align-items:center;font-weight:600;font-size:.85rem;white-space:nowrap;cursor:pointer}
-.fcard label.inc input{width:18px;height:18px;accent-color:var(--accent)}
-.fcard textarea{width:100%;min-height:44px;resize:vertical;background:#0f1325;color:var(--ink);border:1px solid #333a60;border-radius:8px;padding:6px 9px;font:inherit;font-size:.85rem}
-.preview{position:sticky;top:10px}
-.preview pre{background:#0f1325;border-radius:10px;padding:10px 12px;color:var(--ink);overflow:auto;max-height:70vh;font-size:.78rem;white-space:pre-wrap;word-break:break-word}
-.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+/* save indicator (roster / run selection) */
 .savestate{position:fixed;right:14px;bottom:10px;margin:0;font-size:.8rem;color:var(--muted);background:var(--panel);border-radius:8px;padding:4px 10px;min-height:0}
 .savestate:empty{display:none}
 
-@media (max-width:1000px){.pb,.chdetail{grid-template-columns:1fr}.preview{position:static}}
+@media (max-width:1000px){.chdetail{grid-template-columns:1fr}}

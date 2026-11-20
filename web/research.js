@@ -434,7 +434,7 @@
       .then(function (j) {
         if (seq !== saveSeq) return;
         $("saveState").textContent = "Saved " + when(j.updated).slice(11);
-        renderOverviewCounts(); refreshPreview();
+        renderOverviewCounts();
       })
       .catch(function (e) { $("saveState").textContent = "Could not save: " + e.message; });
   }
@@ -472,7 +472,7 @@
     body.appendChild(dg);
     var g2 = el("div", { "class": "grid g2" });
     g2.appendChild(sweepStatusCard());
-    var sc = card("Your selection", "What will go into the paper outline (change it on the Roster, Size & teachers and Paper builder tabs).", el("div", { id: "ovCounts" }));
+    var sc = card("Your selection", "What <code>python -m research.paper_outline --selected</code> puts in docs/PAPER_OUTLINE.md (change it on the Roster and Size & teachers tabs).", el("div", { id: "ovCounts" }));
     g2.appendChild(sc);
     body.appendChild(g2);
     renderOverviewCounts();
@@ -1207,91 +1207,15 @@
     return card("Cross-model comparison", "Layer-by-layer similarity (linear CKA) and concepts one model encodes better than the other.", [ctrl, box]);
   }
 
-  // =================================================================== 6. paper builder
-  var PREVIEW = "";
-  function renderPaper() {
-    var body = $("paperBody"); body.innerHTML = "";
-    var fs = allFindings();
-    UI.pf = UI.pf || { section: "", q: "", only: false };
-    var left = el("div"), right = el("div", { "class": "preview" });
-    var ctrl = el("div", { "class": "bar" }, select("pfSec", [{ v: "", t: "all sections" }, "Arena", "Supervised sweep", "Interpretability"], UI.pf.section, "Section") +
-      ' <input type="search" id="pfQ" placeholder="search title, claim, caveat" aria-label="search findings" value="' + esc(UI.pf.q) + '" style="background:#0f1325;color:var(--ink);border:1px solid #333a60;border-radius:8px;padding:7px 10px;font:inherit">' +
-      ' <label style="color:var(--muted)"><input type="checkbox" id="pfOnly"' + (UI.pf.only ? " checked" : "") + '> only included</label><span class="spacer"></span><button type="button" class="btn" id="pfAll">Include all shown</button><button type="button" class="btn" id="pfNone">Exclude all shown</button>');
-    left.appendChild(ctrl);
-    var listBox = el("div"); left.appendChild(listBox);
-    var counts = el("p", { "class": "stats" }); left.insertBefore(counts, listBox);
-    function shown() {
-      var q = UI.pf.q.toLowerCase();
-      return fs.filter(function (x) { var f = x.f; return (!UI.pf.section || x.section === UI.pf.section) && (!UI.pf.only || g(SEL.findings, f.id + ".include")) && (!q || [f.title, f.claim, f.caveat, f.evidence, f.id].join(" ").toLowerCase().indexOf(q) >= 0); });
-    }
-    function drawList() {
-      var s = shown(); listBox.innerHTML = "";
-      counts.innerHTML = "Showing <b>" + s.length + "</b> of " + fs.length + " findings · <b>" + countSel(SEL.findings) + "</b> included." + (D.sweep ? "" : " Sweep findings appear when sweep.json exists.") + (D.interp ? "" : " Interpretability findings appear when interp.json exists.");
-      if (!fs.length) { listBox.appendChild(empty("No findings in the results files yet.")); return; }
-      s.forEach(function (x) {
-        var f = x.f, sel = SEL.findings[f.id] || { include: false, note: "" }, idk = "f_" + f.id.replace(/[^A-Za-z0-9_-]/g, "_");
-        var c = el("article", { "class": "fcard" + (sel.include ? " inc" : ""), "data-id": f.id });
-        c.innerHTML = '<header><h3>' + esc(f.title || f.id) + '<br><span class="sec">' + esc(x.section) + " · " + esc(f.id) + '</span></h3><label class="inc"><input type="checkbox" id="' + idk + '"' + (sel.include ? " checked" : "") + "> include</label></header>" +
-          '<p class="claim">' + esc(f.claim || "") + "</p>" + (f.evidence ? '<p class="ev"><b>Evidence:</b> ' + esc(f.evidence) + "</p>" : "") +
-          (f.caveat ? '<p class="cav"><b>Caveat:</b> ' + esc(f.caveat) + "</p>" : '<p class="ev">No caveat given in the results file.</p>') +
-          '<label class="sm muted" for="' + idk + '_n">Your note (goes into the outline)</label><textarea id="' + idk + '_n" maxlength="5000">' + esc(sel.note || "") + "</textarea>";
-        listBox.appendChild(c);
-      });
-    }
-    listBox.addEventListener("change", function (e) {
-      var c = e.target.closest(".fcard"); if (!c || e.target.type !== "checkbox") return;
-      var id = c.getAttribute("data-id"), cur = SEL.findings[id] || { include: false, note: "" };
-      SEL.findings[id] = { include: e.target.checked, note: cur.note || "" }; c.classList.toggle("inc", e.target.checked); saveSoon();
-    });
-    listBox.addEventListener("input", function (e) {
-      if (e.target.tagName !== "TEXTAREA") return;
-      var c = e.target.closest(".fcard"), id = c.getAttribute("data-id"), cur = SEL.findings[id] || { include: false, note: "" };
-      SEL.findings[id] = { include: !!cur.include, note: e.target.value.slice(0, 5000) }; saveSoon();
-    });
-    ctrl.addEventListener("change", function (e) { if (e.target.id === "pfSec") UI.pf.section = e.target.value; if (e.target.id === "pfOnly") UI.pf.only = e.target.checked; drawList(); });
-    ctrl.addEventListener("input", function (e) { if (e.target.id === "pfQ") { UI.pf.q = e.target.value; drawList(); } });
-    function setAll(v) { shown().forEach(function (x) { var cur = SEL.findings[x.f.id] || { note: "" }; SEL.findings[x.f.id] = { include: v, note: cur.note || "" }; }); saveSoon(); drawList(); }
-    ctrl.querySelector("#pfAll").onclick = function () { setAll(true); };
-    ctrl.querySelector("#pfNone").onclick = function () { setAll(false); };
-    drawList();
-    right.appendChild(el("h3", { style: "margin:0 0 4px;font-size:1rem" }, "Outline preview (Markdown)"));
-    right.appendChild(el("div", { "class": "btnrow" }, '<button type="button" class="btn" id="pvCopy">Copy Markdown</button><button type="button" class="btn" id="pvDl">Download .md</button><button type="button" class="btn" id="pvSave">Save outline to docs/</button>'));
-    right.appendChild(el("p", { "class": "stats", id: "pvMsg", "aria-live": "polite" }, "Built from your saved selection; updates after each save."));
-    right.appendChild(el("pre", { id: "pvText", tabindex: "0", "aria-label": "outline preview" }, esc(PREVIEW || "Loading…")));
-    right.querySelector("#pvCopy").onclick = function () {
-      var msg = $("pvMsg");
-      var done = function () { msg.textContent = "Copied to the clipboard."; };
-      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(PREVIEW).then(done, fallback); else fallback();
-      function fallback() { var ta = el("textarea"); ta.value = PREVIEW; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); done(); } catch (e) { msg.textContent = "Copy failed: select the text in the preview and copy it by hand."; } document.body.removeChild(ta); }
-    };
-    right.querySelector("#pvDl").onclick = function () {
-      var a = el("a", { href: URL.createObjectURL(new Blob([PREVIEW], { type: "text/markdown" })), download: "PAPER_OUTLINE.md" });
-      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
-    };
-    right.querySelector("#pvSave").onclick = function () {
-      var msg = $("pvMsg"); msg.textContent = "Saving…";
-      var go = function () { return fetch("/api/research/outline/save", { method: "POST" }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); }); };
-      (saveTimer ? (clearTimeout(saveTimer), saveTimer = null, fetch("/api/research/selection", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(SEL) })) : Promise.resolve())
-        .then(go).then(function (j) { msg.textContent = "Saved to " + j.saved + " (" + j.bytes + " bytes)."; refreshPreview(); })
-        .catch(function (e) { msg.textContent = "Could not save: " + e.message; });
-    };
-    body.appendChild(el("div", { "class": "pb" })).appendChild(left);
-    body.firstChild.appendChild(right);
-    refreshPreview();
-  }
-  function refreshPreview() {
-    return fetch("/api/research/outline.md", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t) { PREVIEW = t; var p = $("pvText"); if (p) p.textContent = t; }).catch(function () { });
-  }
-
   // =================================================================== tabs, refresh, start
-  var RENDER = { overview: renderOverview, roster: renderRoster, best: renderBest, sweep: renderSweep, interp: renderInterp, paper: renderPaper };
+  var RENDER = { overview: renderOverview, roster: renderRoster, best: renderBest, sweep: renderSweep, interp: renderInterp };
   var DIRTY = {};
   function safe(name) {
     try { RENDER[name](); DIRTY[name] = false; }
     catch (e) { var b = $(name + "Body"); if (b) { b.innerHTML = ""; b.appendChild(empty("This section could not be drawn from the current data (" + esc(e.message) + "). The file may be mid-update; it will retry on the next refresh.")); } if (window.console) console.error(e); }
   }
   function markDirty(changed) {
-    var dep = { overview: ["arena_analysis", "roster", "arena_top15", "sweep", "interp"], roster: ["roster", "arena_analysis", "arena_top15"], best: ["arena_analysis"], sweep: ["sweep"], interp: ["interp"], paper: ["arena_analysis", "sweep", "interp"] };
+    var dep = { overview: ["arena_analysis", "roster", "arena_top15", "sweep", "interp"], roster: ["roster", "arena_analysis", "arena_top15"], best: ["arena_analysis"], sweep: ["sweep"], interp: ["interp"] };
     Object.keys(dep).forEach(function (t) { if (dep[t].some(function (n) { return changed[n]; })) DIRTY[t] = true; });
   }
   function renderVisible() {
@@ -1299,7 +1223,6 @@
     var t = UI.tab;
     if (DIRTY.overview && t !== "overview") safe("overview");
     if (!DIRTY[t]) return;
-    if (t === "paper" && document.activeElement && $("paperBody").contains(document.activeElement) && document.activeElement.tagName === "TEXTAREA") return; // do not disturb typing
     safe(t);
   }
   function tabs() {

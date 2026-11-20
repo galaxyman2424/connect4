@@ -49,10 +49,26 @@
 
   <div id="status" class="status" role="status" aria-live="polite">Your move</div>
 
-  <section class="stage">
-    <div id="ghostRow" class="ghost-row" aria-hidden="true"></div>
-    <div id="board" class="board" aria-label="Connect 4 board"></div>
-    <div id="colButtons" class="col-buttons" aria-label="Drop in column"></div>
+  <div class="play-area">
+    <div class="evalbar" id="evalBar" role="meter" aria-label="Position evaluation (share for red)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+      <div class="evalbar-red" id="evalRed"></div>
+      <span class="evalbar-label" id="evalLabel">0.00</span>
+    </div>
+    <section class="stage">
+      <div id="ghostRow" class="ghost-row" aria-hidden="true"></div>
+      <div id="board" class="board" aria-label="Connect 4 board"></div>
+      <div id="colButtons" class="col-buttons" aria-label="Drop in column"></div>
+    </section>
+  </div>
+
+  <section class="evalpanel" aria-label="Evaluation">
+    <div class="evalhead">
+      <label for="evalSrc" class="lbl">Evaluation bar</label>
+      <select id="evalSrc" aria-label="What rates the position"></select>
+    </div>
+    <div id="evalText" class="evaltext" aria-live="polite">&nbsp;</div>
+    <div id="evalMove" class="evalmove" aria-live="polite">&nbsp;</div>
+    <svg id="evalGraph" class="evalgraph" viewBox="0 0 420 80" preserveAspectRatio="none" role="img" aria-label="Evaluation after each move"></svg>
   </section>
 
   <div id="reason" class="reason" aria-live="polite">&nbsp;</div>

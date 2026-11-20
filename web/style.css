@@ -57,8 +57,36 @@ button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2
 .reason{min-height:1.4em;color:var(--muted);font-size:.9rem;text-align:center;font-variant-numeric:tabular-nums}
 .keys{margin:0;color:var(--muted);font-size:.8rem}
 kbd{background:#252b4a;border-radius:4px;padding:1px 6px;font-family:inherit}
+/* chess-style evaluation bar: red share fills from the human's side */
+.play-area{display:flex;align-items:flex-end;gap:12px}
+.evalbar{position:relative;width:26px;height:calc(var(--cell)*6 + 24px);border-radius:8px;overflow:hidden;
+  background:radial-gradient(circle at 35% 20%,#ffe29a,var(--p2) 55%,var(--p2b));box-shadow:0 6px 20px rgba(0,0,0,.45);flex:none}
+.evalbar-red{position:absolute;left:0;right:0;bottom:0;height:50%;
+  background:linear-gradient(90deg,var(--p1b),var(--p1),#ff7d9c);transition:height .45s ease}
+.evalbar.flip .evalbar-red{bottom:auto;top:0}
+.evalbar-label{position:absolute;left:0;right:0;text-align:center;font-size:.68rem;font-weight:700;
+  font-variant-numeric:tabular-nums;color:#0b0e1c;bottom:4px;letter-spacing:-.02em}
+.evalbar-label.top{bottom:auto;top:4px}
+.evalbar.stale{opacity:.6}
+.evalpanel{width:100%;background:var(--panel);border-radius:14px;padding:10px 14px}
+.evalhead{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.evalhead .lbl{margin:0}
+.evalhead select{background:#0f1325;color:var(--ink);border:1px solid #333a60;border-radius:8px;padding:6px 8px;font:inherit;font-size:.85rem;max-width:65%}
+.evaltext{font-size:.85rem;color:var(--muted);margin-top:6px;min-height:1.2em}
+.evalmove{font-size:.9rem;min-height:1.3em;font-variant-numeric:tabular-nums}
+.evalmove .tag{font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px;color:#0b0e1c}
+.tag.best{background:var(--ok)} .tag.good{background:#9fe3c4} .tag.inacc{background:#ffd166}
+.tag.mistake{background:#ff9f5a} .tag.blunder{background:var(--p1);color:#fff}
+.evalgraph{width:100%;height:80px;display:block;margin-top:6px}
+.evalgraph .mid{stroke:#333a60;stroke-dasharray:3 3}
+.evalgraph .area-r{fill:rgba(239,71,111,.35)} .evalgraph .area-y{fill:rgba(255,209,102,.3)}
+.evalgraph .line{fill:none;stroke:var(--ink);stroke-width:1.5}
+.evalgraph circle{fill:var(--ink)}
 @media (max-width:420px){
-  :root{--cell:12.4vw}
+  .evalbar{width:18px;height:calc(var(--cell)*6 + 16px)}
+  .play-area{gap:6px}
+  .evalbar-label{font-size:.55rem}
+  :root{--cell:11.4vw}
   .stage{width:calc(var(--cell)*7 + 16px)}
   .board,.ghost-row,.col-buttons{padding-left:8px;padding-right:8px}
   .board{padding-top:8px;padding-bottom:8px}

@@ -217,6 +217,37 @@ Commit `runs/` and `experiments/results/methods/` like in Part D.
 
 ---
 
+## F. Research phase extras (branch `eval-bar-and-accuracy`)
+
+### Top-15 bots in a new arena run (Linux PC)
+
+```bash
+cd ~/projects/introAI/connect4 && source .venv/bin/activate
+python -m arena.tournament --list --roster top15          # all 15 should say "ready"
+# new run: 100 fresh openings (seed 2 = different from part3/top15), ~21,000 games, about 4 h on 6 workers
+tmux new -s arena
+python -m arena.tournament --roster top15 --name top15_o100 --openings 100 --seed 2 --workers 6
+#   detach: Ctrl+b then d    re-attach: tmux attach -t arena
+python -m arena.tournament --roster top15 --name top15_o100 --openings 100 --seed 2 --workers 6 --resume   # if it stopped
+python -m arena.tournament --roster top15 --name top15_o100 --summary-only   # Elo from the games so far
+```
+Results: `experiments/results/arena/top15_o100/summary.json` (shows up on the Lab page).
+
+### Paper outline (was the Paper builder tab)
+
+```bash
+python -m research.paper_outline              # every finding, top-15 bot and sweep run
+python -m research.paper_outline --selected   # only what is ticked on /research
+```
+Writes `docs/PAPER_OUTLINE.md` (gitignored, local only).
+
+### Evaluation bar / accuracy
+
+- The play page shows a chess-style bar beside the board; pick the net or the Pons solver under the board.
+- `python -m experiments.ensemble_probe` measures single nets vs an ensemble on the 3,000-position benchmark (about 8 min on CPU). Plan for 95%+: `docs/ACCURACY_95.md`.
+
+---
+
 ## Where things end up
 
 | what | where |
