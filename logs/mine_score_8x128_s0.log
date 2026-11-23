@@ -1,0 +1,53 @@
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU1 NVIDIA GeForce GTX 750 Ti which is of compute capability (CC) 5.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:602: UserWarning: 
+NVIDIA GeForce GTX 750 Ti with CUDA capability sm_50 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA GeForce GTX 750 Ti GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+[22:30:33] mining with score_8x128_s0 (head combo1) on cuda:0
+[22:30:37]   self-play round 1: 80776 unique positions
+[22:30:42]   self-play round 2: 158418 unique positions
+[22:30:46]   self-play round 3: 234058 unique positions
+[22:30:50]   self-play round 4: 308206 unique positions
+[22:30:54]   self-play round 5: 380958 unique positions
+[22:30:59]   self-play round 6: 452889 unique positions
+[22:31:03]   self-play round 7: 523314 unique positions
+[22:31:07]   self-play round 8: 593513 unique positions
+[22:31:11]   self-play round 9: 662850 unique positions
+[22:31:12] labelling 600000 positions with the solver on 14 workers ...
+[22:33:04]   labelled 25000 / 600000 (skipped 0)  152s
+[22:34:41]   labelled 50000 / 600000 (skipped 0)  249s
+[22:36:21]   labelled 75000 / 600000 (skipped 0)  348s
+[22:38:01]   labelled 100000 / 600000 (skipped 0)  448s
+[22:39:37]   labelled 125000 / 600000 (skipped 0)  545s
+[22:41:16]   labelled 150000 / 600000 (skipped 0)  644s
+[22:42:57]   labelled 175000 / 600000 (skipped 0)  744s
+[22:44:36]   labelled 200000 / 600000 (skipped 0)  844s
+[22:46:17]   labelled 225000 / 600000 (skipped 0)  945s
+[22:47:53]   labelled 250000 / 600000 (skipped 0)  1041s
+[22:49:34]   labelled 275000 / 600000 (skipped 0)  1142s
+[22:51:14]   labelled 300000 / 600000 (skipped 0)  1242s
+[22:52:50]   labelled 325000 / 600000 (skipped 0)  1338s
+[22:54:36]   labelled 350000 / 600000 (skipped 0)  1444s
+[22:56:11]   labelled 375000 / 600000 (skipped 0)  1539s
+[22:57:55]   labelled 400000 / 600000 (skipped 0)  1642s
+[22:59:26]   labelled 425000 / 600000 (skipped 0)  1733s
+[23:01:08]   labelled 450000 / 600000 (skipped 0)  1835s
+[23:02:45]   labelled 475000 / 600000 (skipped 0)  1932s
+[23:04:24]   labelled 500000 / 600000 (skipped 0)  2032s
+[23:06:03]   labelled 525000 / 600000 (skipped 0)  2131s
+[23:07:42]   labelled 550000 / 600000 (skipped 0)  2230s
+[23:09:17]   labelled 575000 / 600000 (skipped 0)  2324s
+[23:10:53]   labelled 600000 / 600000 (skipped 0)  2420s
+[23:11:48] on-policy optimal 0.9463 (32199 wrong of 600000); kept 117362 -> nn_data/hard_8x128_s0.npz

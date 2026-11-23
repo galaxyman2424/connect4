@@ -1,0 +1,29 @@
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU1 NVIDIA GeForce GTX 750 Ti which is of compute capability (CC) 5.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:602: UserWarning: 
+NVIDIA GeForce GTX 750 Ti with CUDA capability sm_50 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA GeForce GTX 750 Ti GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+[05:33:31] run score_8x128_s2_r1 on cuda:0: 2425721 params; {'positions': 3111761, 'duplicates_dropped': 5895, 'hard_positions': 117656, 'train': 3049748, 'val': 59634}
+[05:37:23] epoch 1/10  loss 1.7239 (p 0.830 v 0.066 s 0.030 r 0.831)  val-opt[score] 0.9704  BENCH score 0.9673 (policy 0.9683, score 0.9673; no mirror 0.9647)  keeps 0.9855  230s
+[05:41:13] epoch 2/10  loss 1.7264 (p 0.831 v 0.067 s 0.031 r 0.831)  val-opt[combo1] 0.9705  BENCH combo1 0.9683 (policy 0.9693, score 0.9687; no mirror 0.9667)  keeps 0.9855  230s
+[05:45:03] epoch 3/10  loss 1.7214 (p 0.829 v 0.064 s 0.031 r 0.830)  val-opt[combo2] 0.9705  BENCH combo2 0.9707 (policy 0.9700, score 0.9697; no mirror 0.9660)  keeps 0.9873  230s
+[05:48:53] epoch 4/10  loss 1.7153 (p 0.827 v 0.060 s 0.030 r 0.828)  val-opt[combo0.25] 0.9706  BENCH combo0.25 0.9693 (policy 0.9667, score 0.9690; no mirror 0.9683)  keeps 0.9859  230s
+[05:52:43] epoch 5/10  loss 1.7089 (p 0.826 v 0.056 s 0.029 r 0.826)  val-opt[combo1] 0.9704  BENCH combo1 0.9677 (policy 0.9673, score 0.9683; no mirror 0.9677)  keeps 0.9859  230s
+[05:56:33] epoch 6/10  loss 1.7024 (p 0.824 v 0.051 s 0.029 r 0.824)  val-opt[combo0.25] 0.9708  BENCH combo0.25 0.9677 (policy 0.9680, score 0.9673; no mirror 0.9657)  keeps 0.9864  230s
+[06:00:23] epoch 7/10  loss 1.6964 (p 0.822 v 0.047 s 0.028 r 0.822)  val-opt[combo2] 0.9703  BENCH combo2 0.9663 (policy 0.9670, score 0.9673; no mirror 0.9663)  keeps 0.9850  230s
+[06:04:13] epoch 8/10  loss 1.6916 (p 0.821 v 0.043 s 0.028 r 0.821)  val-opt[score] 0.9704  BENCH score 0.9660 (policy 0.9683, score 0.9660; no mirror 0.9653)  keeps 0.9855  230s
+[06:08:02] epoch 9/10  loss 1.6880 (p 0.820 v 0.040 s 0.028 r 0.820)  val-opt[combo4] 0.9703  BENCH combo4 0.9673 (policy 0.9680, score 0.9687; no mirror 0.9667)  keeps 0.9864  230s
+[06:11:52] epoch 10/10  loss 1.6863 (p 0.820 v 0.039 s 0.028 r 0.820)  val-opt[combo4] 0.9704  BENCH combo4 0.9677 (policy 0.9680, score 0.9680; no mirror 0.9670)  keeps 0.9864  230s
+[06:11:52] done. best val optimal 0.9708. Next: python -m nn.eval_score --runs score_8x128_s2_r1

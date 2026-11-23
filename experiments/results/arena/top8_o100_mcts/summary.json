@@ -1,0 +1,753 @@
+{
+  "bots": [
+    "pons_perfect",
+    "nn_sup_6x64_mcts200",
+    "nn_az_6x64_mcts200",
+    "nn_ppo_from_sup_policy",
+    "bruneton_az",
+    "nn_ppo_6x64_mcts200",
+    "nn_distill_az_2x32_policy",
+    "nn_ens3_score_8x128_policy"
+  ],
+  "matrix": [
+    [
+      null,
+      0.645,
+      0.64,
+      0.795,
+      0.785,
+      0.795,
+      0.8,
+      0.66
+    ],
+    [
+      0.355,
+      null,
+      0.55,
+      0.7925,
+      0.7975,
+      0.765,
+      0.8025,
+      0.4425
+    ],
+    [
+      0.36,
+      0.45,
+      null,
+      0.76,
+      0.805,
+      0.79,
+      0.8175,
+      0.4575
+    ],
+    [
+      0.205,
+      0.2075,
+      0.24,
+      null,
+      0.4975,
+      0.4975,
+      0.5575,
+      0.275
+    ],
+    [
+      0.215,
+      0.2025,
+      0.195,
+      0.5025,
+      null,
+      0.555,
+      0.57,
+      0.2275
+    ],
+    [
+      0.205,
+      0.235,
+      0.21,
+      0.5025,
+      0.445,
+      null,
+      0.635,
+      0.235
+    ],
+    [
+      0.2,
+      0.1975,
+      0.1825,
+      0.4425,
+      0.43,
+      0.365,
+      null,
+      0.1825
+    ],
+    [
+      0.34,
+      0.5575,
+      0.5425,
+      0.725,
+      0.7725,
+      0.765,
+      0.8175,
+      null
+    ]
+  ],
+  "wdl": {
+    "nn_sup_6x64_mcts200": {
+      "bruneton_az": [
+        152,
+        15,
+        33
+      ],
+      "nn_az_6x64_mcts200": [
+        93,
+        34,
+        73
+      ],
+      "nn_ppo_6x64_mcts200": [
+        137,
+        32,
+        31
+      ],
+      "pons_perfect": [
+        53,
+        36,
+        111
+      ],
+      "nn_ppo_from_sup_policy": [
+        144,
+        29,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        148,
+        25,
+        27
+      ],
+      "nn_ens3_score_8x128_policy": [
+        73,
+        31,
+        96
+      ]
+    },
+    "bruneton_az": {
+      "nn_sup_6x64_mcts200": [
+        33,
+        15,
+        152
+      ],
+      "nn_az_6x64_mcts200": [
+        31,
+        16,
+        153
+      ],
+      "nn_ppo_6x64_mcts200": [
+        99,
+        24,
+        77
+      ],
+      "pons_perfect": [
+        30,
+        26,
+        144
+      ],
+      "nn_ppo_from_sup_policy": [
+        87,
+        27,
+        86
+      ],
+      "nn_distill_az_2x32_policy": [
+        101,
+        26,
+        73
+      ],
+      "nn_ens3_score_8x128_policy": [
+        35,
+        21,
+        144
+      ]
+    },
+    "nn_az_6x64_mcts200": {
+      "bruneton_az": [
+        153,
+        16,
+        31
+      ],
+      "nn_sup_6x64_mcts200": [
+        73,
+        34,
+        93
+      ],
+      "nn_ppo_6x64_mcts200": [
+        146,
+        24,
+        30
+      ],
+      "pons_perfect": [
+        56,
+        32,
+        112
+      ],
+      "nn_ppo_from_sup_policy": [
+        140,
+        24,
+        36
+      ],
+      "nn_distill_az_2x32_policy": [
+        150,
+        27,
+        23
+      ],
+      "nn_ens3_score_8x128_policy": [
+        78,
+        27,
+        95
+      ]
+    },
+    "nn_ppo_6x64_mcts200": {
+      "bruneton_az": [
+        77,
+        24,
+        99
+      ],
+      "nn_sup_6x64_mcts200": [
+        31,
+        32,
+        137
+      ],
+      "nn_az_6x64_mcts200": [
+        30,
+        24,
+        146
+      ],
+      "pons_perfect": [
+        27,
+        28,
+        145
+      ],
+      "nn_ppo_from_sup_policy": [
+        78,
+        45,
+        77
+      ],
+      "nn_distill_az_2x32_policy": [
+        112,
+        30,
+        58
+      ],
+      "nn_ens3_score_8x128_policy": [
+        34,
+        26,
+        140
+      ]
+    },
+    "pons_perfect": {
+      "bruneton_az": [
+        144,
+        26,
+        30
+      ],
+      "nn_sup_6x64_mcts200": [
+        111,
+        36,
+        53
+      ],
+      "nn_az_6x64_mcts200": [
+        112,
+        32,
+        56
+      ],
+      "nn_ppo_6x64_mcts200": [
+        145,
+        28,
+        27
+      ],
+      "nn_ppo_from_sup_policy": [
+        145,
+        28,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        146,
+        28,
+        26
+      ],
+      "nn_ens3_score_8x128_policy": [
+        114,
+        36,
+        50
+      ]
+    },
+    "nn_ppo_from_sup_policy": {
+      "bruneton_az": [
+        86,
+        27,
+        87
+      ],
+      "nn_sup_6x64_mcts200": [
+        27,
+        29,
+        144
+      ],
+      "nn_az_6x64_mcts200": [
+        36,
+        24,
+        140
+      ],
+      "nn_ppo_6x64_mcts200": [
+        77,
+        45,
+        78
+      ],
+      "pons_perfect": [
+        27,
+        28,
+        145
+      ],
+      "nn_distill_az_2x32_policy": [
+        94,
+        35,
+        71
+      ],
+      "nn_ens3_score_8x128_policy": [
+        40,
+        30,
+        130
+      ]
+    },
+    "nn_distill_az_2x32_policy": {
+      "bruneton_az": [
+        73,
+        26,
+        101
+      ],
+      "nn_sup_6x64_mcts200": [
+        27,
+        25,
+        148
+      ],
+      "nn_az_6x64_mcts200": [
+        23,
+        27,
+        150
+      ],
+      "nn_ppo_6x64_mcts200": [
+        58,
+        30,
+        112
+      ],
+      "pons_perfect": [
+        26,
+        28,
+        146
+      ],
+      "nn_ppo_from_sup_policy": [
+        71,
+        35,
+        94
+      ],
+      "nn_ens3_score_8x128_policy": [
+        25,
+        23,
+        152
+      ]
+    },
+    "nn_ens3_score_8x128_policy": {
+      "bruneton_az": [
+        144,
+        21,
+        35
+      ],
+      "nn_sup_6x64_mcts200": [
+        96,
+        31,
+        73
+      ],
+      "nn_az_6x64_mcts200": [
+        95,
+        27,
+        78
+      ],
+      "nn_ppo_6x64_mcts200": [
+        140,
+        26,
+        34
+      ],
+      "pons_perfect": [
+        50,
+        36,
+        114
+      ],
+      "nn_ppo_from_sup_policy": [
+        130,
+        30,
+        40
+      ],
+      "nn_distill_az_2x32_policy": [
+        152,
+        23,
+        25
+      ]
+    }
+  },
+  "per_bot": {
+    "pons_perfect": {
+      "games": 1400,
+      "score": 0.7314,
+      "wins": 917,
+      "draws": 214,
+      "losses": 269,
+      "score_moving_first": 0.7343,
+      "avg_ms": 29.9,
+      "max_ms": 907.8,
+      "forfeits": 0
+    },
+    "nn_sup_6x64_mcts200": {
+      "games": 1400,
+      "score": 0.6436,
+      "wins": 800,
+      "draws": 202,
+      "losses": 398,
+      "score_moving_first": 0.6629,
+      "avg_ms": 279.8,
+      "max_ms": 543.2,
+      "forfeits": 0
+    },
+    "nn_az_6x64_mcts200": {
+      "games": 1400,
+      "score": 0.6343,
+      "wins": 796,
+      "draws": 184,
+      "losses": 420,
+      "score_moving_first": 0.645,
+      "avg_ms": 270.1,
+      "max_ms": 552.7,
+      "forfeits": 0
+    },
+    "nn_ppo_from_sup_policy": {
+      "games": 1400,
+      "score": 0.3543,
+      "wins": 387,
+      "draws": 218,
+      "losses": 795,
+      "score_moving_first": 0.385,
+      "avg_ms": 2.1,
+      "max_ms": 89.2,
+      "forfeits": 0
+    },
+    "bruneton_az": {
+      "games": 1400,
+      "score": 0.3525,
+      "wins": 416,
+      "draws": 155,
+      "losses": 829,
+      "score_moving_first": 0.36,
+      "avg_ms": 326.1,
+      "max_ms": 685.2,
+      "forfeits": 0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "games": 1400,
+      "score": 0.3525,
+      "wins": 389,
+      "draws": 209,
+      "losses": 802,
+      "score_moving_first": 0.3743,
+      "avg_ms": 276.1,
+      "max_ms": 533.2,
+      "forfeits": 0
+    },
+    "nn_distill_az_2x32_policy": {
+      "games": 1400,
+      "score": 0.2857,
+      "wins": 303,
+      "draws": 194,
+      "losses": 903,
+      "score_moving_first": 0.3164,
+      "avg_ms": 0.7,
+      "max_ms": 89.5,
+      "forfeits": 0
+    },
+    "nn_ens3_score_8x128_policy": {
+      "games": 1400,
+      "score": 0.6457,
+      "wins": 807,
+      "draws": 194,
+      "losses": 399,
+      "score_moving_first": 0.6486,
+      "avg_ms": 31.6,
+      "max_ms": 97.3,
+      "forfeits": 0
+    }
+  },
+  "elo": {
+    "pons_perfect": {
+      "elo": 1876.6,
+      "lo": 1854.9,
+      "hi": 1897.6
+    },
+    "nn_sup_6x64_mcts200": {
+      "elo": 1810.4,
+      "lo": 1790.0,
+      "hi": 1830.3
+    },
+    "nn_az_6x64_mcts200": {
+      "elo": 1803.8,
+      "lo": 1782.8,
+      "hi": 1824.5
+    },
+    "nn_ppo_from_sup_policy": {
+      "elo": 1610.3,
+      "lo": 1588.2,
+      "hi": 1630.9
+    },
+    "bruneton_az": {
+      "elo": 1609.0,
+      "lo": 1609.0,
+      "hi": 1609.0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "elo": 1609.0,
+      "lo": 1583.6,
+      "hi": 1627.1
+    },
+    "nn_distill_az_2x32_policy": {
+      "elo": 1559.2,
+      "lo": 1537.9,
+      "hi": 1581.7
+    },
+    "nn_ens3_score_8x128_policy": {
+      "elo": 1812.0,
+      "lo": 1792.4,
+      "hi": 1831.5
+    }
+  },
+  "elo_anchor": "bruneton_az",
+  "elo_anchor_value": 1609.0,
+  "unrated": [],
+  "first_player_score": 0.5158,
+  "games": 5600,
+  "decisive": 4815,
+  "forfeits": [],
+  "meta": {
+    "name": "top8_o100",
+    "openings": [
+      "11",
+      "726",
+      "7335",
+      "51",
+      "6246",
+      "767",
+      "3545",
+      "171",
+      "434",
+      "525",
+      "22",
+      "23",
+      "25",
+      "3565",
+      "47",
+      "657",
+      "753",
+      "742",
+      "664",
+      "5243",
+      "557",
+      "644",
+      "565",
+      "4462",
+      "53",
+      "337",
+      "7555",
+      "6554",
+      "624",
+      "3651",
+      "617",
+      "61",
+      "56",
+      "2732",
+      "14",
+      "7113",
+      "226",
+      "1332",
+      "62",
+      "6145",
+      "72",
+      "566",
+      "1334",
+      "34",
+      "7561",
+      "747",
+      "6242",
+      "711",
+      "772",
+      "5744",
+      "3273",
+      "354",
+      "1652",
+      "1312",
+      "21",
+      "625",
+      "1226",
+      "131",
+      "2577",
+      "6336",
+      "421",
+      "6121",
+      "12",
+      "4267",
+      "451",
+      "5145",
+      "2167",
+      "315",
+      "633",
+      "113",
+      "7174",
+      "46",
+      "425",
+      "1131",
+      "361",
+      "15",
+      "464",
+      "642",
+      "1156",
+      "4334",
+      "457",
+      "667",
+      "476",
+      "422",
+      "535",
+      "666",
+      "1132",
+      "2741",
+      "1234",
+      "3425",
+      "125",
+      "2473",
+      "1754",
+      "2451",
+      "343",
+      "6466",
+      "6617",
+      "1345",
+      "4627",
+      "4214"
+    ],
+    "seed": 2,
+    "created": "2026-11-23T15:10:43",
+    "seconds": 0.0,
+    "workers": 14,
+    "threads_per_worker": 1,
+    "move_timeout": 10.0,
+    "game_timeout": 300.0,
+    "roster": "top8",
+    "elo_anchor": "bruneton_az:1609",
+    "scheduled": 5600,
+    "recorded": 5600,
+    "missing": 0,
+    "duplicates": 0,
+    "command": "/home/connor/projects/introAI/connect4/arena/tournament.py --roster top8 --name top8_o100 --openings 100 --seed 2 --summary-only",
+    "machine": {
+      "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "cpus": 16
+    }
+  },
+  "bot_info": {
+    "pons_perfect": {
+      "label": "Pons solver (perfect play)",
+      "group": "open source",
+      "author": "Pascal Pons",
+      "url": "https://github.com/PascalPons/connect4",
+      "commit": "d6ba50d",
+      "license": "AGPL-3.0",
+      "lang": "C++",
+      "algorithm": "Exact solver: negamax + alpha-beta on bitboards, transposition table, iterative null-window search, opening book. Never makes a mistake.",
+      "params": {}
+    },
+    "nn_sup_6x64_mcts200": {
+      "label": "Our neural net (sup_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/sup_6x64/best.npz"
+      }
+    },
+    "nn_az_6x64_mcts200": {
+      "label": "Our neural net (az_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/az_6x64/model.npz"
+      }
+    },
+    "nn_ppo_from_sup_policy": {
+      "label": "Our neural net (ppo_from_sup, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/ppo_from_sup/model.npz"
+      }
+    },
+    "bruneton_az": {
+      "label": "AlphaZero (Bruneton et al.)",
+      "group": "open source",
+      "author": "J.-P. Bruneton, A. Douin, V. Reverdy",
+      "url": "https://github.com/jpbruneton/Alpha-Zero-algorithm-for-Connect-4-game",
+      "commit": "6cd76be",
+      "license": "BSD-3-Clause",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (1 block x 256 filters, 1.2 M params) policy+value net trained by self-play, PUCT MCTS. Pretrained weights from the repo.",
+      "params": {
+        "sims": 200
+      }
+    },
+    "nn_ppo_6x64_mcts200": {
+      "label": "Our neural net (ppo_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/ppo_6x64/model.npz"
+      }
+    },
+    "nn_distill_az_2x32_policy": {
+      "label": "Our neural net (distill_az_2x32, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/distill_az_2x32/best.npz"
+      }
+    },
+    "nn_ens3_score_8x128_policy": {
+      "label": "Ensemble of 3 nets (score_8x128_s0_r1, score_8x128_s1_r1, score_8x128_s2_r1; policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz"
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU1 NVIDIA GeForce GTX 750 Ti which is of compute capability (CC) 5.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+/home/connor/projects/introAI/connect4/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:602: UserWarning: 
+NVIDIA GeForce GTX 750 Ti with CUDA capability sm_50 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the NVIDIA GeForce GTX 750 Ti GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  queued_call()
+[23:50:18] run score_8x128_s1 on cuda:0: 2425721 params; {'positions': 3000000, 'duplicates_dropped': 0, 'hard_positions': 0, 'train': 2940234, 'val': 59766}
+[23:54:02] epoch 1/30  loss 2.6350 (p 1.103 v 0.364 s 0.242 r 1.108)  val-opt[combo1] 0.6907  BENCH combo1 0.7243 (policy 0.7300, score 0.7247; no mirror 0.7247)  keeps 0.8679  222s
+[23:57:44] epoch 2/30  loss 2.0076 (p 0.905 v 0.194 s 0.094 r 0.912)  val-opt[combo0.5] 0.9418  BENCH combo0.5 0.9400 (policy 0.9393, score 0.9397; no mirror 0.9410)  keeps 0.9714  222s
+[00:01:26] epoch 3/30  loss 1.9067 (p 0.875 v 0.161 s 0.072 r 0.880)  val-opt[combo4] 0.9521  BENCH combo4 0.9457 (policy 0.9463, score 0.9457; no mirror 0.9443)  keeps 0.9738  222s
+[00:05:09] epoch 4/30  loss 1.8576 (p 0.860 v 0.145 s 0.062 r 0.864)  val-opt[combo1] 0.9574  BENCH combo1 0.9517 (policy 0.9503, score 0.9520; no mirror 0.9510)  keeps 0.9808  222s
+[00:08:51] epoch 5/30  loss 1.8248 (p 0.850 v 0.133 s 0.055 r 0.853)  val-opt[combo2] 0.9612  BENCH combo2 0.9560 (policy 0.9553, score 0.9567; no mirror 0.9550)  keeps 0.9841  222s
+[00:12:33] epoch 6/30  loss 1.8011 (p 0.842 v 0.125 s 0.050 r 0.846)  val-opt[combo0.25] 0.9632  BENCH combo0.25 0.9593 (policy 0.9583, score 0.9597; no mirror 0.9590)  keeps 0.9855  222s
+[00:16:15] epoch 7/30  loss 1.7827 (p 0.837 v 0.118 s 0.047 r 0.840)  val-opt[combo4] 0.9640  BENCH combo4 0.9597 (policy 0.9597, score 0.9597; no mirror 0.9567)  keeps 0.9850  222s
+[00:19:57] epoch 8/30  loss 1.7678 (p 0.832 v 0.112 s 0.045 r 0.835)  val-opt[policy] 0.9655  BENCH policy 0.9620 (policy 0.9620, score 0.9607; no mirror 0.9593)  keeps 0.9864  222s
+[00:23:40] epoch 9/30  loss 1.7564 (p 0.829 v 0.107 s 0.043 r 0.831)  val-opt[combo1] 0.9663  BENCH combo1 0.9603 (policy 0.9603, score 0.9607; no mirror 0.9607)  keeps 0.9864  222s
+[00:27:22] epoch 10/30  loss 1.7449 (p 0.825 v 0.103 s 0.041 r 0.827)  val-opt[combo1] 0.9669  BENCH combo1 0.9623 (policy 0.9617, score 0.9630; no mirror 0.9627)  keeps 0.9850  222s
+[00:31:04] epoch 11/30  loss 1.7348 (p 0.822 v 0.099 s 0.039 r 0.824)  val-opt[score] 0.9677  BENCH score 0.9643 (policy 0.9643, score 0.9643; no mirror 0.9613)  keeps 0.9878  222s
+[00:34:46] epoch 12/30  loss 1.7265 (p 0.820 v 0.095 s 0.038 r 0.821)  val-opt[combo4] 0.9684  BENCH combo4 0.9650 (policy 0.9640, score 0.9650; no mirror 0.9637)  keeps 0.9855  222s
+[00:38:28] epoch 13/30  loss 1.7179 (p 0.817 v 0.091 s 0.037 r 0.819)  val-opt[combo0.5] 0.9681  BENCH combo0.5 0.9667 (policy 0.9667, score 0.9660; no mirror 0.9637)  keeps 0.9888  222s
+[00:42:11] epoch 14/30  loss 1.7101 (p 0.815 v 0.087 s 0.035 r 0.816)  val-opt[combo1] 0.9686  BENCH combo1 0.9673 (policy 0.9667, score 0.9680; no mirror 0.9630)  keeps 0.9888  222s
+[00:45:53] epoch 15/30  loss 1.7023 (p 0.813 v 0.083 s 0.034 r 0.814)  val-opt[combo4] 0.9691  BENCH combo4 0.9677 (policy 0.9677, score 0.9673; no mirror 0.9633)  keeps 0.9888  222s
+[00:49:35] epoch 16/30  loss 1.6949 (p 0.810 v 0.080 s 0.033 r 0.811)  val-opt[combo2] 0.9693  BENCH combo2 0.9680 (policy 0.9683, score 0.9677; no mirror 0.9627)  keeps 0.9878  222s
+[00:53:17] epoch 17/30  loss 1.6879 (p 0.808 v 0.076 s 0.033 r 0.809)  val-opt[combo0.25] 0.9702  BENCH combo0.25 0.9687 (policy 0.9680, score 0.9683; no mirror 0.9657)  keeps 0.9888  222s
+[00:56:59] epoch 18/30  loss 1.6810 (p 0.806 v 0.072 s 0.032 r 0.807)  val-opt[policy] 0.9699  BENCH policy 0.9687 (policy 0.9687, score 0.9693; no mirror 0.9657)  keeps 0.9892  222s
+[01:00:41] epoch 19/30  loss 1.6744 (p 0.804 v 0.068 s 0.031 r 0.805)  val-opt[combo4] 0.9698  BENCH combo4 0.9693 (policy 0.9697, score 0.9687; no mirror 0.9643)  keeps 0.9888  222s
+[01:04:23] epoch 20/30  loss 1.6679 (p 0.802 v 0.064 s 0.030 r 0.803)  val-opt[combo1] 0.9701  BENCH combo1 0.9673 (policy 0.9680, score 0.9680; no mirror 0.9677)  keeps 0.9888  222s
+[01:08:05] epoch 21/30  loss 1.6619 (p 0.801 v 0.061 s 0.030 r 0.801)  val-opt[combo1] 0.9704  BENCH combo1 0.9687 (policy 0.9677, score 0.9680; no mirror 0.9680)  keeps 0.9892  222s
+[01:11:47] epoch 22/30  loss 1.6561 (p 0.799 v 0.057 s 0.029 r 0.800)  val-opt[combo1] 0.9704  BENCH combo1 0.9690 (policy 0.9683, score 0.9700; no mirror 0.9687)  keeps 0.9888  222s
+[01:15:29] epoch 23/30  loss 1.6512 (p 0.798 v 0.053 s 0.028 r 0.798)  val-opt[combo4] 0.9702  BENCH combo4 0.9673 (policy 0.9670, score 0.9697; no mirror 0.9670)  keeps 0.9878  222s
+[01:19:11] epoch 24/30  loss 1.6462 (p 0.797 v 0.050 s 0.028 r 0.797)  val-opt[combo1] 0.9702  BENCH combo1 0.9683 (policy 0.9683, score 0.9687; no mirror 0.9683)  keeps 0.9883  222s
+[01:22:54] epoch 25/30  loss 1.6423 (p 0.796 v 0.047 s 0.028 r 0.796)  val-opt[combo1] 0.9705  BENCH combo1 0.9683 (policy 0.9683, score 0.9687; no mirror 0.9687)  keeps 0.9878  222s
+[01:26:36] epoch 26/30  loss 1.6387 (p 0.795 v 0.044 s 0.027 r 0.795)  val-opt[combo0.25] 0.9705  BENCH combo0.25 0.9690 (policy 0.9690, score 0.9690; no mirror 0.9673)  keeps 0.9878  222s
+[01:30:18] epoch 27/30  loss 1.6361 (p 0.794 v 0.042 s 0.027 r 0.794)  val-opt[combo2] 0.9703  BENCH combo2 0.9673 (policy 0.9677, score 0.9680; no mirror 0.9670)  keeps 0.9873  222s
+[01:34:00] epoch 28/30  loss 1.6342 (p 0.794 v 0.040 s 0.027 r 0.794)  val-opt[score] 0.9701  BENCH score 0.9670 (policy 0.9680, score 0.9670; no mirror 0.9663)  keeps 0.9869  222s
+[01:37:42] epoch 29/30  loss 1.6330 (p 0.793 v 0.039 s 0.027 r 0.793)  val-opt[combo1] 0.9701  BENCH combo1 0.9667 (policy 0.9677, score 0.9670; no mirror 0.9660)  keeps 0.9869  222s
+[01:41:23] epoch 30/30  loss 1.6324 (p 0.793 v 0.039 s 0.027 r 0.793)  val-opt[combo2] 0.9700  BENCH combo2 0.9670 (policy 0.9680, score 0.9670; no mirror 0.9663)  keeps 0.9873  222s
+[01:41:23] done. best val optimal 0.9705. Next: python -m nn.eval_score --runs score_8x128_s1
