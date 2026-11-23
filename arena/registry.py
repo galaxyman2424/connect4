@@ -105,6 +105,9 @@ ALIASES = {
     "evo_evo_d2_d4": "evo:runs/evo_d2/weights.json:4",
     "ntuple_td_ntuple_d0": "ntuple:runs/td_ntuple/ntuple.npz:0",
     "ntuple_td_ntuple_d4": "ntuple:runs/td_ntuple/ntuple.npz:4",
+    # 3 score-head nets (nn/train_score.py) averaged, policy only (no search)
+    "nn_ens3_score_8x128_policy": "nn:runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz"
+                                  "+runs/score_8x128_s2_r1/best.npz:policy",
 }
 
 # Preset line-ups for `python -m arena.tournament --roster NAME`.
@@ -124,6 +127,13 @@ ROSTERS = {
         "ours_minimax_d8", "evo_evo_d2_d4", "ours_minimax_d4", "galli_minimax", "nn_ppo_6x64_policy",
         "nn_dqn_6x64_policy"],
         "elo_anchor": "ours_minimax_d4:1409"},
+    # the top 7 of the 100-opening top-15 run (top15_o100) + the 3-net score-head ensemble.
+    # ours_minimax_d4 is gone, so bruneton_az is pinned at its top15_o100 Elo to keep the same scale.
+    "top8": {"bots": [
+        # same order as top15, so the existing top15_o100 games keep their (a, b) keys
+        "pons_perfect", "nn_sup_6x64_mcts200", "nn_az_6x64_mcts200", "nn_ppo_from_sup_policy", "bruneton_az",
+        "nn_ppo_6x64_mcts200", "nn_distill_az_2x32_policy", "nn_ens3_score_8x128_policy"],
+        "elo_anchor": "bruneton_az:1609"},
 }
 
 
