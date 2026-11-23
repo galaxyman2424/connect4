@@ -1,0 +1,123 @@
+{
+  "runs": [
+    "score_8x128_s2",
+    "score_8x128_s2_r1"
+  ],
+  "lookahead": true,
+  "results": {
+    "score_8x128_s2": {
+      "policy": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9841
+      },
+      "score": {
+        "optimal": 0.9683,
+        "keeps_nl": 0.9869
+      },
+      "combo0.25": {
+        "optimal": 0.969,
+        "keeps_nl": 0.9869
+      },
+      "combo0.5": {
+        "optimal": 0.9687,
+        "keeps_nl": 0.9859
+      },
+      "combo1": {
+        "optimal": 0.968,
+        "keeps_nl": 0.9859
+      },
+      "combo2": {
+        "optimal": 0.9683,
+        "keeps_nl": 0.9859
+      },
+      "combo4": {
+        "optimal": 0.9683,
+        "keeps_nl": 0.9855
+      },
+      "look": {
+        "optimal": 0.9633,
+        "keeps_nl": 0.9855
+      },
+      "look+": {
+        "optimal": 0.9663,
+        "keeps_nl": 0.9869
+      }
+    },
+    "score_8x128_s2_r1": {
+      "policy": {
+        "optimal": 0.968,
+        "keeps_nl": 0.985
+      },
+      "score": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.9864
+      },
+      "combo0.25": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9864
+      },
+      "combo0.5": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.9864
+      },
+      "combo1": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9864
+      },
+      "combo2": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9855
+      },
+      "combo4": {
+        "optimal": 0.968,
+        "keeps_nl": 0.9859
+      },
+      "look": {
+        "optimal": 0.9627,
+        "keeps_nl": 0.9855
+      },
+      "look+": {
+        "optimal": 0.97,
+        "keeps_nl": 0.9888
+      }
+    },
+    "ENSEMBLE": {
+      "policy": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.985
+      },
+      "score": {
+        "optimal": 0.9683,
+        "keeps_nl": 0.9859
+      },
+      "combo0.25": {
+        "optimal": 0.9683,
+        "keeps_nl": 0.9859
+      },
+      "combo0.5": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.9855
+      },
+      "combo1": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.985
+      },
+      "combo2": {
+        "optimal": 0.967,
+        "keeps_nl": 0.985
+      },
+      "combo4": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.985
+      },
+      "look": {
+        "optimal": 0.9623,
+        "keeps_nl": 0.9864
+      },
+      "look+": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.9873
+      }
+    }
+  }
+}

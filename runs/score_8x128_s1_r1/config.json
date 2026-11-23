@@ -1,0 +1,62 @@
+{
+  "phase": "supervised_score",
+  "created": "2026-11-21T02:22:34",
+  "args": {
+    "data": "nn_data/solver_3m.npz",
+    "hard": "nn_data/hard_8x128_s1.npz",
+    "hard_weight": 2.0,
+    "run": "score_8x128_s1_r1",
+    "init": "runs/score_8x128_s1/checkpoints/best.pt",
+    "epochs": 10,
+    "batch": 1024,
+    "lr": 0.0006,
+    "weight_decay": 0.0001,
+    "blocks": 8,
+    "channels": 128,
+    "policy_temp": 1.0,
+    "rank_temp": 1.0,
+    "value_weight": 0.5,
+    "score_weight": 1.0,
+    "rank_weight": 1.0,
+    "ema": 0.999,
+    "val_frac": 0.02,
+    "val_max": 60000,
+    "device": "auto",
+    "seed": 1,
+    "max_steps": 0
+  },
+  "device": "cuda:0",
+  "model": {
+    "blocks": 8,
+    "channels": 128,
+    "policy_channels": 2,
+    "value_channels": 4,
+    "value_hidden": 64,
+    "score_head": true,
+    "score_channels": 8,
+    "score_hidden": 128
+  },
+  "params": 2425721,
+  "data": {
+    "positions": 3110958,
+    "duplicates_dropped": 5772,
+    "hard_positions": 116730,
+    "train": 3048993,
+    "val": 59666
+  },
+  "init": {
+    "from": "runs/score_8x128_s1/checkpoints/best.pt",
+    "new_layers": []
+  },
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce RTX 3050",
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}

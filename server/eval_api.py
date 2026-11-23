@@ -35,7 +35,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PONS = os.path.join(ROOT, "tools", "pons")
 SOLVER_TIMEOUT = 4.0
 # strongest policy+value nets first; the first one that exists is the default
-PREFERRED_NETS = ("rs_A_pons_8x128", "rs_A_pons_10x128", "sup_6x64", "rs_A_pons_6x64")
+PREFERRED_NETS = ("score_8x128_s0_r1", "score_8x128_s0", "rs_A_pons_8x128", "rs_A_pons_10x128", "sup_6x64", "rs_A_pons_6x64")
 
 bp = Blueprint("eval", __name__)
 _solver = None

@@ -1,0 +1,162 @@
+{
+  "runs": [
+    "score_8x128_s0_r1",
+    "score_8x128_s1_r1",
+    "score_8x128_s2_r1"
+  ],
+  "lookahead": true,
+  "results": {
+    "score_8x128_s0_r1": {
+      "policy": {
+        "optimal": 0.9713,
+        "keeps_nl": 0.9888
+      },
+      "score": {
+        "optimal": 0.971,
+        "keeps_nl": 0.9888
+      },
+      "combo0.25": {
+        "optimal": 0.9727,
+        "keeps_nl": 0.9897
+      },
+      "combo0.5": {
+        "optimal": 0.9727,
+        "keeps_nl": 0.9897
+      },
+      "combo1": {
+        "optimal": 0.9723,
+        "keeps_nl": 0.9892
+      },
+      "combo2": {
+        "optimal": 0.9723,
+        "keeps_nl": 0.9892
+      },
+      "combo4": {
+        "optimal": 0.9717,
+        "keeps_nl": 0.9888
+      },
+      "look": {
+        "optimal": 0.9713,
+        "keeps_nl": 0.9906
+      },
+      "look+": {
+        "optimal": 0.9747,
+        "keeps_nl": 0.9925
+      }
+    },
+    "score_8x128_s1_r1": {
+      "policy": {
+        "optimal": 0.9697,
+        "keeps_nl": 0.9892
+      },
+      "score": {
+        "optimal": 0.9697,
+        "keeps_nl": 0.9897
+      },
+      "combo0.25": {
+        "optimal": 0.9697,
+        "keeps_nl": 0.9892
+      },
+      "combo0.5": {
+        "optimal": 0.969,
+        "keeps_nl": 0.9888
+      },
+      "combo1": {
+        "optimal": 0.969,
+        "keeps_nl": 0.9888
+      },
+      "combo2": {
+        "optimal": 0.969,
+        "keeps_nl": 0.9892
+      },
+      "combo4": {
+        "optimal": 0.9693,
+        "keeps_nl": 0.9892
+      },
+      "look": {
+        "optimal": 0.969,
+        "keeps_nl": 0.9906
+      },
+      "look+": {
+        "optimal": 0.973,
+        "keeps_nl": 0.992
+      }
+    },
+    "score_8x128_s2_r1": {
+      "policy": {
+        "optimal": 0.968,
+        "keeps_nl": 0.985
+      },
+      "score": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.9864
+      },
+      "combo0.25": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9864
+      },
+      "combo0.5": {
+        "optimal": 0.9673,
+        "keeps_nl": 0.9864
+      },
+      "combo1": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9864
+      },
+      "combo2": {
+        "optimal": 0.9677,
+        "keeps_nl": 0.9855
+      },
+      "combo4": {
+        "optimal": 0.968,
+        "keeps_nl": 0.9859
+      },
+      "look": {
+        "optimal": 0.9627,
+        "keeps_nl": 0.9855
+      },
+      "look+": {
+        "optimal": 0.97,
+        "keeps_nl": 0.9888
+      }
+    },
+    "ENSEMBLE": {
+      "policy": {
+        "optimal": 0.9737,
+        "keeps_nl": 0.9897
+      },
+      "score": {
+        "optimal": 0.974,
+        "keeps_nl": 0.9897
+      },
+      "combo0.25": {
+        "optimal": 0.9733,
+        "keeps_nl": 0.9897
+      },
+      "combo0.5": {
+        "optimal": 0.974,
+        "keeps_nl": 0.9897
+      },
+      "combo1": {
+        "optimal": 0.974,
+        "keeps_nl": 0.9897
+      },
+      "combo2": {
+        "optimal": 0.974,
+        "keeps_nl": 0.9897
+      },
+      "combo4": {
+        "optimal": 0.974,
+        "keeps_nl": 0.9897
+      },
+      "look": {
+        "optimal": 0.9697,
+        "keeps_nl": 0.9911
+      },
+      "look+": {
+        "optimal": 0.974,
+        "keeps_nl": 0.9925
+      }
+    }
+  }
+}

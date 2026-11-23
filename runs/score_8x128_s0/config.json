@@ -1,0 +1,59 @@
+{
+  "phase": "supervised_score",
+  "created": "2026-11-20T20:39:22",
+  "args": {
+    "data": "nn_data/solver_3m.npz",
+    "hard": "",
+    "hard_weight": 2.0,
+    "run": "score_8x128_s0",
+    "init": "",
+    "epochs": 30,
+    "batch": 1024,
+    "lr": 0.002,
+    "weight_decay": 0.0001,
+    "blocks": 8,
+    "channels": 128,
+    "policy_temp": 1.0,
+    "rank_temp": 1.0,
+    "value_weight": 0.5,
+    "score_weight": 1.0,
+    "rank_weight": 1.0,
+    "ema": 0.999,
+    "val_frac": 0.02,
+    "val_max": 60000,
+    "device": "auto",
+    "seed": 0,
+    "max_steps": 0
+  },
+  "device": "cuda:0",
+  "model": {
+    "blocks": 8,
+    "channels": 128,
+    "policy_channels": 2,
+    "value_channels": 4,
+    "value_hidden": 64,
+    "score_head": true,
+    "score_channels": 8,
+    "score_hidden": 128
+  },
+  "params": 2425721,
+  "data": {
+    "positions": 3000000,
+    "duplicates_dropped": 0,
+    "hard_positions": 0,
+    "train": 2940234,
+    "val": 59766
+  },
+  "init": null,
+  "machine": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "cpu_count": 16,
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "gpus": [
+      "NVIDIA GeForce RTX 3050",
+      "NVIDIA GeForce GTX 750 Ti"
+    ]
+  }
+}

@@ -90,3 +90,32 @@ extra data. That 2x32 net was only 0.829 optimal on positions from its own games
 (`nn/mine_hard.py`), which is what the hard-mining round targets.
 
 Commands: `COMMANDS.md`, section G.
+
+## Results (pipeline finished 2026-11-21, `tools/train_95.sh`, 8x128, 3 seeds)
+
+Data: 3,000,000 solver-labelled positions (2.7 h labelling, 0 timeouts; benchmark positions and
+mirrors excluded). Training: 30 epochs, about 3.7 min/epoch on the RTX 3050.
+
+| player (3,000 held-out positions, plies 8-30) | optimal | keeps result |
+|---|---|---|
+| best old net, rs_A_pons_10x128 policy + mirror | 0.932 | 0.970 |
+| old 6-net ensemble + mirror | 0.942 | 0.975 |
+| score_8x128_s0, policy head, **no** mirror | 0.966 | |
+| score_8x128_s0 / s1 / s2, mirror, best head | 0.972 / 0.970 / 0.969 | 0.99 |
+| after hard-position round (`_r1`) | 0.972 / 0.970 / 0.968 | 0.99 |
+| best single net + 1-ply score lookahead (`look+`, s0_r1) | **0.975** | **0.993** |
+| 3-net ensemble (r1 nets) | 0.974 | 0.990 |
+
+Findings:
+- **More data + score head did it:** 0.932 to about 0.970 for one net (+3.8 points). Result-changing
+  mistakes fell from about 3% to under 1%.
+- **The benchmark curve is flat from epoch ~16** (0.970-0.972) while training loss keeps falling.
+- **Hard-position mining did not help** (within seed noise, -0.1 to +0.1). On positions from its own
+  games the net was already 94.6% optimal (32k mistakes in 600k positions).
+- **Ensembling no longer helps either** (0.974 vs 0.972-0.975 single): the three nets make
+  mostly the same mistakes, so what is left is hard for this architecture, not noise.
+- 1-ply lookahead with the score head now helps slightly (it hurt with the weak smoke-test net).
+- Toward 99%: deeper search with the score head (MCTS / 2-ply), or a bigger net now that data is
+  no longer the limit (one 10x128 run would test it).
+
+The website's evaluation bar now defaults to `score_8x128_s0_r1`.
