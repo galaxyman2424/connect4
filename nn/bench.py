@@ -186,7 +186,7 @@ _EV_CACHE = {}
 
 
 def _cached_evaluator(path, loader):
-    key = (path, os.path.getmtime(path))
+    key = (path, tuple(os.path.getmtime(p) for p in path.split("+")))
     if key not in _EV_CACHE:
         _EV_CACHE.clear()
         _EV_CACHE[key] = loader(path, "cpu")

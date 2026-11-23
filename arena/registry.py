@@ -196,7 +196,13 @@ def nn_entry(spec):
     path = parts[1]
     mode = parts[2] if len(parts) > 2 else "mcts"
     n = int(parts[3]) if len(parts) > 3 else (200 if mode == "mcts" else 4)
-    run = os.path.basename(os.path.dirname(os.path.abspath(path)))
+    paths = path.split("+")                 # 'a.npz+b.npz+c.npz' = ensemble (averaged)
+    runs = [os.path.basename(os.path.dirname(os.path.abspath(p))) for p in paths]
+    if len(runs) == 1:
+        run = runs[0]
+    else:
+        common = os.path.commonprefix(runs).rstrip("_s") or "nets"
+        run = "ens%d_%s" % (len(runs), common)
     short = {"mcts": "mcts%d" % n, "policy": "policy", "minimax": "minimax_d%d" % n}[mode]
     name = "nn_%s_%s" % (run, short)
 
@@ -209,7 +215,9 @@ def nn_entry(spec):
         else:
             ag = make_agent(("nn", path, "minimax", n))
         return A.Ours(ag, name)
-    return name, {"label": "Our neural net (%s, %s)" % (run, short), "group": "ours",
+    label = "Our neural net (%s, %s)" % (run, short) if len(runs) == 1 else \
+        "Ensemble of %d nets (%s; %s)" % (len(runs), ", ".join(runs), short)
+    return name, {"label": label, "group": "ours",
                   "author": "Connor Thelen", "url": "", "license": "", "lang": "Python / numpy",
                   "algorithm": {"mcts": "Our ResNet policy+value network + PUCT MCTS (%d simulations)." % n,
                                 "policy": "Our network's policy head alone (no search).",

@@ -150,9 +150,26 @@ class TorchEvaluator:
                 wdl.cpu().numpy())
 
 
+class EnsembleEvaluator:
+    """Average of several evaluators: priors, values and WDL are the mean over the nets
+    (each net uses its own playing head and mirror setting)."""
+
+    def __init__(self, evaluators):
+        self.evs = list(evaluators)
+
+    def evaluate(self, curs, masks):
+        import numpy as np
+        outs = [e.evaluate(curs, masks) for e in self.evs]
+        pri = np.mean([o[0] for o in outs], 0)
+        pri = pri / pri.sum(1, keepdims=True)
+        return pri, np.mean([o[1] for o in outs], 0), np.mean([o[2] for o in outs], 0)
+
+
 def load_evaluator(path, device="auto"):
     """Model file -> object with .evaluate().  .npz -> numpy (no torch needed);
-    .pt -> torch on the chosen device."""
+    .pt -> torch on the chosen device.  'a.npz+b.npz+c.npz' -> EnsembleEvaluator."""
+    if "+" in path:
+        return EnsembleEvaluator(load_evaluator(p, device) for p in path.split("+"))
     if path.endswith(".npz"):
         from .numpy_net import NumpyNet
         return NumpyNet(path)
