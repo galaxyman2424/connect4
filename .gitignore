@@ -28,3 +28,7 @@ arena/third_party/
 experiments/results/arena/*/games.csv.old
 .ruff_cache/
 .mypy_cache/
+
+# local MCP server (not committed)
+mcp_server/
+.mcp.json

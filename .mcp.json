@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "connect4": {
-      "command": "/home/connor/projects/introAI/connect4/.venv/bin/python",
-      "args": ["/home/connor/projects/introAI/connect4/mcp_server/server.py"]
-    }
-  }
-}
