@@ -1,0 +1,1076 @@
+{
+  "bots": [
+    "pons_perfect",
+    "nn_sup_6x64_mcts200",
+    "nn_az_6x64_mcts200",
+    "nn_ppo_from_sup_policy",
+    "bruneton_az",
+    "nn_ppo_6x64_mcts200",
+    "nn_distill_az_2x32_policy",
+    "nn_ens3_score_8x128_policy",
+    "nn_ens3_score_8x128_mcts200",
+    "nn_score_8x128_s0_r1_mcts200"
+  ],
+  "matrix": [
+    [
+      null,
+      0.645,
+      0.64,
+      0.795,
+      0.785,
+      0.795,
+      0.8,
+      0.66,
+      0.5275,
+      1.0
+    ],
+    [
+      0.355,
+      null,
+      0.55,
+      0.7925,
+      0.7975,
+      0.765,
+      0.8025,
+      0.4425,
+      0.2875,
+      1.0
+    ],
+    [
+      0.36,
+      0.45,
+      null,
+      0.76,
+      0.805,
+      0.79,
+      0.8175,
+      0.4575,
+      0.3225,
+      1.0
+    ],
+    [
+      0.205,
+      0.2075,
+      0.24,
+      null,
+      0.4975,
+      0.4975,
+      0.5575,
+      0.275,
+      0.165,
+      1.0
+    ],
+    [
+      0.215,
+      0.2025,
+      0.195,
+      0.5025,
+      null,
+      0.555,
+      0.57,
+      0.2275,
+      0.19,
+      1.0
+    ],
+    [
+      0.205,
+      0.235,
+      0.21,
+      0.5025,
+      0.445,
+      null,
+      0.635,
+      0.235,
+      0.16,
+      1.0
+    ],
+    [
+      0.2,
+      0.1975,
+      0.1825,
+      0.4425,
+      0.43,
+      0.365,
+      null,
+      0.1825,
+      0.155,
+      1.0
+    ],
+    [
+      0.34,
+      0.5575,
+      0.5425,
+      0.725,
+      0.7725,
+      0.765,
+      0.8175,
+      null,
+      0.0,
+      0.0
+    ],
+    [
+      0.4725,
+      0.7125,
+      0.6775,
+      0.835,
+      0.81,
+      0.84,
+      0.845,
+      1.0,
+      null,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      null
+    ]
+  ],
+  "wdl": {
+    "nn_sup_6x64_mcts200": {
+      "bruneton_az": [
+        152,
+        15,
+        33
+      ],
+      "nn_az_6x64_mcts200": [
+        93,
+        34,
+        73
+      ],
+      "nn_ppo_6x64_mcts200": [
+        137,
+        32,
+        31
+      ],
+      "pons_perfect": [
+        53,
+        36,
+        111
+      ],
+      "nn_ppo_from_sup_policy": [
+        144,
+        29,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        148,
+        25,
+        27
+      ],
+      "nn_ens3_score_8x128_policy": [
+        73,
+        31,
+        96
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        38,
+        39,
+        123
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "bruneton_az": {
+      "nn_sup_6x64_mcts200": [
+        33,
+        15,
+        152
+      ],
+      "nn_az_6x64_mcts200": [
+        31,
+        16,
+        153
+      ],
+      "nn_ppo_6x64_mcts200": [
+        99,
+        24,
+        77
+      ],
+      "pons_perfect": [
+        30,
+        26,
+        144
+      ],
+      "nn_ppo_from_sup_policy": [
+        87,
+        27,
+        86
+      ],
+      "nn_distill_az_2x32_policy": [
+        101,
+        26,
+        73
+      ],
+      "nn_ens3_score_8x128_policy": [
+        35,
+        21,
+        144
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        26,
+        24,
+        150
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "nn_az_6x64_mcts200": {
+      "bruneton_az": [
+        153,
+        16,
+        31
+      ],
+      "nn_sup_6x64_mcts200": [
+        73,
+        34,
+        93
+      ],
+      "nn_ppo_6x64_mcts200": [
+        146,
+        24,
+        30
+      ],
+      "pons_perfect": [
+        56,
+        32,
+        112
+      ],
+      "nn_ppo_from_sup_policy": [
+        140,
+        24,
+        36
+      ],
+      "nn_distill_az_2x32_policy": [
+        150,
+        27,
+        23
+      ],
+      "nn_ens3_score_8x128_policy": [
+        78,
+        27,
+        95
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        49,
+        31,
+        120
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "nn_ppo_6x64_mcts200": {
+      "bruneton_az": [
+        77,
+        24,
+        99
+      ],
+      "nn_sup_6x64_mcts200": [
+        31,
+        32,
+        137
+      ],
+      "nn_az_6x64_mcts200": [
+        30,
+        24,
+        146
+      ],
+      "pons_perfect": [
+        27,
+        28,
+        145
+      ],
+      "nn_ppo_from_sup_policy": [
+        78,
+        45,
+        77
+      ],
+      "nn_distill_az_2x32_policy": [
+        112,
+        30,
+        58
+      ],
+      "nn_ens3_score_8x128_policy": [
+        34,
+        26,
+        140
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        21,
+        22,
+        157
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "pons_perfect": {
+      "bruneton_az": [
+        144,
+        26,
+        30
+      ],
+      "nn_sup_6x64_mcts200": [
+        111,
+        36,
+        53
+      ],
+      "nn_az_6x64_mcts200": [
+        112,
+        32,
+        56
+      ],
+      "nn_ppo_6x64_mcts200": [
+        145,
+        28,
+        27
+      ],
+      "nn_ppo_from_sup_policy": [
+        145,
+        28,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        146,
+        28,
+        26
+      ],
+      "nn_ens3_score_8x128_policy": [
+        114,
+        36,
+        50
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        81,
+        49,
+        70
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "nn_ppo_from_sup_policy": {
+      "bruneton_az": [
+        86,
+        27,
+        87
+      ],
+      "nn_sup_6x64_mcts200": [
+        27,
+        29,
+        144
+      ],
+      "nn_az_6x64_mcts200": [
+        36,
+        24,
+        140
+      ],
+      "nn_ppo_6x64_mcts200": [
+        77,
+        45,
+        78
+      ],
+      "pons_perfect": [
+        27,
+        28,
+        145
+      ],
+      "nn_distill_az_2x32_policy": [
+        94,
+        35,
+        71
+      ],
+      "nn_ens3_score_8x128_policy": [
+        40,
+        30,
+        130
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        17,
+        32,
+        151
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "nn_distill_az_2x32_policy": {
+      "bruneton_az": [
+        73,
+        26,
+        101
+      ],
+      "nn_sup_6x64_mcts200": [
+        27,
+        25,
+        148
+      ],
+      "nn_az_6x64_mcts200": [
+        23,
+        27,
+        150
+      ],
+      "nn_ppo_6x64_mcts200": [
+        58,
+        30,
+        112
+      ],
+      "pons_perfect": [
+        26,
+        28,
+        146
+      ],
+      "nn_ppo_from_sup_policy": [
+        71,
+        35,
+        94
+      ],
+      "nn_ens3_score_8x128_policy": [
+        25,
+        23,
+        152
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        20,
+        22,
+        158
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ]
+    },
+    "nn_ens3_score_8x128_policy": {
+      "bruneton_az": [
+        144,
+        21,
+        35
+      ],
+      "nn_sup_6x64_mcts200": [
+        96,
+        31,
+        73
+      ],
+      "nn_az_6x64_mcts200": [
+        95,
+        27,
+        78
+      ],
+      "nn_ppo_6x64_mcts200": [
+        140,
+        26,
+        34
+      ],
+      "pons_perfect": [
+        50,
+        36,
+        114
+      ],
+      "nn_ppo_from_sup_policy": [
+        130,
+        30,
+        40
+      ],
+      "nn_distill_az_2x32_policy": [
+        152,
+        23,
+        25
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        0,
+        0,
+        200
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        0,
+        0,
+        200
+      ]
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "bruneton_az": [
+        150,
+        24,
+        26
+      ],
+      "nn_sup_6x64_mcts200": [
+        123,
+        39,
+        38
+      ],
+      "nn_az_6x64_mcts200": [
+        120,
+        31,
+        49
+      ],
+      "nn_ppo_6x64_mcts200": [
+        157,
+        22,
+        21
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        200,
+        0,
+        0
+      ],
+      "pons_perfect": [
+        70,
+        49,
+        81
+      ],
+      "nn_ppo_from_sup_policy": [
+        151,
+        32,
+        17
+      ],
+      "nn_distill_az_2x32_policy": [
+        158,
+        22,
+        20
+      ],
+      "nn_ens3_score_8x128_policy": [
+        200,
+        0,
+        0
+      ]
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "bruneton_az": [
+        0,
+        0,
+        200
+      ],
+      "nn_sup_6x64_mcts200": [
+        0,
+        0,
+        200
+      ],
+      "nn_az_6x64_mcts200": [
+        0,
+        0,
+        200
+      ],
+      "nn_ppo_6x64_mcts200": [
+        0,
+        0,
+        200
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        0,
+        0,
+        200
+      ],
+      "pons_perfect": [
+        0,
+        0,
+        200
+      ],
+      "nn_ppo_from_sup_policy": [
+        0,
+        0,
+        200
+      ],
+      "nn_distill_az_2x32_policy": [
+        0,
+        0,
+        200
+      ],
+      "nn_ens3_score_8x128_policy": [
+        200,
+        0,
+        0
+      ]
+    }
+  },
+  "per_bot": {
+    "pons_perfect": {
+      "games": 1800,
+      "score": 0.7386,
+      "wins": 1198,
+      "draws": 263,
+      "losses": 339,
+      "score_moving_first": 0.7439,
+      "avg_ms": 26.0,
+      "max_ms": 907.8,
+      "forfeits": 0
+    },
+    "nn_sup_6x64_mcts200": {
+      "games": 1800,
+      "score": 0.6436,
+      "wins": 1038,
+      "draws": 241,
+      "losses": 521,
+      "score_moving_first": 0.6567,
+      "avg_ms": 248.9,
+      "max_ms": 543.2,
+      "forfeits": 0
+    },
+    "nn_az_6x64_mcts200": {
+      "games": 1800,
+      "score": 0.6403,
+      "wins": 1045,
+      "draws": 215,
+      "losses": 540,
+      "score_moving_first": 0.6506,
+      "avg_ms": 241.5,
+      "max_ms": 552.7,
+      "forfeits": 0
+    },
+    "nn_ppo_from_sup_policy": {
+      "games": 1800,
+      "score": 0.405,
+      "wins": 604,
+      "draws": 250,
+      "losses": 946,
+      "score_moving_first": 0.4306,
+      "avg_ms": 1.9,
+      "max_ms": 89.2,
+      "forfeits": 0
+    },
+    "bruneton_az": {
+      "games": 1800,
+      "score": 0.4064,
+      "wins": 642,
+      "draws": 179,
+      "losses": 979,
+      "score_moving_first": 0.4094,
+      "avg_ms": 293.1,
+      "max_ms": 685.2,
+      "forfeits": 0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "games": 1800,
+      "score": 0.4031,
+      "wins": 610,
+      "draws": 231,
+      "losses": 959,
+      "score_moving_first": 0.4183,
+      "avg_ms": 247.5,
+      "max_ms": 533.2,
+      "forfeits": 0
+    },
+    "nn_distill_az_2x32_policy": {
+      "games": 1800,
+      "score": 0.3506,
+      "wins": 523,
+      "draws": 216,
+      "losses": 1061,
+      "score_moving_first": 0.3717,
+      "avg_ms": 0.6,
+      "max_ms": 89.5,
+      "forfeits": 0
+    },
+    "nn_ens3_score_8x128_policy": {
+      "games": 1800,
+      "score": 0.5022,
+      "wins": 807,
+      "draws": 194,
+      "losses": 799,
+      "score_moving_first": 0.5044,
+      "avg_ms": 24.6,
+      "max_ms": 97.3,
+      "forfeits": 400
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "games": 1800,
+      "score": 0.7992,
+      "wins": 1329,
+      "draws": 219,
+      "losses": 252,
+      "score_moving_first": 0.7967,
+      "avg_ms": 3444.3,
+      "max_ms": 6825.3,
+      "forfeits": 0
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "games": 1800,
+      "score": 0.1111,
+      "wins": 200,
+      "draws": 0,
+      "losses": 1600,
+      "score_moving_first": 0.1111,
+      "avg_ms": 0.0,
+      "max_ms": 0.0,
+      "forfeits": 1600
+    }
+  },
+  "elo": {
+    "pons_perfect": {
+      "elo": 1867.0,
+      "lo": 1850.6,
+      "hi": 1886.9
+    },
+    "nn_sup_6x64_mcts200": {
+      "elo": 1788.4,
+      "lo": 1771.8,
+      "hi": 1807.1
+    },
+    "nn_az_6x64_mcts200": {
+      "elo": 1785.8,
+      "lo": 1770.5,
+      "hi": 1804.9
+    },
+    "nn_ppo_from_sup_policy": {
+      "elo": 1607.9,
+      "lo": 1590.4,
+      "hi": 1626.7
+    },
+    "bruneton_az": {
+      "elo": 1609.0,
+      "lo": 1609.0,
+      "hi": 1609.0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "elo": 1606.4,
+      "lo": 1590.6,
+      "hi": 1623.6
+    },
+    "nn_distill_az_2x32_policy": {
+      "elo": 1565.1,
+      "lo": 1545.7,
+      "hi": 1583.8
+    },
+    "nn_ens3_score_8x128_policy": {
+      "elo": 1681.3,
+      "lo": 1666.0,
+      "hi": 1697.7
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "elo": 1923.4,
+      "lo": 1905.0,
+      "hi": 1944.6
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "elo": 1322.8,
+      "lo": 1311.9,
+      "hi": 1334.3
+    }
+  },
+  "elo_anchor": "bruneton_az",
+  "elo_anchor_value": 1609.0,
+  "unrated": [],
+  "first_player_score": 0.5093,
+  "games": 9000,
+  "decisive": 7996,
+  "forfeits": [
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'",
+    "nn_score_8x128_s0_r1_mcts200: build error: FileNotFoundError: [Errno 2] No such file or directory: 'runs/score_8x128_s0_r1/best.npz'"
+  ],
+  "meta": {
+    "name": "top8_o100_mcts",
+    "openings": [
+      "11",
+      "726",
+      "7335",
+      "51",
+      "6246",
+      "767",
+      "3545",
+      "171",
+      "434",
+      "525",
+      "22",
+      "23",
+      "25",
+      "3565",
+      "47",
+      "657",
+      "753",
+      "742",
+      "664",
+      "5243",
+      "557",
+      "644",
+      "565",
+      "4462",
+      "53",
+      "337",
+      "7555",
+      "6554",
+      "624",
+      "3651",
+      "617",
+      "61",
+      "56",
+      "2732",
+      "14",
+      "7113",
+      "226",
+      "1332",
+      "62",
+      "6145",
+      "72",
+      "566",
+      "1334",
+      "34",
+      "7561",
+      "747",
+      "6242",
+      "711",
+      "772",
+      "5744",
+      "3273",
+      "354",
+      "1652",
+      "1312",
+      "21",
+      "625",
+      "1226",
+      "131",
+      "2577",
+      "6336",
+      "421",
+      "6121",
+      "12",
+      "4267",
+      "451",
+      "5145",
+      "2167",
+      "315",
+      "633",
+      "113",
+      "7174",
+      "46",
+      "425",
+      "1131",
+      "361",
+      "15",
+      "464",
+      "642",
+      "1156",
+      "4334",
+      "457",
+      "667",
+      "476",
+      "422",
+      "535",
+      "666",
+      "1132",
+      "2741",
+      "1234",
+      "3425",
+      "125",
+      "2473",
+      "1754",
+      "2451",
+      "343",
+      "6466",
+      "6617",
+      "1345",
+      "4627",
+      "4214"
+    ],
+    "seed": 2,
+    "created": "2026-11-23T19:48:53",
+    "seconds": 16462.1,
+    "workers": 6,
+    "threads_per_worker": 1,
+    "move_timeout": 10.0,
+    "game_timeout": 300.0,
+    "roster": "top8",
+    "elo_anchor": "bruneton_az:1609",
+    "scheduled": 9000,
+    "recorded": 9000,
+    "missing": 0,
+    "duplicates": 0,
+    "command": "/home/connor/projects/introAI/connect4/arena/tournament.py --roster top8 --name top8_o100_mcts --openings 100 --seed 2 --workers 6 --resume --add-nn nn:runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz:mcts:200 --add-nn nn:runs/score_8x128_s0_r1/best.npz:mcts:200",
+    "machine": {
+      "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "cpus": 16
+    }
+  },
+  "bot_info": {
+    "pons_perfect": {
+      "label": "Pons solver (perfect play)",
+      "group": "open source",
+      "author": "Pascal Pons",
+      "url": "https://github.com/PascalPons/connect4",
+      "commit": "d6ba50d",
+      "license": "AGPL-3.0",
+      "lang": "C++",
+      "algorithm": "Exact solver: negamax + alpha-beta on bitboards, transposition table, iterative null-window search, opening book. Never makes a mistake.",
+      "params": {}
+    },
+    "nn_sup_6x64_mcts200": {
+      "label": "Our neural net (sup_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/sup_6x64/best.npz"
+      }
+    },
+    "nn_az_6x64_mcts200": {
+      "label": "Our neural net (az_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/az_6x64/model.npz"
+      }
+    },
+    "nn_ppo_from_sup_policy": {
+      "label": "Our neural net (ppo_from_sup, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/ppo_from_sup/model.npz"
+      }
+    },
+    "bruneton_az": {
+      "label": "AlphaZero (Bruneton et al.)",
+      "group": "open source",
+      "author": "J.-P. Bruneton, A. Douin, V. Reverdy",
+      "url": "https://github.com/jpbruneton/Alpha-Zero-algorithm-for-Connect-4-game",
+      "commit": "6cd76be",
+      "license": "BSD-3-Clause",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (1 block x 256 filters, 1.2 M params) policy+value net trained by self-play, PUCT MCTS. Pretrained weights from the repo.",
+      "params": {
+        "sims": 200
+      }
+    },
+    "nn_ppo_6x64_mcts200": {
+      "label": "Our neural net (ppo_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/ppo_6x64/model.npz"
+      }
+    },
+    "nn_distill_az_2x32_policy": {
+      "label": "Our neural net (distill_az_2x32, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/distill_az_2x32/best.npz"
+      }
+    },
+    "nn_ens3_score_8x128_policy": {
+      "label": "Ensemble of 3 nets (score_8x128_s0_r1, score_8x128_s1_r1, score_8x128_s2_r1; policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz"
+      }
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "label": "Ensemble of 3 nets (score_8x128_s0_r1, score_8x128_s1_r1, score_8x128_s2_r1; mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz"
+      }
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "label": "Our neural net (score_8x128_s0_r1, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz"
+      }
+    }
+  }
+}
