@@ -32,3 +32,5 @@ experiments/results/arena/*/games.csv.old
 # local MCP server (not committed)
 mcp_server/
 .mcp.json
+logs/
+docs/PAPER_OUTLINE.md
