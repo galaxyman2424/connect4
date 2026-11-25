@@ -100,6 +100,7 @@ def main():
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 2))
     ap.add_argument("--quick", action="store_true", help="small version for a smoke test")
     ap.add_argument("--skip", default="", help="comma list of sections to skip: accuracy,tactics,ladder,hypothesis")
+    ap.add_argument("--out", default="eval.json", help="output file name inside runs/<run>/ (e.g. eval_ens3.json)")
     a = ap.parse_args()
     if a.quick:
         a.sims, a.depths, a.openings = "50", "1,2,4", 4
@@ -107,13 +108,17 @@ def main():
     skip = set(a.skip.split(","))
 
     run = Run(a.run, create=False)
-    model_path = a.model if os.path.isfile(a.model) else run.path(a.model)
-    if not os.path.isfile(model_path):
-        raise SystemExit("model not found: %s" % model_path)
+    def _resolve(m):
+        return m if os.path.isfile(m) else run.path(m)
+    # 'a.npz+b.npz+c.npz' = ensemble (load_evaluator averages them); each part may be a path or a file in runs/<run>/
+    model_path = "+".join(_resolve(m) for m in a.model.split("+"))
+    for m in model_path.split("+"):
+        if not os.path.isfile(m):
+            raise SystemExit("model not found: %s" % m)
     ev = load_evaluator(model_path, "auto")
     meta = getattr(ev, "meta", {})
-    out_path = run.path("eval.json")
-    out = {"run": a.run, "model": os.path.relpath(model_path, bench.ROOT).replace("\\", "/"),
+    out_path = run.path(os.path.basename(a.out))
+    out = {"run": a.run, "model": "+".join(os.path.relpath(m, bench.ROOT).replace("\\", "/") for m in model_path.split("+")),
            "model_meta": meta, "created": now_iso(), "settings": vars(a)}
     if os.path.isfile(out_path):                 # keep sections we skip this time
         with open(out_path, encoding="utf-8") as f:
