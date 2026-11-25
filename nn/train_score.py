@@ -127,6 +127,42 @@ def fit_input_pca(grids, k, seed=0, max_rows=500_000):
             "fit_positions": int(len(g))}
 
 
+def teacher_targets(paths, D, device, batch=8192):
+    """Ensemble teacher outputs for every position of D: mean over nets (each mirror-averaged)
+    of the policy-head probabilities over legal columns and of the score head (Pons units).
+    Teachers are exported .npz files (score-head nets; older nets give policy only)."""
+    import torch
+    from .torch_net import TorchNpzNet
+    nets = [TorchNpzNet(p, device) for p in paths]
+    n = len(D["grids"])
+    t_pol = np.zeros((n, 7), np.float32)
+    t_sc = np.zeros((n, 7), np.float32)
+    n_sc = sum(1 for t in nets if t.has_score)
+    g_all = torch.from_numpy(D["grids"])
+    f_all = torch.from_numpy(D["first"])
+    l_all = torch.from_numpy(D["legal"])
+    with torch.inference_mode():
+        for i in range(0, n, batch):
+            g = g_all[i:i + batch].to(device).float()
+            b = g.shape[0]
+            x = torch.cat([g, torch.ones((b, 1, 6, 7), device=device),
+                           f_all[i:i + batch].to(device).float().view(b, 1, 1, 1).expand(b, 1, 6, 7)], 1)
+            legal = l_all[i:i + batch].to(device)
+            pol = torch.zeros((b, 7), device=device)
+            sc = torch.zeros((b, 7), device=device)
+            for t in nets:
+                p1, _, s1 = t.forward_all(x)
+                p2, _, s2 = t.forward_all(x.flip(3))
+                logit = (p1 + p2.flip(1)) / 2
+                pol += torch.softmax(logit.masked_fill(~legal, float("-inf")), 1)
+                if s1 is not None:
+                    sc += (s1 + s2.flip(1)) / 2
+            t_pol[i:i + b] = (pol / len(nets)).cpu().numpy()
+            if n_sc:
+                t_sc[i:i + b] = (sc / n_sc).masked_fill(~legal, 0).cpu().numpy()
+    return t_pol, t_sc, n_sc
+
+
 def to_device(D, device):
     import torch
     return {k: torch.from_numpy(np.ascontiguousarray(v)).to(device) for k, v in D.items()}
@@ -155,8 +191,11 @@ def soft_target(sc, legal, temp):
     return torch.softmax(z, 1)
 
 
-def losses(model, x, sc, legal, val, w, a, fwd=None):
-    """(weighted total loss, detached tensor [policy, value, score, rank]) - no GPU sync."""
+def losses(model, x, sc, legal, val, w, a, fwd=None, teacher=None):
+    """(weighted total loss, detached tensor [policy, value, score, rank]) - no GPU sync.
+    teacher = (policy probs (B,7), scores in Pons units (B,7)) of the --teacher ensemble:
+    adds distill_weight * (cross-entropy to the teacher policy + score regression to the
+    teacher's scores) - knowledge distillation of several nets into this one."""
     import torch
     import torch.nn.functional as F
     p, v, s = (fwd or model.forward_all)(x)
@@ -170,6 +209,12 @@ def losses(model, x, sc, legal, val, w, a, fwd=None):
     ls_all = F.log_softmax((s * SCORE_SCALE / a.rank_temp).masked_fill(~legal, -1e9), 1)
     lrank = -(soft_target(sc, legal, a.rank_temp) * ls_all.masked_fill(~legal, 0)).sum(1)
     per = lp + a.value_weight * lv + a.score_weight * lreg + a.rank_weight * lrank
+    if teacher is not None:
+        t_pol, t_sc = teacher
+        ld_p = -(t_pol * lp_all.masked_fill(~legal, 0)).sum(1)
+        ld_s = (F.smooth_l1_loss(s, t_sc / SCORE_SCALE, reduction="none", beta=0.1) * legal).sum(1) \
+            / legal.sum(1).clamp(min=1)
+        per = per + a.distill_weight * (ld_p + a.score_weight * ld_s)
     wsum = w.sum()
     parts = torch.stack([(t * w).sum() / wsum for t in (lp, lv, lreg, lrank)]).detach()
     return (per * w).sum() / wsum, parts
@@ -272,6 +317,10 @@ def main():
     ap.add_argument("--max-steps", type=int, default=0, help="stop early (smoke tests)")
     ap.add_argument("--speed", choices=SPEEDS, default="safe",
                     help="GPU speed settings (nn/fasttrain.py): off | safe (default) | max = + channels_last + torch.compile")
+    ap.add_argument("--teacher", default="",
+                    help="distil an ensemble into this net: 'runs/a/best.npz+runs/b/best.npz+runs/c/best.npz'")
+    ap.add_argument("--distill-weight", type=float, default=1.0,
+                    help="weight of the teacher losses (the Pons-label losses keep weight 1)")
     ap.add_argument("--pca", type=int, default=0,
                     help="PCA input projection with K components fitted on the training positions "
                          "(nn/model.py; research/pca_lda.py runs a sweep). 0 = off")
@@ -330,6 +379,21 @@ def main():
     run.write_config(cfg)
     log("run %s on %s: %d params; %s" % (a.run, device, cfg["params"], dinfo))
 
+    teacher_info = None
+    if a.teacher:
+        tpaths = [p for p in a.teacher.split("+") if p]
+        for p in tpaths:
+            if not os.path.isfile(p):
+                raise SystemExit("teacher not found: %s" % p)
+        t0t = time.time()
+        D["t_pol"], D["t_sc"], n_sc = teacher_targets(tpaths, D, device)
+        teacher_info = {"nets": tpaths, "with_score_head": n_sc, "weight": a.distill_weight,
+                        "seconds": round(time.time() - t0t, 1)}
+        if not n_sc:
+            D["t_sc"] = D["scores"].copy()       # no teacher scores: keep the Pons scores as target
+        log("teacher targets from %d nets for %d positions in %.0fs" % (len(tpaths), len(D["grids"]), time.time() - t0t))
+        cfg["teacher"] = teacher_info
+        run.write_config(cfg)
     Dd = to_device(D, device)
     tr_t = torch.from_numpy(tr).to(device)
     va_t = torch.from_numpy(va).to(device)
@@ -357,8 +421,13 @@ def main():
             mirror = torch.rand(len(idx), device=device) < 0.5
             x, sc, legal, _, val, w = make_batch(Dd, idx, mirror)
             x = fasttrain.to_input(a.speed, x)
+            tch = None
+            if teacher_info is not None:
+                m2 = mirror.view(-1, 1)
+                tp, ts = Dd["t_pol"][idx], Dd["t_sc"][idx]
+                tch = (torch.where(m2, tp.flip(1), tp), torch.where(m2, ts.flip(1), ts))
             with torch.autocast(device.type, dtype=torch.bfloat16, enabled=use_amp):
-                loss, parts = losses(model, x, sc, legal, val, w, a, fwd=train_fwd)
+                loss, parts = losses(model, x, sc, legal, val, w, a, fwd=train_fwd, teacher=tch)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)

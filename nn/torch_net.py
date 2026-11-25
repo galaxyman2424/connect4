@@ -93,6 +93,8 @@ class TorchNpzEvaluator:
         self.play_head = self.meta.get("play_head", "policy") if self.has_score else "policy"
         self.play_temp = float(self.meta.get("play_temp", 0.5))
         self.play_policy_weight = float(self.meta.get("play_policy_weight", 0.0))
+        from .numpy_net import value_source
+        self.value_source = value_source()
 
     def forward_all(self, x):
         """numpy in, numpy out (same as NumpyNet.forward_all)."""
@@ -112,6 +114,7 @@ class TorchNpzEvaluator:
                 logits, wdl_logits = (logits + l2.flip(1)) / 2, (wdl_logits + w2) / 2
                 if scores is not None:
                     scores = (scores + s2.flip(1)) / 2
+            raw_scores = scores
             if self.play_head in ("score", "combo") and scores is not None:
                 z = scores / self.play_temp
                 if self.play_head == "combo" and self.play_policy_weight:
@@ -122,4 +125,7 @@ class TorchNpzEvaluator:
             pri = torch.softmax(logits.double(), 1)
             wdl = torch.softmax(wdl_logits.float(), 1)
             val = (wdl[:, 0] - wdl[:, 2]).double()
+            if raw_scores is not None and self.value_source == "score":
+                best = raw_scores.masked_fill(~legal, float("-inf")).max(1).values.double()
+                val = torch.tanh(best) * (0.75 + 0.25 * best.abs().clamp(max=21.0) / 21.0)
         return pri.cpu().numpy(), val.cpu().numpy(), wdl.cpu().numpy()

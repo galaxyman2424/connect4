@@ -331,6 +331,51 @@ these as background jobs: see `mcp_server/README.md`.
 
 ---
 
+## I. Bigger benchmark, search sweeps, hybrid, ensemble distillation, C minimax (Linux PC)
+
+Background and measured numbers: [`docs/SEARCH_AND_ENSEMBLES.md`](docs/SEARCH_AND_ENSEMBLES.md).
+
+```bash
+cd ~/projects/introAI/connect4 && source .venv/bin/activate
+
+# 0. C minimax (identical results, ~20-190x faster); used automatically once built
+python -m engine.cbuild --check
+python -m pytest -q tests/test_cminimax.py tests/test_speedups.py
+
+# 1. 50,000-position benchmark (per-bucket CI +-0.5 instead of +-1.9), CPU ~10-20 min
+python experiments/data_prep/make_accuracy_set.py --n 60000 --workers 14 --seed 20261125 \
+    --out data/accuracy_positions_60k_raw.csv --exclude data/accuracy_positions.csv
+python experiments/data_prep/filter_bench.py --bench data/accuracy_positions_60k_raw.csv \
+    --exclude nn_data/solver_3m.npz,nn_data/solver_300k.npz,nn_data/hard_8x128_s0.npz,nn_data/hard_8x128_s1.npz,nn_data/hard_8x128_s2.npz \
+    --per-bucket 8333 --out data/accuracy_positions_50k.csv
+#    (data/accuracy_positions_60k_raw.csv may already be in the repo: then only run filter_bench)
+python -m nn.bench_stats --runs score_8x128_s0_r1,score_8x128_s1_r1,score_8x128_s2_r1 --bench data/accuracy_positions_50k.csv --backend torch
+python -m nn.evaluate --run score_8x128_s0_r1 --model best.npz --backend torch --bench data/accuracy_positions_50k.csv \
+    --mcts-sample 6000 --sims 200,800 --out eval_bench50k.json --skip ladder,hypothesis
+
+# 2. how much does search help (sims x value source, tree depth), GPU ~30-60 min each
+python -m nn.search_sweep --run score_8x128_s0_r1 --sims 0,50,200,800,1600,3200 --values wdl,score --positions 3000
+python -m nn.search_sweep --run score_8x128_s0_r1 --sims 0,200,800 --root-exact-from 16 --exact-from 20 --positions 3000
+python -m nn.search_sweep --run ens3 --model runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz \
+    --sims 0,200,800 --root-exact-from 16 --exact-from 20 --positions 3000
+#    results: experiments/results/search_sweep_<run>[_exact20][_root16].json
+
+# 3. hybrid player in the arena: net + MCTS until ply 16, exact C search after
+python -m arena.tournament --roster top8 --name top8_hybrid --openings 100 --seed 2 --workers 6 \
+    --add-nn nn:runs/score_8x128_s0_r1/best.npz:hybrid:16:200
+
+# 4. three ensemble nets -> one net (knowledge distillation), GPU ~2.5 h each at 8x128
+python -m nn.train_score --data nn_data/solver_3m.npz --hard nn_data/hard_8x128_s0.npz --hard-weight 2 \
+    --run distill_ens3_8x128 --blocks 8 --channels 128 --epochs 30 --seed 7 \
+    --teacher runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz
+python -m nn.train_score --data nn_data/solver_3m.npz --run distill_ens3_10x128 --blocks 10 --channels 128 --epochs 30 --seed 7 \
+    --teacher runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz
+python -m nn.bench_stats --runs distill_ens3_8x128,score_8x128_s0_r1,runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz \
+    --bench data/accuracy_positions_50k.csv --backend torch
+```
+
+---
+
 ## Where things end up
 
 | what | where |
@@ -345,4 +390,6 @@ these as background jobs: see `mcp_server/README.md`.
 | method comparison | `experiments/results/methods/<name>/summary.json` (+ csv, png charts) |
 | PCA / LDA experiments | `experiments/results/research/pca_lda/` (+ runs `pca_k*`, `lda_*`; logs `runs/pca_lda_logs/`) |
 | training speed test | `experiments/results/speedtest_<blocks>x<channels>.json` |
+| search sweeps (sims, value source, tree depth, hybrid) | `experiments/results/search_sweep_<run>*.json` |
+| bigger benchmark | `data/accuracy_positions_50k.csv` (made by `filter_bench.py`) |
 | jobs started from the MCP server | `mcp_server/jobs/<id>/output.log` (git-ignored) |

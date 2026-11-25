@@ -87,6 +87,12 @@ def search(board, depth, time_limit=None, use_tt=True, ordering=True, evaluator=
         raise ValueError("cannot search a finished game")
     if depth < 1:
         raise ValueError("depth must be >= 1")
+    if evaluator is None:
+        # C port (engine/cminimax/minimax.c): identical column / score / nodes, ~50-100x faster.
+        # Used when built (python -m engine.cbuild); C4_MINIMAX_C=0 forces this Python version.
+        from . import cminimax_ffi
+        if cminimax_ffi.available():
+            return cminimax_ffi.search(board, depth, time_limit, use_tt, ordering)
     t0 = time.perf_counter()
     deadline = (t0 + time_limit) if time_limit else None
     s = _Searcher(use_tt, ordering, deadline, evaluator)

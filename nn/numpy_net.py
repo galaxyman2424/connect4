@@ -45,6 +45,20 @@ def _softmax(z, axis=1):
 SCORE_SCALE = 10.0     # same as nn/model.py
 
 
+def score_to_value(best):
+    """Predicted Pons score of the best column -> value in (-1, 1) for search
+    (C4_VALUE_SOURCE=score).  Unlike P(win) - P(loss) it ranks a fast win above a slow one:
+    score 1 (slowest win) -> 0.58, score 21 (win now) -> 1.0, draw 0 -> 0."""
+    a = np.minimum(np.abs(best), 21.0)
+    return np.tanh(best) * (0.75 + 0.25 * a / 21.0)
+
+
+def value_source():
+    import os
+    v = os.environ.get("C4_VALUE_SOURCE", "wdl").strip().lower()
+    return v if v in ("wdl", "score") else "wdl"
+
+
 class NumpyNet:
     """Loads model.npz.  forward(planes) -> (policy_logits (B,7), wdl_logits (B,3)).
 
@@ -67,6 +81,7 @@ class NumpyNet:
         self.play_head = self.meta.get("play_head", "policy") if self.has_score else "policy"
         self.play_temp = float(self.meta.get("play_temp", 0.5))
         self.play_policy_weight = float(self.meta.get("play_policy_weight", 0.0))
+        self.value_source = value_source()      # 'wdl' (default) or 'score' (score-head nets only)
 
     def forward(self, x):
         p, v, _ = self.forward_all(x)
@@ -120,7 +135,11 @@ class NumpyNet:
                 lp = lp - np.log(np.exp(lp).sum(1, keepdims=True))
                 z = z + self.play_policy_weight * np.where(legal, lp, 0.0)
             logits = z
+        raw_scores = scores
         logits = np.where(legal, logits, -np.inf)
         pri = _softmax(logits)
         wdl = _softmax(wdl_logits)
-        return pri, wdl[:, 0] - wdl[:, 2], wdl
+        val = wdl[:, 0] - wdl[:, 2]
+        if raw_scores is not None and self.value_source == "score":
+            val = score_to_value(np.where(legal, raw_scores, -np.inf).max(1)).astype(np.float64)
+        return pri, val, wdl

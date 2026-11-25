@@ -155,3 +155,59 @@ def test_pca_lda_labels():
     assert list(y) == [0, 1, 2] and cls == ["win", "draw", "loss"]
     y, _ = labels(sc, "bestcol")
     assert list(y) == [5, 3, 2]          # most central optimal column
+
+
+def test_exact_tail_and_hybrid():
+    from engine.minimax import search
+    from nn import mcts
+    from nn.exact_tail import ExactTailEvaluator, HybridAgent, _board_from_bits, exact_value
+    import random
+    rng = random.Random(4)
+    n = 0
+    while n < 15:
+        b = Board()
+        for _ in range(rng.randint(30, 36)):
+            if b.is_terminal():
+                break
+            b.drop(rng.choice(b.legal_moves()))
+        if b.is_terminal():
+            continue
+        n += 1
+        bb = _board_from_bits(b.current_bits(), b.mask)
+        assert (bb.p1, bb.p2, bb.to_move, bb.moves_played) == (b.p1, b.p2, b.to_move, b.moves_played)
+        v, col, ok = exact_value(b.current_bits(), b.mask)
+        full = search(b, 42 - b.moves_played)
+        assert ok and col == full.col and (v > 0) == (full.score > 0) and (v < 0) == (full.score < 0)
+    net = random_init_numpy_net(2, 16, seed=1)
+    tail = ExactTailEvaluator(net, from_ply=30)
+    root = mcts.root_from_board(Board.from_moves("4444333322"))   # ply 10: leaves never reach ply 30
+    mcts.search([root], tail, 30)
+    late = None
+    while late is None:                                              # a random position at ply 26
+        b = Board()
+        for _ in range(26):
+            if b.is_terminal():
+                break
+            b.drop(rng.choice(b.legal_moves()))
+        if not b.is_terminal() and b.moves_played == 26:
+            late = b
+    if True:
+        r2 = mcts.root_from_board(late)
+        mcts.search([r2], ExactTailEvaluator(net, from_ply=27), 40)
+        assert any(ch is not None and ch.terminal is not None for ch in r2.children)
+        ag = HybridAgent(net, root_from=20, sims=20)
+        assert ag.choose(late) in late.legal_moves() and ag.last_info["mode"] == "exact_search"
+
+
+def test_teacher_targets_shapes(tmp_path):
+    pytest.importorskip("torch")
+    import torch
+    from nn.train_score import teacher_targets
+    _, path = _score_npz(tmp_path)
+    rng = np.random.default_rng(0)
+    D = {"grids": rng.integers(0, 2, (50, 2, 6, 7)).astype(np.uint8),
+         "first": rng.integers(0, 2, 50).astype(bool), "legal": np.ones((50, 7), bool)}
+    D["legal"][:, 0] = False
+    tp, ts, n_sc = teacher_targets([path, path], D, torch.device("cpu"))
+    assert tp.shape == (50, 7) and ts.shape == (50, 7) and n_sc == 2
+    assert np.allclose(tp.sum(1), 1, atol=1e-5) and (tp[:, 0] == 0).all() and (ts[:, 0] == 0).all()

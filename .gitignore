@@ -43,3 +43,12 @@ docs/PAPER_OUTLINE.md
 
 # training logs from tools/train_95.sh
 logs/
+
+# C minimax build output (python -m engine.cbuild; machine-specific)
+engine/cminimax/*.so
+engine/cminimax/*.dll
+engine/cminimax/*.dylib
+engine/cminimax/*.obj
+engine/cminimax/*.lib
+engine/cminimax/*.exp
+engine/cminimax/*.tmp

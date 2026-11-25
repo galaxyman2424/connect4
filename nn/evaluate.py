@@ -118,6 +118,9 @@ def main():
     ap.add_argument("--device", default="auto", help="torch backend device for the main process: auto, cpu, cuda:0")
     ap.add_argument("--mcts-batch", type=int, default=256,
                     help="positions searched in lock-step in the accuracy section (bigger = fuller GPU batches)")
+    ap.add_argument("--mcts-sample", type=int, default=0,
+                    help="run the MCTS accuracy part on a ply-stratified subset of this many benchmark "
+                         "positions (the policy part always uses all); e.g. 6000 with a 50k benchmark")
     ap.add_argument("--bench", default="", help="benchmark csv (default data/accuracy_positions.csv); "
                     "e.g. a bigger one from experiments/data_prep/make_accuracy_set.py --out")
     a = ap.parse_args()
@@ -171,8 +174,9 @@ def main():
         log("accuracy vs perfect play (%d positions) ..." % len(rows))
         pol = bench.policy_eval(ev, rows)
         acc = {"nn_policy": {k: pol[k] for k in ("n", "optimal", "keeps_nl", "by_bucket")}}
+        mrows = bench.stratified(rows, a.mcts_sample, seed=11)
         for s in parse_list(a.sims):
-            r = bench.mcts_eval(ev, rows, s, batch=a.mcts_batch)
+            r = bench.mcts_eval(ev, mrows, s, batch=a.mcts_batch)
             acc["nn_mcts%d" % s] = r
             log("  MCTS %d sims: optimal %.3f keeps %.3f" % (s, r["optimal"], r["keeps_nl"]))
         acc["minimax_reference"] = bench.minimax_reference()

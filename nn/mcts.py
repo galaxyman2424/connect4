@@ -170,8 +170,11 @@ def search(roots, evaluator, sims, c_puct=1.5, fpu=0.0):
         if leaves:
             pri, val, _ = evaluator.evaluate([l.cur for l in leaves], [l.mask for l in leaves])
             evals += len(leaves)
-            for leaf, p, v, path in zip(leaves, pri, val, paths):
+            exact = getattr(evaluator, "last_exact", None)     # nn/exact_tail.py: solved leaves
+            for k, (leaf, p, v, path) in enumerate(zip(leaves, pri, val, paths)):
                 _set_priors(leaf, p, v)
+                if exact is not None and exact[k]:
+                    leaf.terminal = float(v)                    # never expanded: value is exact
                 _backup(path, float(v))
     return evals
 

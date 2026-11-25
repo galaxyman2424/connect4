@@ -205,7 +205,8 @@ def nn_entry(spec):
     parts = spec.split(":")
     path = parts[1]
     mode = parts[2] if len(parts) > 2 else "mcts"
-    n = int(parts[3]) if len(parts) > 3 else (200 if mode == "mcts" else 4)
+    n = int(parts[3]) if len(parts) > 3 else (200 if mode == "mcts" else 16 if mode == "hybrid" else 4)
+    sims = int(parts[4]) if mode == "hybrid" and len(parts) > 4 else 200     # nn:<path>:hybrid:<ply>[:<sims>]
     paths = path.split("+")                 # 'a.npz+b.npz+c.npz' = ensemble (averaged)
     runs = [os.path.basename(os.path.dirname(os.path.abspath(p))) for p in paths]
     if len(runs) == 1:
@@ -213,7 +214,8 @@ def nn_entry(spec):
     else:
         common = os.path.commonprefix(runs).rstrip("_s") or "nets"
         run = "ens%d_%s" % (len(runs), common)
-    short = {"mcts": "mcts%d" % n, "policy": "policy", "minimax": "minimax_d%d" % n}[mode]
+    short = {"mcts": "mcts%d" % n, "policy": "policy", "minimax": "minimax_d%d" % n,
+             "hybrid": "hybrid%d_mcts%d" % (n, sims)}[mode]
     name = "nn_%s_%s" % (run, short)
 
     def make():
@@ -222,6 +224,8 @@ def nn_entry(spec):
             ag = make_agent(("nn", path, "mcts", n))
         elif mode == "policy":
             ag = make_agent(("nn", path, "policy"))
+        elif mode == "hybrid":
+            ag = make_agent(("nn", path, "hybrid", n, sims))
         else:
             ag = make_agent(("nn", path, "minimax", n))
         return A.Ours(ag, name)
@@ -232,7 +236,9 @@ def nn_entry(spec):
                   "algorithm": {"mcts": "Our ResNet policy+value network + PUCT MCTS (%d simulations)." % n,
                                 "policy": "Our network's policy head alone (no search).",
                                 "minimax": "Our minimax (depth %d) with the network's value as the "
-                                           "evaluation function." % n}[mode],
+                                           "evaluation function." % n,
+                                "hybrid": "Our network + MCTS (%d sims, exact C alpha-beta values at late leaves) "
+                                          "until ply %d, then exact C alpha-beta search." % (sims, n)}[mode],
                   "params": {"model": path}, "make": make}
 
 

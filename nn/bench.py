@@ -80,6 +80,23 @@ def wilson_ci(k, n, z=1.96):
     return (round(mid - half, 4), round(mid + half, 4))
 
 
+def stratified(rows, n, seed=0):
+    """n rows with the same number per ply bucket (deterministic for a seed), in file order."""
+    if not n or n >= len(rows):
+        return rows
+    by = {}
+    for i, r in enumerate(rows):
+        by.setdefault(r["bucket"], []).append(i)
+    rng = random.Random(seed)
+    k, extra = divmod(n, len(by))
+    keep = []
+    for j, b in enumerate(sorted(by)):
+        idx = by[b]
+        m = min(len(idx), k + (1 if j < extra else 0))
+        keep += rng.sample(idx, m)
+    return [rows[i] for i in sorted(keep)]
+
+
 def heldout_rows():
     """Every benchmark position that training data must never contain: the standard
     data/accuracy_positions.csv plus any extra benchmark data/accuracy_positions_*.csv
@@ -199,6 +216,7 @@ def make_agent(spec):
       ("nn", model_path, "policy")              policy head only
       ("nn", model_path, "mcts", sims)          network + MCTS
       ("nn", model_path, "minimax", depth)      minimax with the network's value as eval
+      ("nn", model_path, "hybrid", ply, sims)   MCTS (exact leaves) before ply, exact C search after
       ("weights", weights.json, depth)          minimax with evolved heuristic weights (rl/evolve.py)
       ("ntuple", ntuple.npz, depth)             n-tuple TD agent; depth 0 = greedy (rl/ntuple.py)
       ("random",)"""
@@ -222,6 +240,9 @@ def make_agent(spec):
             return MCTSAgent(ev, sims=int(spec[3]))
         if spec[2] == "minimax":
             return NNMinimaxAgent(ev, int(spec[3]))
+        if spec[2] == "hybrid":      # ("nn", path, "hybrid", root_from, sims): exact search from ply root_from
+            from .exact_tail import HybridAgent
+            return HybridAgent(ev, root_from=int(spec[3]), sims=int(spec[4]) if len(spec) > 4 else 200)
     raise ValueError("bad agent spec %r" % (spec,))
 
 
@@ -248,6 +269,8 @@ def spec_name(spec):
         return "nn_policy"
     if spec[2] == "mcts":
         return "nn_mcts%d" % spec[3]
+    if spec[2] == "hybrid":
+        return "nn_hybrid%d_mcts%d" % (spec[3], spec[4] if len(spec) > 4 else 200)
     return "nn_minimax_d%d" % spec[3]
 
 
