@@ -1,0 +1,10 @@
+model,arena_bot,blocks,channels,params,intact_agree,intact_value_acc,patch_layer,patch_mean_abs_z
+sup_6x64,nn_sup_6x64_mcts200,6,64,457500,0.9383,0.9523,block4,11.16
+az_6x64,nn_az_6x64_mcts200,6,64,457500,0.7265,0.7902,block4,6.69
+ppo_from_sup,nn_ppo_from_sup_policy,6,64,457500,0.7985,0.8418,block3,9.52
+ppo_6x64,nn_ppo_6x64_mcts200,6,64,457500,0.5976,0.6934,block4,2.37
+distill_az_2x32,nn_distill_az_2x32_policy,2,32,49980,0.7481,0.7954,block2,6.24
+score_8x128_s0,nn_score_8x128_s0_r1_mcts200 / ensemble member,8,128,2423531,0.9679,0.9665,block4,6.27
+score_8x128_s1,ensemble member,8,128,2423531,0.9677,0.9688,block4,24.38
+score_8x128_s2,ensemble member,8,128,2423531,0.9689,0.9655,block4,14.07
+bruneton_az,bruneton_az,1,256,1202866,0.611,0.6541,,

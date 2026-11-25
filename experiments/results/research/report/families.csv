@@ -1,0 +1,9 @@
+family,nets,best_run,best_policy_optimal,best_value_acc,mean_policy_optimal
+"perfect labels + score head (Pons, 3M)",6,score_8x128_s0_r1,0.967,0.9483333333333334,0.9657
+perfect labels (Pons),15,rs_A_pons_6x96,0.915,0.906,0.8677
+net teacher (distillation),10,rs_C_sup6x64_4x64,0.9123333333333333,0.8916666666666667,0.8397
+search teacher (minimax d4),6,rs_B_mm_d4_hand_6x64,0.8673333333333333,0.7096666666666667,0.8551
+self-play RL (PPO / DQN),3,dqn_6x64,0.823,0.8433333333333334,0.7386
+RL-net teacher,6,rs_B_ppo_from_sup_2x32_s1,0.7993333333333333,0.8403333333333334,0.7093
+heuristic teacher (no search),15,rs_B_heur_evo_g10_6x64,0.758,0.673,0.7416
+self-play (AlphaZero),2,az_6x64,0.7176666666666667,0.7716666666666666,0.5782

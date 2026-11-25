@@ -1,0 +1,1025 @@
+{
+  "bots": [
+    "pons_perfect",
+    "nn_sup_6x64_mcts200",
+    "nn_az_6x64_mcts200",
+    "nn_ppo_from_sup_policy",
+    "bruneton_az",
+    "nn_ppo_6x64_mcts200",
+    "nn_distill_az_2x32_policy",
+    "nn_ens3_score_8x128_policy",
+    "nn_ens3_score_8x128_mcts200",
+    "nn_score_8x128_s0_r1_mcts200"
+  ],
+  "matrix": [
+    [
+      null,
+      0.645,
+      0.64,
+      0.795,
+      0.785,
+      0.795,
+      0.8,
+      0.66,
+      0.5275,
+      0.54
+    ],
+    [
+      0.355,
+      null,
+      0.55,
+      0.7925,
+      0.7975,
+      0.765,
+      0.8025,
+      0.4425,
+      0.2875,
+      0.285
+    ],
+    [
+      0.36,
+      0.45,
+      null,
+      0.76,
+      0.805,
+      0.79,
+      0.8175,
+      0.4575,
+      0.3225,
+      0.33
+    ],
+    [
+      0.205,
+      0.2075,
+      0.24,
+      null,
+      0.4975,
+      0.4975,
+      0.5575,
+      0.275,
+      0.165,
+      0.175
+    ],
+    [
+      0.215,
+      0.2025,
+      0.195,
+      0.5025,
+      null,
+      0.555,
+      0.57,
+      0.2275,
+      0.19,
+      0.18
+    ],
+    [
+      0.205,
+      0.235,
+      0.21,
+      0.5025,
+      0.445,
+      null,
+      0.635,
+      0.235,
+      0.16,
+      0.16
+    ],
+    [
+      0.2,
+      0.1975,
+      0.1825,
+      0.4425,
+      0.43,
+      0.365,
+      null,
+      0.1825,
+      0.155,
+      0.14
+    ],
+    [
+      0.34,
+      0.5575,
+      0.5425,
+      0.725,
+      0.7725,
+      0.765,
+      0.8175,
+      null,
+      0.3225,
+      0.34
+    ],
+    [
+      0.4725,
+      0.7125,
+      0.6775,
+      0.835,
+      0.81,
+      0.84,
+      0.845,
+      0.6775,
+      null,
+      0.525
+    ],
+    [
+      0.46,
+      0.715,
+      0.67,
+      0.825,
+      0.82,
+      0.84,
+      0.86,
+      0.66,
+      0.475,
+      null
+    ]
+  ],
+  "wdl": {
+    "nn_sup_6x64_mcts200": {
+      "bruneton_az": [
+        152,
+        15,
+        33
+      ],
+      "nn_az_6x64_mcts200": [
+        93,
+        34,
+        73
+      ],
+      "nn_ppo_6x64_mcts200": [
+        137,
+        32,
+        31
+      ],
+      "pons_perfect": [
+        53,
+        36,
+        111
+      ],
+      "nn_ppo_from_sup_policy": [
+        144,
+        29,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        148,
+        25,
+        27
+      ],
+      "nn_ens3_score_8x128_policy": [
+        73,
+        31,
+        96
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        38,
+        39,
+        123
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        36,
+        42,
+        122
+      ]
+    },
+    "bruneton_az": {
+      "nn_sup_6x64_mcts200": [
+        33,
+        15,
+        152
+      ],
+      "nn_az_6x64_mcts200": [
+        31,
+        16,
+        153
+      ],
+      "nn_ppo_6x64_mcts200": [
+        99,
+        24,
+        77
+      ],
+      "pons_perfect": [
+        30,
+        26,
+        144
+      ],
+      "nn_ppo_from_sup_policy": [
+        87,
+        27,
+        86
+      ],
+      "nn_distill_az_2x32_policy": [
+        101,
+        26,
+        73
+      ],
+      "nn_ens3_score_8x128_policy": [
+        35,
+        21,
+        144
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        26,
+        24,
+        150
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        25,
+        22,
+        153
+      ]
+    },
+    "nn_az_6x64_mcts200": {
+      "bruneton_az": [
+        153,
+        16,
+        31
+      ],
+      "nn_sup_6x64_mcts200": [
+        73,
+        34,
+        93
+      ],
+      "nn_ppo_6x64_mcts200": [
+        146,
+        24,
+        30
+      ],
+      "pons_perfect": [
+        56,
+        32,
+        112
+      ],
+      "nn_ppo_from_sup_policy": [
+        140,
+        24,
+        36
+      ],
+      "nn_distill_az_2x32_policy": [
+        150,
+        27,
+        23
+      ],
+      "nn_ens3_score_8x128_policy": [
+        78,
+        27,
+        95
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        49,
+        31,
+        120
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        49,
+        34,
+        117
+      ]
+    },
+    "nn_ppo_6x64_mcts200": {
+      "bruneton_az": [
+        77,
+        24,
+        99
+      ],
+      "nn_sup_6x64_mcts200": [
+        31,
+        32,
+        137
+      ],
+      "nn_az_6x64_mcts200": [
+        30,
+        24,
+        146
+      ],
+      "pons_perfect": [
+        27,
+        28,
+        145
+      ],
+      "nn_ppo_from_sup_policy": [
+        78,
+        45,
+        77
+      ],
+      "nn_distill_az_2x32_policy": [
+        112,
+        30,
+        58
+      ],
+      "nn_ens3_score_8x128_policy": [
+        34,
+        26,
+        140
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        21,
+        22,
+        157
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        19,
+        26,
+        155
+      ]
+    },
+    "pons_perfect": {
+      "bruneton_az": [
+        144,
+        26,
+        30
+      ],
+      "nn_sup_6x64_mcts200": [
+        111,
+        36,
+        53
+      ],
+      "nn_az_6x64_mcts200": [
+        112,
+        32,
+        56
+      ],
+      "nn_ppo_6x64_mcts200": [
+        145,
+        28,
+        27
+      ],
+      "nn_ppo_from_sup_policy": [
+        145,
+        28,
+        27
+      ],
+      "nn_distill_az_2x32_policy": [
+        146,
+        28,
+        26
+      ],
+      "nn_ens3_score_8x128_policy": [
+        114,
+        36,
+        50
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        81,
+        49,
+        70
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        84,
+        48,
+        68
+      ]
+    },
+    "nn_ppo_from_sup_policy": {
+      "bruneton_az": [
+        86,
+        27,
+        87
+      ],
+      "nn_sup_6x64_mcts200": [
+        27,
+        29,
+        144
+      ],
+      "nn_az_6x64_mcts200": [
+        36,
+        24,
+        140
+      ],
+      "nn_ppo_6x64_mcts200": [
+        77,
+        45,
+        78
+      ],
+      "pons_perfect": [
+        27,
+        28,
+        145
+      ],
+      "nn_distill_az_2x32_policy": [
+        94,
+        35,
+        71
+      ],
+      "nn_ens3_score_8x128_policy": [
+        40,
+        30,
+        130
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        17,
+        32,
+        151
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        18,
+        34,
+        148
+      ]
+    },
+    "nn_distill_az_2x32_policy": {
+      "bruneton_az": [
+        73,
+        26,
+        101
+      ],
+      "nn_sup_6x64_mcts200": [
+        27,
+        25,
+        148
+      ],
+      "nn_az_6x64_mcts200": [
+        23,
+        27,
+        150
+      ],
+      "nn_ppo_6x64_mcts200": [
+        58,
+        30,
+        112
+      ],
+      "pons_perfect": [
+        26,
+        28,
+        146
+      ],
+      "nn_ppo_from_sup_policy": [
+        71,
+        35,
+        94
+      ],
+      "nn_ens3_score_8x128_policy": [
+        25,
+        23,
+        152
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        20,
+        22,
+        158
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        18,
+        20,
+        162
+      ]
+    },
+    "nn_ens3_score_8x128_policy": {
+      "bruneton_az": [
+        144,
+        21,
+        35
+      ],
+      "nn_sup_6x64_mcts200": [
+        96,
+        31,
+        73
+      ],
+      "nn_az_6x64_mcts200": [
+        95,
+        27,
+        78
+      ],
+      "nn_ppo_6x64_mcts200": [
+        140,
+        26,
+        34
+      ],
+      "pons_perfect": [
+        50,
+        36,
+        114
+      ],
+      "nn_ppo_from_sup_policy": [
+        130,
+        30,
+        40
+      ],
+      "nn_distill_az_2x32_policy": [
+        152,
+        23,
+        25
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        42,
+        45,
+        113
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        48,
+        40,
+        112
+      ]
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "bruneton_az": [
+        150,
+        24,
+        26
+      ],
+      "nn_sup_6x64_mcts200": [
+        123,
+        39,
+        38
+      ],
+      "nn_az_6x64_mcts200": [
+        120,
+        31,
+        49
+      ],
+      "nn_ppo_6x64_mcts200": [
+        157,
+        22,
+        21
+      ],
+      "pons_perfect": [
+        70,
+        49,
+        81
+      ],
+      "nn_ppo_from_sup_policy": [
+        151,
+        32,
+        17
+      ],
+      "nn_distill_az_2x32_policy": [
+        158,
+        22,
+        20
+      ],
+      "nn_score_8x128_s0_r1_mcts200": [
+        75,
+        60,
+        65
+      ],
+      "nn_ens3_score_8x128_policy": [
+        113,
+        45,
+        42
+      ]
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "bruneton_az": [
+        153,
+        22,
+        25
+      ],
+      "nn_sup_6x64_mcts200": [
+        122,
+        42,
+        36
+      ],
+      "nn_az_6x64_mcts200": [
+        117,
+        34,
+        49
+      ],
+      "nn_ppo_6x64_mcts200": [
+        155,
+        26,
+        19
+      ],
+      "nn_ens3_score_8x128_mcts200": [
+        65,
+        60,
+        75
+      ],
+      "pons_perfect": [
+        68,
+        48,
+        84
+      ],
+      "nn_ppo_from_sup_policy": [
+        148,
+        34,
+        18
+      ],
+      "nn_distill_az_2x32_policy": [
+        162,
+        20,
+        18
+      ],
+      "nn_ens3_score_8x128_policy": [
+        112,
+        40,
+        48
+      ]
+    }
+  },
+  "per_bot": {
+    "pons_perfect": {
+      "games": 1800,
+      "score": 0.6875,
+      "wins": 1082,
+      "draws": 311,
+      "losses": 407,
+      "score_moving_first": 0.6956,
+      "avg_ms": 28.7,
+      "max_ms": 907.8,
+      "forfeits": 0
+    },
+    "nn_sup_6x64_mcts200": {
+      "games": 1800,
+      "score": 0.5642,
+      "wins": 874,
+      "draws": 283,
+      "losses": 643,
+      "score_moving_first": 0.5783,
+      "avg_ms": 280.2,
+      "max_ms": 543.2,
+      "forfeits": 0
+    },
+    "nn_az_6x64_mcts200": {
+      "games": 1800,
+      "score": 0.5658,
+      "wins": 894,
+      "draws": 249,
+      "losses": 657,
+      "score_moving_first": 0.5783,
+      "avg_ms": 272.3,
+      "max_ms": 552.7,
+      "forfeits": 0
+    },
+    "nn_ppo_from_sup_policy": {
+      "games": 1800,
+      "score": 0.3133,
+      "wins": 422,
+      "draws": 284,
+      "losses": 1094,
+      "score_moving_first": 0.3389,
+      "avg_ms": 2.1,
+      "max_ms": 89.2,
+      "forfeits": 0
+    },
+    "bruneton_az": {
+      "games": 1800,
+      "score": 0.3153,
+      "wins": 467,
+      "draws": 201,
+      "losses": 1132,
+      "score_moving_first": 0.315,
+      "avg_ms": 331.5,
+      "max_ms": 685.2,
+      "forfeits": 0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "games": 1800,
+      "score": 0.3097,
+      "wins": 429,
+      "draws": 257,
+      "losses": 1114,
+      "score_moving_first": 0.3211,
+      "avg_ms": 279.8,
+      "max_ms": 533.2,
+      "forfeits": 0
+    },
+    "nn_distill_az_2x32_policy": {
+      "games": 1800,
+      "score": 0.255,
+      "wins": 341,
+      "draws": 236,
+      "losses": 1223,
+      "score_moving_first": 0.2744,
+      "avg_ms": 0.7,
+      "max_ms": 89.5,
+      "forfeits": 0
+    },
+    "nn_ens3_score_8x128_policy": {
+      "games": 1800,
+      "score": 0.5758,
+      "wins": 897,
+      "draws": 279,
+      "losses": 624,
+      "score_moving_first": 0.5828,
+      "avg_ms": 31.7,
+      "max_ms": 97.3,
+      "forfeits": 0
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "games": 1800,
+      "score": 0.7106,
+      "wins": 1117,
+      "draws": 324,
+      "losses": 359,
+      "score_moving_first": 0.7111,
+      "avg_ms": 4431.6,
+      "max_ms": 6825.3,
+      "forfeits": 0
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "games": 1800,
+      "score": 0.7028,
+      "wins": 1102,
+      "draws": 326,
+      "losses": 372,
+      "score_moving_first": 0.7006,
+      "avg_ms": 1465.8,
+      "max_ms": 2275.2,
+      "forfeits": 0
+    }
+  },
+  "elo": {
+    "pons_perfect": {
+      "elo": 1882.9,
+      "lo": 1866.8,
+      "hi": 1904.2
+    },
+    "nn_sup_6x64_mcts200": {
+      "elo": 1791.1,
+      "lo": 1774.4,
+      "hi": 1811.1
+    },
+    "nn_az_6x64_mcts200": {
+      "elo": 1792.3,
+      "lo": 1776.7,
+      "hi": 1813.0
+    },
+    "nn_ppo_from_sup_policy": {
+      "elo": 1607.5,
+      "lo": 1588.4,
+      "hi": 1626.8
+    },
+    "bruneton_az": {
+      "elo": 1609.0,
+      "lo": 1609.0,
+      "hi": 1609.0
+    },
+    "nn_ppo_6x64_mcts200": {
+      "elo": 1604.6,
+      "lo": 1587.1,
+      "hi": 1624.7
+    },
+    "nn_distill_az_2x32_policy": {
+      "elo": 1559.3,
+      "lo": 1539.8,
+      "hi": 1579.6
+    },
+    "nn_ens3_score_8x128_policy": {
+      "elo": 1799.5,
+      "lo": 1782.3,
+      "hi": 1818.6
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "elo": 1901.3,
+      "lo": 1885.0,
+      "hi": 1921.8
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "elo": 1895.0,
+      "lo": 1877.0,
+      "hi": 1915.3
+    }
+  },
+  "elo_anchor": "bruneton_az",
+  "elo_anchor_value": 1609.0,
+  "unrated": [],
+  "first_player_score": 0.5096,
+  "games": 9000,
+  "decisive": 7625,
+  "forfeits": [],
+  "meta": {
+    "name": "top8_o100_mcts_fixed",
+    "openings": [
+      "11",
+      "726",
+      "7335",
+      "51",
+      "6246",
+      "767",
+      "3545",
+      "171",
+      "434",
+      "525",
+      "22",
+      "23",
+      "25",
+      "3565",
+      "47",
+      "657",
+      "753",
+      "742",
+      "664",
+      "5243",
+      "557",
+      "644",
+      "565",
+      "4462",
+      "53",
+      "337",
+      "7555",
+      "6554",
+      "624",
+      "3651",
+      "617",
+      "61",
+      "56",
+      "2732",
+      "14",
+      "7113",
+      "226",
+      "1332",
+      "62",
+      "6145",
+      "72",
+      "566",
+      "1334",
+      "34",
+      "7561",
+      "747",
+      "6242",
+      "711",
+      "772",
+      "5744",
+      "3273",
+      "354",
+      "1652",
+      "1312",
+      "21",
+      "625",
+      "1226",
+      "131",
+      "2577",
+      "6336",
+      "421",
+      "6121",
+      "12",
+      "4267",
+      "451",
+      "5145",
+      "2167",
+      "315",
+      "633",
+      "113",
+      "7174",
+      "46",
+      "425",
+      "1131",
+      "361",
+      "15",
+      "464",
+      "642",
+      "1156",
+      "4334",
+      "457",
+      "667",
+      "476",
+      "422",
+      "535",
+      "666",
+      "1132",
+      "2741",
+      "1234",
+      "3425",
+      "125",
+      "2473",
+      "1754",
+      "2451",
+      "343",
+      "6466",
+      "6617",
+      "1345",
+      "4627",
+      "4214"
+    ],
+    "seed": 2,
+    "created": "2026-11-24T00:24:20",
+    "seconds": 13023.1,
+    "workers": 6,
+    "threads_per_worker": 1,
+    "move_timeout": 10.0,
+    "game_timeout": 300.0,
+    "roster": "top8",
+    "elo_anchor": "bruneton_az:1609",
+    "scheduled": 9000,
+    "recorded": 9000,
+    "missing": 0,
+    "duplicates": 0,
+    "command": "/home/connor/projects/introAI/connect4/arena/tournament.py --roster top8 --name top8_o100_mcts_fixed --openings 100 --seed 2 --workers 6 --resume --add-nn nn:runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz:mcts:200 --add-nn nn:runs/score_8x128_s0_r1/best.npz:mcts:200",
+    "machine": {
+      "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "cpus": 16
+    }
+  },
+  "bot_info": {
+    "pons_perfect": {
+      "label": "Pons solver (perfect play)",
+      "group": "open source",
+      "author": "Pascal Pons",
+      "url": "https://github.com/PascalPons/connect4",
+      "commit": "d6ba50d",
+      "license": "AGPL-3.0",
+      "lang": "C++",
+      "algorithm": "Exact solver: negamax + alpha-beta on bitboards, transposition table, iterative null-window search, opening book. Never makes a mistake.",
+      "params": {}
+    },
+    "nn_sup_6x64_mcts200": {
+      "label": "Our neural net (sup_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/sup_6x64/best.npz"
+      }
+    },
+    "nn_az_6x64_mcts200": {
+      "label": "Our neural net (az_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/az_6x64/model.npz"
+      }
+    },
+    "nn_ppo_from_sup_policy": {
+      "label": "Our neural net (ppo_from_sup, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/ppo_from_sup/model.npz"
+      }
+    },
+    "bruneton_az": {
+      "label": "AlphaZero (Bruneton et al.)",
+      "group": "open source",
+      "author": "J.-P. Bruneton, A. Douin, V. Reverdy",
+      "url": "https://github.com/jpbruneton/Alpha-Zero-algorithm-for-Connect-4-game",
+      "commit": "6cd76be",
+      "license": "BSD-3-Clause",
+      "lang": "Python / PyTorch",
+      "algorithm": "AlphaZero: ResNet (1 block x 256 filters, 1.2 M params) policy+value net trained by self-play, PUCT MCTS. Pretrained weights from the repo.",
+      "params": {
+        "sims": 200
+      }
+    },
+    "nn_ppo_6x64_mcts200": {
+      "label": "Our neural net (ppo_6x64, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/ppo_6x64/model.npz"
+      }
+    },
+    "nn_distill_az_2x32_policy": {
+      "label": "Our neural net (distill_az_2x32, policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/distill_az_2x32/best.npz"
+      }
+    },
+    "nn_ens3_score_8x128_policy": {
+      "label": "Ensemble of 3 nets (score_8x128_s0_r1, score_8x128_s1_r1, score_8x128_s2_r1; policy)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our network's policy head alone (no search).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz"
+      }
+    },
+    "nn_ens3_score_8x128_mcts200": {
+      "label": "Ensemble of 3 nets (score_8x128_s0_r1, score_8x128_s1_r1, score_8x128_s2_r1; mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz"
+      }
+    },
+    "nn_score_8x128_s0_r1_mcts200": {
+      "label": "Our neural net (score_8x128_s0_r1, mcts200)",
+      "group": "ours",
+      "author": "Connor Thelen",
+      "url": "",
+      "license": "",
+      "lang": "Python / numpy",
+      "algorithm": "Our ResNet policy+value network + PUCT MCTS (200 simulations).",
+      "params": {
+        "model": "runs/score_8x128_s0_r1/best.npz"
+      }
+    }
+  }
+}

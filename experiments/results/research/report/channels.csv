@@ -1,0 +1,294 @@
+key,model,layer,label,count
+sup_6x64|stem|row/height detector,sup_6x64,stem,row/height detector,5
+sup_6x64|stem|phase: late,sup_6x64,stem,phase: late,25
+sup_6x64|stem|mixed,sup_6x64,stem,mixed,25
+sup_6x64|stem|phase: early,sup_6x64,stem,phase: early,3
+sup_6x64|stem|occupancy copy,sup_6x64,stem,occupancy copy,3
+sup_6x64|stem|column detector,sup_6x64,stem,column detector,3
+sup_6x64|block1|phase: late,sup_6x64,block1,phase: late,22
+sup_6x64|block1|mixed,sup_6x64,block1,mixed,40
+sup_6x64|block1|own-threat,sup_6x64,block1,own-threat,1
+sup_6x64|block1|phase: early,sup_6x64,block1,phase: early,1
+sup_6x64|block2|mixed,sup_6x64,block2,mixed,49
+sup_6x64|block2|phase: late,sup_6x64,block2,phase: late,8
+sup_6x64|block2|own-threat,sup_6x64,block2,own-threat,5
+sup_6x64|block2|phase: early,sup_6x64,block2,phase: early,2
+sup_6x64|block3|mixed,sup_6x64,block3,mixed,47
+sup_6x64|block3|phase: late,sup_6x64,block3,phase: late,4
+sup_6x64|block3|phase: early,sup_6x64,block3,phase: early,3
+sup_6x64|block3|own-threat,sup_6x64,block3,own-threat,6
+sup_6x64|block3|opponent-threat,sup_6x64,block3,opponent-threat,4
+sup_6x64|block4|mixed,sup_6x64,block4,mixed,56
+sup_6x64|block4|own-threat,sup_6x64,block4,own-threat,2
+sup_6x64|block4|opponent-threat,sup_6x64,block4,opponent-threat,1
+sup_6x64|block4|phase: early,sup_6x64,block4,phase: early,3
+sup_6x64|block4|phase: late,sup_6x64,block4,phase: late,2
+sup_6x64|block5|mixed,sup_6x64,block5,mixed,58
+sup_6x64|block5|own-threat,sup_6x64,block5,own-threat,3
+sup_6x64|block5|opponent-threat,sup_6x64,block5,opponent-threat,1
+sup_6x64|block5|phase: early,sup_6x64,block5,phase: early,1
+sup_6x64|block5|phase: late,sup_6x64,block5,phase: late,1
+sup_6x64|block6|mixed,sup_6x64,block6,mixed,59
+sup_6x64|block6|own-threat,sup_6x64,block6,own-threat,2
+sup_6x64|block6|opponent-threat,sup_6x64,block6,opponent-threat,1
+sup_6x64|block6|phase: early,sup_6x64,block6,phase: early,1
+sup_6x64|block6|phase: late,sup_6x64,block6,phase: late,1
+az_6x64|stem|mixed,az_6x64,stem,mixed,37
+az_6x64|stem|phase: late,az_6x64,stem,phase: late,20
+az_6x64|stem|row/height detector,az_6x64,stem,row/height detector,4
+az_6x64|stem|occupancy copy,az_6x64,stem,occupancy copy,2
+az_6x64|stem|phase: early,az_6x64,stem,phase: early,1
+az_6x64|block1|mixed,az_6x64,block1,mixed,45
+az_6x64|block1|phase: late,az_6x64,block1,phase: late,19
+az_6x64|block2|phase: late,az_6x64,block2,phase: late,16
+az_6x64|block2|mixed,az_6x64,block2,mixed,47
+az_6x64|block2|opponent-threat,az_6x64,block2,opponent-threat,1
+az_6x64|block3|phase: late,az_6x64,block3,phase: late,13
+az_6x64|block3|mixed,az_6x64,block3,mixed,48
+az_6x64|block3|opponent-threat,az_6x64,block3,opponent-threat,1
+az_6x64|block3|phase: early,az_6x64,block3,phase: early,2
+az_6x64|block4|phase: late,az_6x64,block4,phase: late,9
+az_6x64|block4|mixed,az_6x64,block4,mixed,51
+az_6x64|block4|opponent-threat,az_6x64,block4,opponent-threat,1
+az_6x64|block4|phase: early,az_6x64,block4,phase: early,2
+az_6x64|block4|row/height detector,az_6x64,block4,row/height detector,1
+az_6x64|block5|phase: late,az_6x64,block5,phase: late,10
+az_6x64|block5|mixed,az_6x64,block5,mixed,49
+az_6x64|block5|opponent-threat,az_6x64,block5,opponent-threat,1
+az_6x64|block5|row/height detector,az_6x64,block5,row/height detector,2
+az_6x64|block5|phase: early,az_6x64,block5,phase: early,2
+az_6x64|block6|mixed,az_6x64,block6,mixed,41
+az_6x64|block6|phase: late,az_6x64,block6,phase: late,14
+az_6x64|block6|row/height detector,az_6x64,block6,row/height detector,9
+ppo_from_sup|stem|row/height detector,ppo_from_sup,stem,row/height detector,7
+ppo_from_sup|stem|phase: late,ppo_from_sup,stem,phase: late,24
+ppo_from_sup|stem|mixed,ppo_from_sup,stem,mixed,25
+ppo_from_sup|stem|column detector,ppo_from_sup,stem,column detector,5
+ppo_from_sup|stem|phase: early,ppo_from_sup,stem,phase: early,2
+ppo_from_sup|stem|occupancy copy,ppo_from_sup,stem,occupancy copy,1
+ppo_from_sup|block1|phase: late,ppo_from_sup,block1,phase: late,20
+ppo_from_sup|block1|mixed,ppo_from_sup,block1,mixed,42
+ppo_from_sup|block1|phase: early,ppo_from_sup,block1,phase: early,1
+ppo_from_sup|block1|own-threat,ppo_from_sup,block1,own-threat,1
+ppo_from_sup|block2|mixed,ppo_from_sup,block2,mixed,52
+ppo_from_sup|block2|own-threat,ppo_from_sup,block2,own-threat,2
+ppo_from_sup|block2|opponent-threat,ppo_from_sup,block2,opponent-threat,1
+ppo_from_sup|block2|phase: early,ppo_from_sup,block2,phase: early,4
+ppo_from_sup|block2|phase: late,ppo_from_sup,block2,phase: late,5
+ppo_from_sup|block3|mixed,ppo_from_sup,block3,mixed,50
+ppo_from_sup|block3|phase: early,ppo_from_sup,block3,phase: early,3
+ppo_from_sup|block3|phase: late,ppo_from_sup,block3,phase: late,4
+ppo_from_sup|block3|opponent-threat,ppo_from_sup,block3,opponent-threat,3
+ppo_from_sup|block3|own-threat,ppo_from_sup,block3,own-threat,4
+ppo_from_sup|block4|mixed,ppo_from_sup,block4,mixed,55
+ppo_from_sup|block4|own-threat,ppo_from_sup,block4,own-threat,3
+ppo_from_sup|block4|opponent-threat,ppo_from_sup,block4,opponent-threat,2
+ppo_from_sup|block4|phase: early,ppo_from_sup,block4,phase: early,2
+ppo_from_sup|block4|phase: late,ppo_from_sup,block4,phase: late,2
+ppo_from_sup|block5|mixed,ppo_from_sup,block5,mixed,60
+ppo_from_sup|block5|own-threat,ppo_from_sup,block5,own-threat,3
+ppo_from_sup|block5|phase: early,ppo_from_sup,block5,phase: early,1
+ppo_from_sup|block6|mixed,ppo_from_sup,block6,mixed,58
+ppo_from_sup|block6|own-threat,ppo_from_sup,block6,own-threat,3
+ppo_from_sup|block6|row/height detector,ppo_from_sup,block6,row/height detector,2
+ppo_from_sup|block6|opponent-threat,ppo_from_sup,block6,opponent-threat,1
+ppo_6x64|stem|phase: late,ppo_6x64,stem,phase: late,17
+ppo_6x64|stem|mixed,ppo_6x64,stem,mixed,31
+ppo_6x64|stem|occupancy copy,ppo_6x64,stem,occupancy copy,5
+ppo_6x64|stem|column detector,ppo_6x64,stem,column detector,1
+ppo_6x64|stem|row/height detector,ppo_6x64,stem,row/height detector,7
+ppo_6x64|stem|phase: early,ppo_6x64,stem,phase: early,3
+ppo_6x64|block1|mixed,ppo_6x64,block1,mixed,40
+ppo_6x64|block1|phase: late,ppo_6x64,block1,phase: late,18
+ppo_6x64|block1|occupancy copy,ppo_6x64,block1,occupancy copy,2
+ppo_6x64|block1|row/height detector,ppo_6x64,block1,row/height detector,2
+ppo_6x64|block1|phase: early,ppo_6x64,block1,phase: early,2
+ppo_6x64|block2|mixed,ppo_6x64,block2,mixed,50
+ppo_6x64|block2|phase: late,ppo_6x64,block2,phase: late,13
+ppo_6x64|block2|row/height detector,ppo_6x64,block2,row/height detector,1
+ppo_6x64|block3|mixed,ppo_6x64,block3,mixed,50
+ppo_6x64|block3|phase: late,ppo_6x64,block3,phase: late,12
+ppo_6x64|block3|phase: early,ppo_6x64,block3,phase: early,2
+ppo_6x64|block4|mixed,ppo_6x64,block4,mixed,52
+ppo_6x64|block4|phase: late,ppo_6x64,block4,phase: late,11
+ppo_6x64|block4|row/height detector,ppo_6x64,block4,row/height detector,1
+ppo_6x64|block5|mixed,ppo_6x64,block5,mixed,53
+ppo_6x64|block5|phase: late,ppo_6x64,block5,phase: late,5
+ppo_6x64|block5|row/height detector,ppo_6x64,block5,row/height detector,5
+ppo_6x64|block5|column detector,ppo_6x64,block5,column detector,1
+ppo_6x64|block6|mixed,ppo_6x64,block6,mixed,54
+ppo_6x64|block6|phase: late,ppo_6x64,block6,phase: late,4
+ppo_6x64|block6|row/height detector,ppo_6x64,block6,row/height detector,6
+distill_az_2x32|stem|row/height detector,distill_az_2x32,stem,row/height detector,8
+distill_az_2x32|stem|mixed,distill_az_2x32,stem,mixed,11
+distill_az_2x32|stem|phase: early,distill_az_2x32,stem,phase: early,3
+distill_az_2x32|stem|occupancy copy,distill_az_2x32,stem,occupancy copy,4
+distill_az_2x32|stem|phase: late,distill_az_2x32,stem,phase: late,5
+distill_az_2x32|stem|column detector,distill_az_2x32,stem,column detector,1
+distill_az_2x32|block1|row/height detector,distill_az_2x32,block1,row/height detector,7
+distill_az_2x32|block1|mixed,distill_az_2x32,block1,mixed,17
+distill_az_2x32|block1|phase: late,distill_az_2x32,block1,phase: late,6
+distill_az_2x32|block1|occupancy copy,distill_az_2x32,block1,occupancy copy,1
+distill_az_2x32|block1|phase: early,distill_az_2x32,block1,phase: early,1
+distill_az_2x32|block2|phase: early,distill_az_2x32,block2,phase: early,2
+distill_az_2x32|block2|row/height detector,distill_az_2x32,block2,row/height detector,10
+distill_az_2x32|block2|mixed,distill_az_2x32,block2,mixed,16
+distill_az_2x32|block2|phase: late,distill_az_2x32,block2,phase: late,4
+score_8x128_s0|stem|mixed,score_8x128_s0,stem,mixed,48
+score_8x128_s0|stem|phase: late,score_8x128_s0,stem,phase: late,58
+score_8x128_s0|stem|row/height detector,score_8x128_s0,stem,row/height detector,8
+score_8x128_s0|stem|column detector,score_8x128_s0,stem,column detector,7
+score_8x128_s0|stem|occupancy copy,score_8x128_s0,stem,occupancy copy,2
+score_8x128_s0|stem|phase: early,score_8x128_s0,stem,phase: early,5
+score_8x128_s0|block1|mixed,score_8x128_s0,block1,mixed,81
+score_8x128_s0|block1|phase: early,score_8x128_s0,block1,phase: early,12
+score_8x128_s0|block1|phase: late,score_8x128_s0,block1,phase: late,23
+score_8x128_s0|block1|opponent-threat,score_8x128_s0,block1,opponent-threat,4
+score_8x128_s0|block1|own-threat,score_8x128_s0,block1,own-threat,4
+score_8x128_s0|block1|row/height detector,score_8x128_s0,block1,row/height detector,3
+score_8x128_s0|block1|occupancy copy,score_8x128_s0,block1,occupancy copy,1
+score_8x128_s0|block2|mixed,score_8x128_s0,block2,mixed,80
+score_8x128_s0|block2|phase: early,score_8x128_s0,block2,phase: early,20
+score_8x128_s0|block2|own-threat,score_8x128_s0,block2,own-threat,7
+score_8x128_s0|block2|phase: late,score_8x128_s0,block2,phase: late,9
+score_8x128_s0|block2|row/height detector,score_8x128_s0,block2,row/height detector,2
+score_8x128_s0|block2|opponent-threat,score_8x128_s0,block2,opponent-threat,10
+score_8x128_s0|block3|mixed,score_8x128_s0,block3,mixed,90
+score_8x128_s0|block3|phase: early,score_8x128_s0,block3,phase: early,20
+score_8x128_s0|block3|own-threat,score_8x128_s0,block3,own-threat,8
+score_8x128_s0|block3|phase: late,score_8x128_s0,block3,phase: late,3
+score_8x128_s0|block3|opponent-threat,score_8x128_s0,block3,opponent-threat,7
+score_8x128_s0|block4|mixed,score_8x128_s0,block4,mixed,105
+score_8x128_s0|block4|phase: early,score_8x128_s0,block4,phase: early,9
+score_8x128_s0|block4|own-threat,score_8x128_s0,block4,own-threat,3
+score_8x128_s0|block4|phase: late,score_8x128_s0,block4,phase: late,4
+score_8x128_s0|block4|row/height detector,score_8x128_s0,block4,row/height detector,3
+score_8x128_s0|block4|opponent-threat,score_8x128_s0,block4,opponent-threat,4
+score_8x128_s0|block5|mixed,score_8x128_s0,block5,mixed,119
+score_8x128_s0|block5|phase: early,score_8x128_s0,block5,phase: early,5
+score_8x128_s0|block5|own-threat,score_8x128_s0,block5,own-threat,1
+score_8x128_s0|block5|phase: late,score_8x128_s0,block5,phase: late,1
+score_8x128_s0|block5|row/height detector,score_8x128_s0,block5,row/height detector,1
+score_8x128_s0|block5|opponent-threat,score_8x128_s0,block5,opponent-threat,1
+score_8x128_s0|block6|mixed,score_8x128_s0,block6,mixed,111
+score_8x128_s0|block6|phase: early,score_8x128_s0,block6,phase: early,7
+score_8x128_s0|block6|own-threat,score_8x128_s0,block6,own-threat,1
+score_8x128_s0|block6|phase: late,score_8x128_s0,block6,phase: late,3
+score_8x128_s0|block6|row/height detector,score_8x128_s0,block6,row/height detector,5
+score_8x128_s0|block6|opponent-threat,score_8x128_s0,block6,opponent-threat,1
+score_8x128_s0|block7|mixed,score_8x128_s0,block7,mixed,110
+score_8x128_s0|block7|phase: early,score_8x128_s0,block7,phase: early,1
+score_8x128_s0|block7|row/height detector,score_8x128_s0,block7,row/height detector,13
+score_8x128_s0|block7|own-threat,score_8x128_s0,block7,own-threat,1
+score_8x128_s0|block7|phase: late,score_8x128_s0,block7,phase: late,3
+score_8x128_s0|block8|row/height detector,score_8x128_s0,block8,row/height detector,40
+score_8x128_s0|block8|mixed,score_8x128_s0,block8,mixed,87
+score_8x128_s0|block8|phase: early,score_8x128_s0,block8,phase: early,1
+score_8x128_s1|stem|phase: early,score_8x128_s1,stem,phase: early,6
+score_8x128_s1|stem|occupancy copy,score_8x128_s1,stem,occupancy copy,8
+score_8x128_s1|stem|phase: late,score_8x128_s1,stem,phase: late,52
+score_8x128_s1|stem|mixed,score_8x128_s1,stem,mixed,45
+score_8x128_s1|stem|column detector,score_8x128_s1,stem,column detector,10
+score_8x128_s1|stem|row/height detector,score_8x128_s1,stem,row/height detector,7
+score_8x128_s1|block1|phase: early,score_8x128_s1,block1,phase: early,12
+score_8x128_s1|block1|occupancy copy,score_8x128_s1,block1,occupancy copy,4
+score_8x128_s1|block1|phase: late,score_8x128_s1,block1,phase: late,30
+score_8x128_s1|block1|mixed,score_8x128_s1,block1,mixed,77
+score_8x128_s1|block1|row/height detector,score_8x128_s1,block1,row/height detector,2
+score_8x128_s1|block1|opponent-threat,score_8x128_s1,block1,opponent-threat,2
+score_8x128_s1|block1|own-threat,score_8x128_s1,block1,own-threat,1
+score_8x128_s1|block2|phase: early,score_8x128_s1,block2,phase: early,22
+score_8x128_s1|block2|own-threat,score_8x128_s1,block2,own-threat,9
+score_8x128_s1|block2|mixed,score_8x128_s1,block2,mixed,78
+score_8x128_s1|block2|phase: late,score_8x128_s1,block2,phase: late,10
+score_8x128_s1|block2|opponent-threat,score_8x128_s1,block2,opponent-threat,7
+score_8x128_s1|block2|row/height detector,score_8x128_s1,block2,row/height detector,1
+score_8x128_s1|block2|occupancy copy,score_8x128_s1,block2,occupancy copy,1
+score_8x128_s1|block3|mixed,score_8x128_s1,block3,mixed,82
+score_8x128_s1|block3|opponent-threat,score_8x128_s1,block3,opponent-threat,7
+score_8x128_s1|block3|phase: early,score_8x128_s1,block3,phase: early,22
+score_8x128_s1|block3|phase: late,score_8x128_s1,block3,phase: late,4
+score_8x128_s1|block3|own-threat,score_8x128_s1,block3,own-threat,10
+score_8x128_s1|block3|row/height detector,score_8x128_s1,block3,row/height detector,2
+score_8x128_s1|block3|occupancy copy,score_8x128_s1,block3,occupancy copy,1
+score_8x128_s1|block4|mixed,score_8x128_s1,block4,mixed,100
+score_8x128_s1|block4|opponent-threat,score_8x128_s1,block4,opponent-threat,3
+score_8x128_s1|block4|phase: early,score_8x128_s1,block4,phase: early,15
+score_8x128_s1|block4|phase: late,score_8x128_s1,block4,phase: late,3
+score_8x128_s1|block4|own-threat,score_8x128_s1,block4,own-threat,5
+score_8x128_s1|block4|row/height detector,score_8x128_s1,block4,row/height detector,2
+score_8x128_s1|block5|mixed,score_8x128_s1,block5,mixed,114
+score_8x128_s1|block5|opponent-threat,score_8x128_s1,block5,opponent-threat,2
+score_8x128_s1|block5|phase: late,score_8x128_s1,block5,phase: late,2
+score_8x128_s1|block5|own-threat,score_8x128_s1,block5,own-threat,2
+score_8x128_s1|block5|phase: early,score_8x128_s1,block5,phase: early,5
+score_8x128_s1|block5|row/height detector,score_8x128_s1,block5,row/height detector,3
+score_8x128_s1|block6|mixed,score_8x128_s1,block6,mixed,118
+score_8x128_s1|block6|opponent-threat,score_8x128_s1,block6,opponent-threat,2
+score_8x128_s1|block6|phase: early,score_8x128_s1,block6,phase: early,2
+score_8x128_s1|block6|phase: late,score_8x128_s1,block6,phase: late,2
+score_8x128_s1|block6|own-threat,score_8x128_s1,block6,own-threat,1
+score_8x128_s1|block6|row/height detector,score_8x128_s1,block6,row/height detector,3
+score_8x128_s1|block7|mixed,score_8x128_s1,block7,mixed,114
+score_8x128_s1|block7|row/height detector,score_8x128_s1,block7,row/height detector,8
+score_8x128_s1|block7|phase: late,score_8x128_s1,block7,phase: late,2
+score_8x128_s1|block7|own-threat,score_8x128_s1,block7,own-threat,2
+score_8x128_s1|block7|phase: early,score_8x128_s1,block7,phase: early,2
+score_8x128_s1|block8|mixed,score_8x128_s1,block8,mixed,103
+score_8x128_s1|block8|row/height detector,score_8x128_s1,block8,row/height detector,19
+score_8x128_s1|block8|phase: late,score_8x128_s1,block8,phase: late,2
+score_8x128_s1|block8|phase: early,score_8x128_s1,block8,phase: early,2
+score_8x128_s1|block8|own-threat,score_8x128_s1,block8,own-threat,2
+score_8x128_s2|stem|mixed,score_8x128_s2,stem,mixed,48
+score_8x128_s2|stem|phase: late,score_8x128_s2,stem,phase: late,57
+score_8x128_s2|stem|column detector,score_8x128_s2,stem,column detector,10
+score_8x128_s2|stem|row/height detector,score_8x128_s2,stem,row/height detector,4
+score_8x128_s2|stem|occupancy copy,score_8x128_s2,stem,occupancy copy,3
+score_8x128_s2|stem|phase: early,score_8x128_s2,stem,phase: early,6
+score_8x128_s2|block1|own-threat,score_8x128_s2,block1,own-threat,4
+score_8x128_s2|block1|mixed,score_8x128_s2,block1,mixed,83
+score_8x128_s2|block1|row/height detector,score_8x128_s2,block1,row/height detector,2
+score_8x128_s2|block1|phase: late,score_8x128_s2,block1,phase: late,26
+score_8x128_s2|block1|phase: early,score_8x128_s2,block1,phase: early,11
+score_8x128_s2|block1|occupancy copy,score_8x128_s2,block1,occupancy copy,1
+score_8x128_s2|block1|opponent-threat,score_8x128_s2,block1,opponent-threat,1
+score_8x128_s2|block2|own-threat,score_8x128_s2,block2,own-threat,7
+score_8x128_s2|block2|mixed,score_8x128_s2,block2,mixed,85
+score_8x128_s2|block2|opponent-threat,score_8x128_s2,block2,opponent-threat,8
+score_8x128_s2|block2|phase: early,score_8x128_s2,block2,phase: early,21
+score_8x128_s2|block2|row/height detector,score_8x128_s2,block2,row/height detector,2
+score_8x128_s2|block2|occupancy copy,score_8x128_s2,block2,occupancy copy,2
+score_8x128_s2|block2|phase: late,score_8x128_s2,block2,phase: late,3
+score_8x128_s2|block3|own-threat,score_8x128_s2,block3,own-threat,5
+score_8x128_s2|block3|mixed,score_8x128_s2,block3,mixed,87
+score_8x128_s2|block3|phase: early,score_8x128_s2,block3,phase: early,20
+score_8x128_s2|block3|opponent-threat,score_8x128_s2,block3,opponent-threat,8
+score_8x128_s2|block3|row/height detector,score_8x128_s2,block3,row/height detector,2
+score_8x128_s2|block3|occupancy copy,score_8x128_s2,block3,occupancy copy,2
+score_8x128_s2|block3|phase: late,score_8x128_s2,block3,phase: late,4
+score_8x128_s2|block4|own-threat,score_8x128_s2,block4,own-threat,6
+score_8x128_s2|block4|mixed,score_8x128_s2,block4,mixed,104
+score_8x128_s2|block4|phase: early,score_8x128_s2,block4,phase: early,6
+score_8x128_s2|block4|opponent-threat,score_8x128_s2,block4,opponent-threat,5
+score_8x128_s2|block4|row/height detector,score_8x128_s2,block4,row/height detector,3
+score_8x128_s2|block4|phase: late,score_8x128_s2,block4,phase: late,4
+score_8x128_s2|block5|mixed,score_8x128_s2,block5,mixed,110
+score_8x128_s2|block5|phase: early,score_8x128_s2,block5,phase: early,5
+score_8x128_s2|block5|own-threat,score_8x128_s2,block5,own-threat,5
+score_8x128_s2|block5|opponent-threat,score_8x128_s2,block5,opponent-threat,1
+score_8x128_s2|block5|row/height detector,score_8x128_s2,block5,row/height detector,3
+score_8x128_s2|block5|phase: late,score_8x128_s2,block5,phase: late,4
+score_8x128_s2|block6|mixed,score_8x128_s2,block6,mixed,114
+score_8x128_s2|block6|own-threat,score_8x128_s2,block6,own-threat,4
+score_8x128_s2|block6|row/height detector,score_8x128_s2,block6,row/height detector,3
+score_8x128_s2|block6|phase: late,score_8x128_s2,block6,phase: late,3
+score_8x128_s2|block6|phase: early,score_8x128_s2,block6,phase: early,4
+score_8x128_s2|block7|mixed,score_8x128_s2,block7,mixed,113
+score_8x128_s2|block7|own-threat,score_8x128_s2,block7,own-threat,3
+score_8x128_s2|block7|row/height detector,score_8x128_s2,block7,row/height detector,7
+score_8x128_s2|block7|phase: late,score_8x128_s2,block7,phase: late,3
+score_8x128_s2|block7|phase: early,score_8x128_s2,block7,phase: early,2
+score_8x128_s2|block8|mixed,score_8x128_s2,block8,mixed,101
+score_8x128_s2|block8|row/height detector,score_8x128_s2,block8,row/height detector,24
+score_8x128_s2|block8|phase: late,score_8x128_s2,block8,phase: late,2
+score_8x128_s2|block8|phase: early,score_8x128_s2,block8,phase: early,1

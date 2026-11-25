@@ -1,0 +1,40 @@
+key,bot,opponent,score,par,gifts,own_losses,opp_error_rate,opp_only_move_share
+Pons solver|sup 6x64 + MCTS200,Pons solver,sup 6x64 + MCTS200,0.645,0.5,0.145,0.0,0.0305,0.3769
+Pons solver|az 6x64 + MCTS200,Pons solver,az 6x64 + MCTS200,0.64,0.5,0.14,0.0,0.0305,0.379
+Pons solver|ppo_from_sup (policy),Pons solver,ppo_from_sup (policy),0.795,0.5,0.295,0.0,0.0836,0.3734
+Pons solver|Bruneton AlphaZero,Pons solver,Bruneton AlphaZero,0.785,0.5,0.285,0.0,0.0816,0.4072
+Pons solver|ppo 6x64 + MCTS200,Pons solver,ppo 6x64 + MCTS200,0.795,0.5,0.295,0.0,0.084,0.3441
+Pons solver|distill_az 2x32 (policy),Pons solver,distill_az 2x32 (policy),0.8,0.5,0.3,0.0,0.0822,0.3507
+Pons solver|3-net score ensemble (policy),Pons solver,3-net score ensemble (policy),0.66,0.5,0.16,0.0,0.031,0.3765
+3-net score ensemble + MCTS200|sup 6x64 + MCTS200,3-net score ensemble + MCTS200,sup 6x64 + MCTS200,0.7125,0.5,0.255,0.0425,0.0543,0.4086
+3-net score ensemble + MCTS200|az 6x64 + MCTS200,3-net score ensemble + MCTS200,az 6x64 + MCTS200,0.6775,0.5,0.215,0.0375,0.0487,0.4329
+3-net score ensemble + MCTS200|ppo_from_sup (policy),3-net score ensemble + MCTS200,ppo_from_sup (policy),0.835,0.5,0.3825,0.0475,0.1108,0.4215
+3-net score ensemble + MCTS200|Bruneton AlphaZero,3-net score ensemble + MCTS200,Bruneton AlphaZero,0.81,0.5,0.345,0.035,0.1042,0.4151
+3-net score ensemble + MCTS200|ppo 6x64 + MCTS200,3-net score ensemble + MCTS200,ppo 6x64 + MCTS200,0.84,0.5,0.385,0.045,0.1201,0.4134
+3-net score ensemble + MCTS200|distill_az 2x32 (policy),3-net score ensemble + MCTS200,distill_az 2x32 (policy),0.845,0.5,0.3725,0.0275,0.112,0.4068
+3-net score ensemble + MCTS200|3-net score ensemble (policy),3-net score ensemble + MCTS200,3-net score ensemble (policy),0.6775,0.5,0.235,0.0575,0.0435,0.4521
+score 8x128 s0 + MCTS200|sup 6x64 + MCTS200,score 8x128 s0 + MCTS200,sup 6x64 + MCTS200,0.715,0.5,0.2625,0.0475,0.0544,0.4018
+score 8x128 s0 + MCTS200|az 6x64 + MCTS200,score 8x128 s0 + MCTS200,az 6x64 + MCTS200,0.67,0.5,0.2275,0.0575,0.0497,0.4428
+score 8x128 s0 + MCTS200|ppo_from_sup (policy),score 8x128 s0 + MCTS200,ppo_from_sup (policy),0.825,0.5,0.385,0.06,0.1113,0.3987
+score 8x128 s0 + MCTS200|Bruneton AlphaZero,score 8x128 s0 + MCTS200,Bruneton AlphaZero,0.82,0.5,0.38,0.06,0.1148,0.417
+score 8x128 s0 + MCTS200|ppo 6x64 + MCTS200,score 8x128 s0 + MCTS200,ppo 6x64 + MCTS200,0.84,0.5,0.4,0.06,0.1169,0.4291
+score 8x128 s0 + MCTS200|distill_az 2x32 (policy),score 8x128 s0 + MCTS200,distill_az 2x32 (policy),0.86,0.5,0.39,0.03,0.1213,0.387
+score 8x128 s0 + MCTS200|3-net score ensemble (policy),score 8x128 s0 + MCTS200,3-net score ensemble (policy),0.66,0.5,0.22,0.06,0.0427,0.4435
+3-net score ensemble (policy)|sup 6x64 + MCTS200,3-net score ensemble (policy),sup 6x64 + MCTS200,0.5575,0.5,0.24,0.1825,0.0421,0.4164
+3-net score ensemble (policy)|az 6x64 + MCTS200,3-net score ensemble (policy),az 6x64 + MCTS200,0.5425,0.5,0.23,0.1875,0.0413,0.4749
+3-net score ensemble (policy)|ppo_from_sup (policy),3-net score ensemble (policy),ppo_from_sup (policy),0.725,0.5,0.3775,0.1525,0.0878,0.4634
+3-net score ensemble (policy)|Bruneton AlphaZero,3-net score ensemble (policy),Bruneton AlphaZero,0.7725,0.5,0.38,0.1075,0.0989,0.4268
+3-net score ensemble (policy)|ppo 6x64 + MCTS200,3-net score ensemble (policy),ppo 6x64 + MCTS200,0.765,0.5,0.425,0.16,0.1058,0.4652
+3-net score ensemble (policy)|distill_az 2x32 (policy),3-net score ensemble (policy),distill_az 2x32 (policy),0.8175,0.5,0.43,0.1125,0.1097,0.4333
+sup 6x64 + MCTS200|az 6x64 + MCTS200,sup 6x64 + MCTS200,az 6x64 + MCTS200,0.55,0.5,0.35,0.3,0.0559,0.4723
+sup 6x64 + MCTS200|ppo_from_sup (policy),sup 6x64 + MCTS200,ppo_from_sup (policy),0.7925,0.5,0.565,0.2725,0.1385,0.47
+sup 6x64 + MCTS200|Bruneton AlphaZero,sup 6x64 + MCTS200,Bruneton AlphaZero,0.7975,0.5,0.575,0.2775,0.1525,0.4287
+sup 6x64 + MCTS200|ppo 6x64 + MCTS200,sup 6x64 + MCTS200,ppo 6x64 + MCTS200,0.765,0.5,0.5025,0.2375,0.1239,0.4594
+sup 6x64 + MCTS200|distill_az 2x32 (policy),sup 6x64 + MCTS200,distill_az 2x32 (policy),0.8025,0.5,0.5475,0.245,0.1252,0.4385
+sup 6x64 + MCTS200|3-net score ensemble (policy),sup 6x64 + MCTS200,3-net score ensemble (policy),0.4425,0.5,0.1825,0.24,0.0301,0.4656
+az 6x64 + MCTS200|sup 6x64 + MCTS200,az 6x64 + MCTS200,sup 6x64 + MCTS200,0.45,0.5,0.3,0.35,0.0519,0.4044
+az 6x64 + MCTS200|ppo_from_sup (policy),az 6x64 + MCTS200,ppo_from_sup (policy),0.76,0.5,0.52,0.26,0.1331,0.4306
+az 6x64 + MCTS200|Bruneton AlphaZero,az 6x64 + MCTS200,Bruneton AlphaZero,0.805,0.5,0.6175,0.3125,0.1653,0.4187
+az 6x64 + MCTS200|ppo 6x64 + MCTS200,az 6x64 + MCTS200,ppo 6x64 + MCTS200,0.79,0.5,0.635,0.345,0.1609,0.4417
+az 6x64 + MCTS200|distill_az 2x32 (policy),az 6x64 + MCTS200,distill_az 2x32 (policy),0.8175,0.5,0.59,0.2725,0.1459,0.409
+az 6x64 + MCTS200|3-net score ensemble (policy),az 6x64 + MCTS200,3-net score ensemble (policy),0.4575,0.5,0.1875,0.23,0.0327,0.4153

@@ -1,0 +1,684 @@
+{
+ "id": "interp_bruneton",
+ "generated": "2026-11-24 00:48:38",
+ "params": 1202866,
+ "layers": [
+  "input",
+  "stem",
+  "block1",
+  "pol_conv",
+  "val_conv",
+  "val_hidden"
+ ],
+ "chance": {
+  "heights": -0.0001,
+  "landing_row": 0.2444,
+  "ply": -0.0,
+  "first_to_move": 0.5,
+  "win_now": 0.5,
+  "opp_win_now": 0.5,
+  "own_threats": -0.0001,
+  "opp_threats": -0.0,
+  "own_double": 0.5,
+  "opp_double": 0.5,
+  "own_odd_thr": -0.0001,
+  "own_even_thr": -0.0,
+  "opp_odd_thr": -0.0001,
+  "opp_even_thr": -0.0,
+  "opt_set": 0.5,
+  "outcome": 0.6165,
+  "score": -0.0,
+  "phase": 0.5408,
+  "net_move": 0.1718
+ },
+ "metric": {
+  "heights": "r2",
+  "landing_row": "acc",
+  "ply": "r2",
+  "first_to_move": "auc",
+  "win_now": "auc",
+  "opp_win_now": "auc",
+  "own_threats": "r2",
+  "opp_threats": "r2",
+  "own_double": "auc",
+  "opp_double": "auc",
+  "own_odd_thr": "r2",
+  "own_even_thr": "r2",
+  "opp_odd_thr": "r2",
+  "opp_even_thr": "r2",
+  "opt_set": "auc",
+  "net_move": "acc",
+  "outcome": "acc",
+  "score": "r2",
+  "opp_reply": "auc",
+  "opp_net_move": "acc",
+  "phase": "acc"
+ },
+ "probes": {
+  "heights": {
+   "input": {
+    "flat": 0.9955,
+    "shuffled": -0.0039,
+    "skill": 0.9955
+   },
+   "stem": {
+    "flat": 0.9778,
+    "shuffled": -0.0048,
+    "skill": 0.9778
+   },
+   "block1": {
+    "flat": 0.9785,
+    "shuffled": -0.0057,
+    "skill": 0.9785
+   },
+   "pol_conv": {
+    "flat": 0.6728,
+    "shuffled": 0.003,
+    "skill": 0.6728
+   },
+   "val_conv": {
+    "flat": 0.2075,
+    "shuffled": 0.0006,
+    "skill": 0.2076
+   },
+   "val_hidden": {
+    "flat": 0.2658,
+    "shuffled": -0.0067,
+    "skill": 0.2659
+   }
+  },
+  "landing_row": {
+   "input": {
+    "flat": 0.9998,
+    "shuffled": 0.2357,
+    "skill": 0.9998
+   },
+   "stem": {
+    "flat": 0.9999,
+    "shuffled": 0.1865,
+    "skill": 0.9999
+   },
+   "block1": {
+    "flat": 0.9999,
+    "shuffled": 0.1888,
+    "skill": 0.9998
+   },
+   "pol_conv": {
+    "flat": 0.7201,
+    "shuffled": 0.2358,
+    "skill": 0.6295
+   },
+   "val_conv": {
+    "flat": 0.3301,
+    "shuffled": 0.2421,
+    "skill": 0.1135
+   },
+   "val_hidden": {
+    "flat": 0.357,
+    "shuffled": 0.2375,
+    "skill": 0.149
+   }
+  },
+  "ply": {
+   "input": {
+    "flat": 0.9988,
+    "shuffled": 0.0112,
+    "skill": 0.9988
+   },
+   "stem": {
+    "flat": 0.9965,
+    "shuffled": -0.0287,
+    "skill": 0.9965
+   },
+   "block1": {
+    "flat": 0.9937,
+    "shuffled": -0.03,
+    "skill": 0.9937
+   },
+   "pol_conv": {
+    "flat": 0.8183,
+    "shuffled": 0.0123,
+    "skill": 0.8183
+   },
+   "val_conv": {
+    "flat": 0.4537,
+    "shuffled": 0.0025,
+    "skill": 0.4537
+   },
+   "val_hidden": {
+    "flat": 0.5165,
+    "shuffled": -0.0008,
+    "skill": 0.5165
+   }
+  },
+  "first_to_move": {
+   "input": {
+    "flat": 1.0,
+    "shuffled": 0.7726,
+    "skill": 1.0
+   },
+   "stem": {
+    "flat": 1.0,
+    "shuffled": 0.4822,
+    "skill": 1.0
+   },
+   "block1": {
+    "flat": 1.0,
+    "shuffled": 0.5325,
+    "skill": 1.0
+   },
+   "pol_conv": {
+    "flat": 0.9017,
+    "shuffled": 0.6471,
+    "skill": 0.8033
+   },
+   "val_conv": {
+    "flat": 1.0,
+    "shuffled": 0.6715,
+    "skill": 1.0
+   },
+   "val_hidden": {
+    "flat": 1.0,
+    "shuffled": 0.4349,
+    "skill": 1.0
+   }
+  },
+  "win_now": {
+   "input": {
+    "flat": 0.7863,
+    "shuffled": 0.4637,
+    "skill": 0.5725
+   },
+   "stem": {
+    "flat": 0.9031,
+    "shuffled": 0.4778,
+    "skill": 0.8062
+   },
+   "block1": {
+    "flat": 0.9325,
+    "shuffled": 0.4888,
+    "skill": 0.865
+   },
+   "pol_conv": {
+    "flat": 0.8697,
+    "shuffled": 0.5069,
+    "skill": 0.7394
+   },
+   "val_conv": {
+    "flat": 0.7489,
+    "shuffled": 0.5026,
+    "skill": 0.4978
+   },
+   "val_hidden": {
+    "flat": 0.7622,
+    "shuffled": 0.5259,
+    "skill": 0.5245
+   }
+  },
+  "opp_win_now": {
+   "input": {
+    "flat": 0.7614,
+    "shuffled": 0.5073,
+    "skill": 0.5228
+   },
+   "stem": {
+    "flat": 0.8962,
+    "shuffled": 0.4966,
+    "skill": 0.7925
+   },
+   "block1": {
+    "flat": 0.925,
+    "shuffled": 0.4959,
+    "skill": 0.85
+   },
+   "pol_conv": {
+    "flat": 0.8658,
+    "shuffled": 0.4769,
+    "skill": 0.7316
+   },
+   "val_conv": {
+    "flat": 0.6775,
+    "shuffled": 0.5146,
+    "skill": 0.355
+   },
+   "val_hidden": {
+    "flat": 0.693,
+    "shuffled": 0.5226,
+    "skill": 0.3859
+   }
+  },
+  "own_threats": {
+   "input": {
+    "flat": 0.3041,
+    "shuffled": 0.0012,
+    "skill": 0.3042
+   },
+   "stem": {
+    "flat": 0.616,
+    "shuffled": -0.0294,
+    "skill": 0.616
+   },
+   "block1": {
+    "flat": 0.5977,
+    "shuffled": -0.0345,
+    "skill": 0.5977
+   },
+   "pol_conv": {
+    "flat": 0.28,
+    "shuffled": 0.0058,
+    "skill": 0.2801
+   },
+   "val_conv": {
+    "flat": 0.3061,
+    "shuffled": 0.0018,
+    "skill": 0.3062
+   },
+   "val_hidden": {
+    "flat": 0.339,
+    "shuffled": -0.0054,
+    "skill": 0.3391
+   }
+  },
+  "opp_threats": {
+   "input": {
+    "flat": 0.2893,
+    "shuffled": 0.0052,
+    "skill": 0.2893
+   },
+   "stem": {
+    "flat": 0.6251,
+    "shuffled": -0.0265,
+    "skill": 0.6251
+   },
+   "block1": {
+    "flat": 0.61,
+    "shuffled": -0.0563,
+    "skill": 0.61
+   },
+   "pol_conv": {
+    "flat": 0.2324,
+    "shuffled": -0.0066,
+    "skill": 0.2324
+   },
+   "val_conv": {
+    "flat": 0.3052,
+    "shuffled": -0.0074,
+    "skill": 0.3052
+   },
+   "val_hidden": {
+    "flat": 0.3353,
+    "shuffled": -0.0158,
+    "skill": 0.3353
+   }
+  },
+  "own_double": {
+   "input": {
+    "flat": 0.8256,
+    "shuffled": 0.3281,
+    "skill": 0.6512
+   },
+   "stem": {
+    "flat": 0.9014,
+    "shuffled": 0.4535,
+    "skill": 0.8029
+   },
+   "block1": {
+    "flat": 0.9228,
+    "shuffled": 0.4849,
+    "skill": 0.8457
+   },
+   "pol_conv": {
+    "flat": 0.8086,
+    "shuffled": 0.4729,
+    "skill": 0.6172
+   },
+   "val_conv": {
+    "flat": 0.7809,
+    "shuffled": 0.4323,
+    "skill": 0.5619
+   },
+   "val_hidden": {
+    "flat": 0.7904,
+    "shuffled": 0.444,
+    "skill": 0.5809
+   }
+  },
+  "opp_double": {
+   "input": {
+    "flat": 0.7897,
+    "shuffled": 0.4856,
+    "skill": 0.5794
+   },
+   "stem": {
+    "flat": 0.8895,
+    "shuffled": 0.4786,
+    "skill": 0.7789
+   },
+   "block1": {
+    "flat": 0.9069,
+    "shuffled": 0.4941,
+    "skill": 0.8138
+   },
+   "pol_conv": {
+    "flat": 0.7208,
+    "shuffled": 0.5035,
+    "skill": 0.4417
+   },
+   "val_conv": {
+    "flat": 0.7175,
+    "shuffled": 0.4547,
+    "skill": 0.4349
+   },
+   "val_hidden": {
+    "flat": 0.7252,
+    "shuffled": 0.5103,
+    "skill": 0.4505
+   }
+  },
+  "own_odd_thr": {
+   "input": {
+    "flat": 0.1721,
+    "shuffled": 0.0069,
+    "skill": 0.1722
+   },
+   "stem": {
+    "flat": 0.5049,
+    "shuffled": -0.0273,
+    "skill": 0.505
+   },
+   "block1": {
+    "flat": 0.5035,
+    "shuffled": -0.0425,
+    "skill": 0.5036
+   },
+   "pol_conv": {
+    "flat": 0.1687,
+    "shuffled": 0.0055,
+    "skill": 0.1688
+   },
+   "val_conv": {
+    "flat": 0.1967,
+    "shuffled": 0.0013,
+    "skill": 0.1968
+   },
+   "val_hidden": {
+    "flat": 0.2637,
+    "shuffled": -0.0029,
+    "skill": 0.2638
+   }
+  },
+  "own_even_thr": {
+   "input": {
+    "flat": 0.1886,
+    "shuffled": -0.003,
+    "skill": 0.1886
+   },
+   "stem": {
+    "flat": 0.5251,
+    "shuffled": -0.0246,
+    "skill": 0.5251
+   },
+   "block1": {
+    "flat": 0.4992,
+    "shuffled": -0.0301,
+    "skill": 0.4992
+   },
+   "pol_conv": {
+    "flat": 0.1745,
+    "shuffled": 0.0023,
+    "skill": 0.1745
+   },
+   "val_conv": {
+    "flat": 0.1842,
+    "shuffled": -0.0054,
+    "skill": 0.1842
+   },
+   "val_hidden": {
+    "flat": 0.2186,
+    "shuffled": -0.0092,
+    "skill": 0.2186
+   }
+  },
+  "opp_odd_thr": {
+   "input": {
+    "flat": 0.1406,
+    "shuffled": -0.0034,
+    "skill": 0.1407
+   },
+   "stem": {
+    "flat": 0.526,
+    "shuffled": -0.0332,
+    "skill": 0.526
+   },
+   "block1": {
+    "flat": 0.511,
+    "shuffled": -0.0589,
+    "skill": 0.511
+   },
+   "pol_conv": {
+    "flat": 0.1338,
+    "shuffled": -0.0041,
+    "skill": 0.1338
+   },
+   "val_conv": {
+    "flat": 0.208,
+    "shuffled": -0.0097,
+    "skill": 0.208
+   },
+   "val_hidden": {
+    "flat": 0.2599,
+    "shuffled": -0.0205,
+    "skill": 0.26
+   }
+  },
+  "opp_even_thr": {
+   "input": {
+    "flat": 0.1942,
+    "shuffled": 0.0023,
+    "skill": 0.1942
+   },
+   "stem": {
+    "flat": 0.5311,
+    "shuffled": -0.0224,
+    "skill": 0.5311
+   },
+   "block1": {
+    "flat": 0.5139,
+    "shuffled": -0.0467,
+    "skill": 0.5139
+   },
+   "pol_conv": {
+    "flat": 0.1419,
+    "shuffled": -0.0055,
+    "skill": 0.1419
+   },
+   "val_conv": {
+    "flat": 0.1764,
+    "shuffled": -0.0019,
+    "skill": 0.1764
+   },
+   "val_hidden": {
+    "flat": 0.2157,
+    "shuffled": -0.006,
+    "skill": 0.2157
+   }
+  },
+  "opt_set": {
+   "input": {
+    "flat": 0.7104,
+    "shuffled": 0.5066,
+    "skill": 0.4208
+   },
+   "stem": {
+    "flat": 0.7566,
+    "shuffled": 0.5118,
+    "skill": 0.5132
+   },
+   "block1": {
+    "flat": 0.8012,
+    "shuffled": 0.5042,
+    "skill": 0.6024
+   },
+   "pol_conv": {
+    "flat": 0.796,
+    "shuffled": 0.5014,
+    "skill": 0.592
+   },
+   "val_conv": {
+    "flat": 0.6127,
+    "shuffled": 0.4925,
+    "skill": 0.2253
+   },
+   "val_hidden": {
+    "flat": 0.628,
+    "shuffled": 0.5087,
+    "skill": 0.2561
+   }
+  },
+  "outcome": {
+   "input": {
+    "flat": 0.6178,
+    "shuffled": 0.6165,
+    "skill": 0.0034
+   },
+   "stem": {
+    "flat": 0.7051,
+    "shuffled": 0.6142,
+    "skill": 0.231
+   },
+   "block1": {
+    "flat": 0.7644,
+    "shuffled": 0.6055,
+    "skill": 0.3857
+   },
+   "pol_conv": {
+    "flat": 0.6667,
+    "shuffled": 0.6165,
+    "skill": 0.1309
+   },
+   "val_conv": {
+    "flat": 0.7335,
+    "shuffled": 0.6165,
+    "skill": 0.3051
+   },
+   "val_hidden": {
+    "flat": 0.7365,
+    "shuffled": 0.6163,
+    "skill": 0.3129
+   }
+  },
+  "score": {
+   "input": {
+    "flat": 0.0428,
+    "shuffled": -0.0057,
+    "skill": 0.0428
+   },
+   "stem": {
+    "flat": 0.2722,
+    "shuffled": -0.028,
+    "skill": 0.2722
+   },
+   "block1": {
+    "flat": 0.366,
+    "shuffled": -0.0607,
+    "skill": 0.366
+   },
+   "pol_conv": {
+    "flat": 0.1524,
+    "shuffled": -0.0054,
+    "skill": 0.1524
+   },
+   "val_conv": {
+    "flat": 0.2606,
+    "shuffled": 0.0075,
+    "skill": 0.2606
+   },
+   "val_hidden": {
+    "flat": 0.2945,
+    "shuffled": -0.0058,
+    "skill": 0.2945
+   }
+  },
+  "phase": {
+   "input": {
+    "flat": 0.9936,
+    "shuffled": 0.5408,
+    "skill": 0.9861
+   },
+   "stem": {
+    "flat": 0.9432,
+    "shuffled": 0.5345,
+    "skill": 0.8763
+   },
+   "block1": {
+    "flat": 0.9388,
+    "shuffled": 0.5188,
+    "skill": 0.8667
+   },
+   "pol_conv": {
+    "flat": 0.7989,
+    "shuffled": 0.5408,
+    "skill": 0.5621
+   },
+   "val_conv": {
+    "flat": 0.6954,
+    "shuffled": 0.5408,
+    "skill": 0.3367
+   },
+   "val_hidden": {
+    "flat": 0.7049,
+    "shuffled": 0.5397,
+    "skill": 0.3574
+   }
+  },
+  "net_move": {
+   "input": {
+    "flat": 0.4008,
+    "shuffled": 0.179,
+    "skill": 0.2765
+   },
+   "stem": {
+    "flat": 0.5287,
+    "shuffled": 0.1522,
+    "skill": 0.4309
+   },
+   "block1": {
+    "flat": 0.7339,
+    "shuffled": 0.168,
+    "skill": 0.6787
+   },
+   "pol_conv": {
+    "flat": 0.971,
+    "shuffled": 0.1928,
+    "skill": 0.965
+   },
+   "val_conv": {
+    "flat": 0.2374,
+    "shuffled": 0.1744,
+    "skill": 0.0792
+   },
+   "val_hidden": {
+    "flat": 0.2641,
+    "shuffled": 0.1643,
+    "skill": 0.1114
+   }
+  }
+ },
+ "intact": {
+  "agree": 0.611,
+  "value_acc_thirds": 0.6541,
+  "value_corr": 0.4779
+ },
+ "block1_skipped": {
+  "agree": 0.3761,
+  "value_acc_thirds": 0.4133,
+  "value_corr": 0.1006
+ },
+ "notes": [
+  "Positions, splits and concept labels identical to research/interp.py (seed 2026, n=50000).",
+  "value_acc_thirds: tanh value > 1/3 -> win, < -1/3 -> loss, else draw (their head has no draw class).",
+  "Their stem is a 4x4 conv with padding 1, so every layer after the input is 5x6 = 30 cells.",
+  "block1_skipped: residual block replaced by identity (its input is post-ReLU)."
+ ],
+ "seconds": 289.2
+}

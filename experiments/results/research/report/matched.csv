@@ -1,0 +1,21 @@
+key,net,state,n,net_better,same,net_worse,net_move_also_keeps_value,mean_score_diff,opp_err_after_pons,opp_err_after_net,only_move_after_pons,only_move_after_net,sign_p,pairs,identical_games
+3-net score ensemble + MCTS200|won,3-net score ensemble + MCTS200,won,608,0,587,21,574,-0.0181,0.0,0.0707,0.0,0.5543,,,
+3-net score ensemble + MCTS200|drawn,3-net score ensemble + MCTS200,drawn,264,49,190,25,253,0.0436,0.0359,0.0627,0.3824,0.4083,,,
+3-net score ensemble + MCTS200|lost,3-net score ensemble + MCTS200,lost,388,111,230,47,388,0.1418,0.0326,0.0618,0.3447,0.425,,,
+3-net score ensemble + MCTS200|all,3-net score ensemble + MCTS200,all,1260,160,1007,93,,,,,,,3e-05,1400,139
+score 8x128 s0 + MCTS200|won,score 8x128 s0 + MCTS200,won,628,0,607,21,575,-0.0175,0.0,0.1181,0.0,0.5542,,,
+score 8x128 s0 + MCTS200|drawn,score 8x128 s0 + MCTS200,drawn,268,51,194,23,259,0.0522,0.0374,0.0672,0.3807,0.4151,,,
+score 8x128 s0 + MCTS200|lost,score 8x128 s0 + MCTS200,lost,354,116,185,53,354,0.1441,0.0336,0.061,0.3508,0.4151,,,
+score 8x128 s0 + MCTS200|all,score 8x128 s0 + MCTS200,all,1250,167,986,97,,,,,,,2e-05,1400,150
+3-net score ensemble (policy)|won,3-net score ensemble (policy),won,506,0,474,32,456,-0.0514,0.0,0.1386,0.0,0.5683,,,
+3-net score ensemble (policy)|drawn,3-net score ensemble (policy),drawn,255,32,154,69,182,-0.1216,0.0476,0.067,0.3625,0.4667,,,
+3-net score ensemble (policy)|lost,3-net score ensemble (policy),lost,330,62,208,60,330,0.003,0.0364,0.0471,0.3535,0.4299,,,
+3-net score ensemble (policy)|all,3-net score ensemble (policy),all,1091,94,836,161,,,,,,,3.2e-05,1200,109
+sup 6x64 + MCTS200|won,sup 6x64 + MCTS200,won,543,0,481,62,450,-0.0838,0.0,0.1476,0.0,0.6223,,,
+sup 6x64 + MCTS200|drawn,sup 6x64 + MCTS200,drawn,254,45,138,71,164,-0.1063,0.0472,0.0882,0.3701,0.4738,,,
+sup 6x64 + MCTS200|lost,sup 6x64 + MCTS200,lost,312,58,204,50,312,0.024,0.0385,0.0612,0.3536,0.4091,,,
+sup 6x64 + MCTS200|all,sup 6x64 + MCTS200,all,1109,103,823,183,,,,,,,3e-06,1200,91
+az 6x64 + MCTS200|won,az 6x64 + MCTS200,won,536,0,468,68,420,-0.0924,0.0,0.1248,0.0,0.5109,,,
+az 6x64 + MCTS200|drawn,az 6x64 + MCTS200,drawn,255,42,121,92,145,-0.1627,0.0529,0.0983,0.3694,0.4352,,,
+az 6x64 + MCTS200|lost,az 6x64 + MCTS200,lost,367,83,211,73,367,0.03,0.0428,0.0875,0.3429,0.3465,,,
+az 6x64 + MCTS200|all,az 6x64 + MCTS200,all,1158,125,800,233,,,,,,,0.0,1200,42

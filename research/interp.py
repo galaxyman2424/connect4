@@ -43,7 +43,14 @@ MODELS = {
     "az_6x64": "runs/az_6x64/model.npz",
     "distill_az_2x32": "runs/distill_az_2x32/best.npz",
     "ppo_6x64": "runs/ppo_6x64/model.npz",
+    # added 2026-11-24: the rest of the nets in the top8_o100_mcts_fixed arena
+    "ppo_from_sup": "runs/ppo_from_sup/model.npz",
+    "score_8x128_s0": "runs/score_8x128_s0_r1/best.npz",
+    "score_8x128_s1": "runs/score_8x128_s1_r1/best.npz",
+    "score_8x128_s2": "runs/score_8x128_s2_r1/best.npz",
 }
+ARENA_MODELS = ["sup_6x64", "az_6x64", "ppo_from_sup", "ppo_6x64", "distill_az_2x32",
+                "score_8x128_s0", "score_8x128_s1", "score_8x128_s2"]
 PRIMARY = "sup_6x64"
 
 # thresholds (stated in notes)
