@@ -3,12 +3,15 @@
     python -m research.report_data
 
 Reads experiments/results/research/{arena_vs_pons,bench_all,interp_arena,interp_bruneton}.json
-and writes experiments/results/research/report/*.csv.
+and writes experiments/results/research/report/*.csv, plus all of those tables in one file,
+experiments/results/research/report.json, which the website's /research page reads
+(tabs "Nets vs Pons", "Inside all arena nets", "All nets benchmarked").
 """
 
 import csv
 import json
 import os
+import time
 
 from scipy import stats as sstats
 
@@ -31,7 +34,25 @@ MODEL_BOT = {"sup_6x64": "nn_sup_6x64_mcts200", "az_6x64": "nn_az_6x64_mcts200",
              "bruneton_az": "bruneton_az"}
 
 
+TABLES = {}
+
+
+def _typed(v):
+    if v is None or v == "":
+        return None
+    if isinstance(v, bool):
+        return v
+    if isinstance(v, (int, float)):
+        return v
+    try:
+        f = float(v)
+        return int(f) if f.is_integer() and "." not in str(v) and "e" not in str(v).lower() else f
+    except (TypeError, ValueError):
+        return v
+
+
 def write(name, rows, cols):
+    TABLES[name[:-4]] = [{k: _typed(r.get(k)) for k in cols} for r in rows]
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, name), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
@@ -247,3 +268,12 @@ if __name__ == "__main__":
     nets()
     if os.path.isfile(os.path.join(RES, "interp_arena.json")):
         interp()
+    A = json.load(open(os.path.join(RES, "arena_vs_pons.json")))
+    out = {"id": "report", "title": "Nets vs Pons, inside all arena nets, every net benchmarked",
+           "generated": time.strftime("%Y-%m-%d %H:%M:%S"), "arena_run": A["run"], "games": A["games"],
+           "positions_solved": A["positions"], "common_field": A["common_field"], "tables": TABLES}
+    tmp = os.path.join(RES, ".report.json.part")
+    with open(tmp, "w") as f:
+        json.dump(out, f, separators=(",", ":"))
+    os.replace(tmp, os.path.join(RES, "report.json"))
+    print("wrote report.json", os.path.getsize(os.path.join(RES, "report.json")))

@@ -10,7 +10,7 @@
   var SEQ = [C.blue, C.orange, C.green, C.purple, C.yellow, C.sky, C.red, C.grey, C.white];
   var SHAPES = ["circle", "square", "diamond", "triangle"];
   var BEST = "nn_sup_6x64_mcts200";
-  var D = { arena_analysis: null, roster: null, sweep: null, interp: null, interp_channels: null };
+  var D = { arena_analysis: null, roster: null, sweep: null, interp: null, interp_channels: null, report: null };
   var IDX = null, SEL = { findings: {}, roster: {}, runs: {} };
   var UI = { tab: "overview" };       // UI state kept across re-renders
 
@@ -398,7 +398,7 @@
   }
 
   // =================================================================== data + selection
-  var FILES = ["arena_analysis", "roster", "arena_top15", "sweep", "interp"];   // interp_channels is loaded on demand
+  var FILES = ["arena_analysis", "roster", "arena_top15", "sweep", "interp", "report"];   // interp_channels is loaded on demand
   var SEEN = {};
   function stamp(ent) { return ent && ent.exists ? (ent.mtime || "") + "|" + (ent.bytes || 0) : "none"; }
   function loadIndex() {
@@ -455,7 +455,8 @@
     arena_top15: "A clean re-run of the top-15 tournament with the fixed arena (same format as part3/summary.json, anchor ours_minimax_d4 = 1409).",
     sweep: "Supervised students of 8 sizes trained on the same 300k positions but labelled by different teachers (solver, heuristics, minimax depth 4, networks), each measured on 3,000 solver-scored positions and a gauntlet of games.",
     interp: "Linear probes for 21 game concepts at every layer, a census of what each channel responds to, block / channel-group knock-outs, policy-head weights, probe-direction patching and cross-model similarity.",
-    interp_channels: "Per-channel 6x7 mean activation maps for the channel explorer (large; loaded only when you open a channel)."
+    interp_channels: "Per-channel 6x7 mean activation maps for the channel explorer (large; loaded only when you open a channel).",
+    report: "The last arena (top8_o100_mcts_fixed) with every position solved: why the score nets out-rate Pons; linear probes, knock-outs and channel census for all nine arena nets; and every net in runs/ on one benchmark (policy, value and score heads)."
   };
   function renderOverview() {
     var body = $("overviewBody"); body.className = ""; body.innerHTML = "";
@@ -1207,15 +1208,247 @@
     return card("Cross-model comparison", "Layer-by-layer similarity (linear CKA) and concepts one model encodes better than the other.", [ctrl, box]);
   }
 
+  // =================================================================== 6-8. report.json (research/report_data.py)
+  // Nets vs Pons · inside all arena nets · every net benchmarked.  Same tables as the report artifact.
+  function RT(name) { return (D.report && D.report.tables && D.report.tables[name]) || []; }
+  function rFind(name, key, val) { return RT(name).filter(function (r) { return r[key] === val; })[0] || {}; }
+  function reportMissing(body) {
+    body.appendChild(empty("report.json is not available yet. Run <code>python -m research.arena_vs_pons</code>, <code>python -m research._next_turn_check</code>, <code>python -m research.bench_all</code>, <code>python -m research.interp_bruneton</code> and <code>python -m research.interp --models sup_6x64 az_6x64 ppo_from_sup ppo_6x64 distill_az_2x32 score_8x128_s0 score_8x128_s1 score_8x128_s2 --out experiments/results/research/interp_arena.json</code>, then <code>python -m research.report_data</code>."));
+  }
+  var ENS = "nn_ens3_score_8x128_mcts200", ENSN = "3-net score ensemble + MCTS200", PONS = "pons_perfect";
+
+  // ---------------------------------------------------------------- 6. nets vs Pons
+  function renderVsPons() {
+    var body = $("vsponsBody"); body.innerHTML = "";
+    if (!D.report) { reportMissing(body); return; }
+    var rec = RT("records"), E = rFind("records", "bot", ENS), P = rFind("records", "bot", PONS);
+    var m = function (net, st) { return rFind("matched", "key", net + "|" + st); };
+    var mAll = m(ENSN, "all"), mLost = m(ENSN, "lost"), mWon = m(ENSN, "won"), pLost = m("3-net score ensemble (policy)", "lost");
+    var nt = rFind("next_turn", "key", ENSN + "|lost");
+    body.appendChild(el("p", { "class": "note" },
+      "The 3-net score ensemble with MCTS rates <b>" + num(E.elo, 0) + "</b> against Pons at <b>" + num(P.elo, 0) + "</b>, but loses to Pons head to head (" +
+      num(E.h2h_w) + "–" + num(E.h2h_d) + "–" + num(E.h2h_l) + ", score " + num(E.h2h_score, 3) + ", sign test p = " + num(E.h2h_p, 2) + "). Its rating comes from beating the rest of the field more often than Pons does (" +
+      num(E.score_field, 3) + " vs " + num(P.score_field, 3) + " against the same 7 opponents), not from being stronger than Pons. Arena <code>" + esc(D.report.arena_run) + "</code>, " +
+      fmtInt(D.report.games) + " games, all " + fmtInt(D.report.positions_solved) + " positions solved."));
+    body.appendChild(el("div", { "class": "tiles" },
+      tile("Arena Elo, ensemble + MCTS vs Pons", num(E.elo, 0) + " vs " + num(P.elo, 0), "95% intervals [" + num(E.elo_lo, 0) + ", " + num(E.elo_hi, 0) + "] and [" + num(P.elo_lo, 0) + ", " + num(P.elo_hi, 0) + "] overlap") +
+      tile("Head to head vs Pons", num(E.h2h_w) + "–" + num(E.h2h_d) + "–" + num(E.h2h_l), "Elo predicts " + num(E.elo_pred_vs_pons, 3) + ", actual " + num(E.h2h_score, 3)) +
+      tile("Score vs the 7 common opponents", num(E.score_field, 3) + " vs " + num(P.score_field, 3), "ensemble + MCTS vs Pons") +
+      tile("Matched games vs Pons", num(mAll.net_better) + " / " + num(mAll.net_worse), "net line better / worse, p " + (mAll.sign_p < 0.001 ? "< 0.001" : num(mAll.sign_p, 3)))));
+
+    var sorted = rec.slice().sort(function (a, b) { return b.elo - a.elo; });
+    body.appendChild(card("Ratings measured four ways",
+      "Elo gives each bot one number, which only works if results are transitive. Here they are not: Pons beats both score nets head to head, but they score more than Pons against the weaker bots. <b>Elo from Pons games only</b> converts each bot's score against Pons into Elo; <b>top-group Elo</b> is refit on games among the six strongest bots only; <b>strength-weighted score</b> weights each opponent by its own overall score.",
+      table(["Bot", "Arena Elo [95% CI]", "Elo from Pons games only", "Top-group Elo", "Score vs Pons", "Elo-predicted vs Pons", "Strength-weighted score", "Raw score"],
+        sorted.map(function (r) { return { cls: r.bot === PONS ? "sel" : "", cells: ["<b>" + esc(r.name) + "</b>", ciCell(r.elo, r.elo_lo, r.elo_hi, 0), num(r.elo_from_pons_h2h, 0), num(r.elo_top_group, 0), num(r.h2h_score, 3), num(r.elo_pred_vs_pons, 3), num(r.strength_weighted, 3), num(r.score_all, 3)] }; }),
+        { cls: "lt" }), true));
+
+    var byField = rec.slice().sort(function (a, b) { return b.score_field - a.score_field; });
+    body.appendChild(card("Where each bot's points come from (vs the 7 common opponents)",
+      "Each game is scored against <b>par</b>, its opening's result under perfect play (0.500: the openings are balanced). <b>score = par + gifts − own losses</b>. Gifts are points the opponent threw away with result-changing moves; own losses are points the bot threw away. Pons never errs, so its whole margin is gifts. The split adds up exactly for every one of the games.",
+      [decompChart(byField), table(["Bot", "Par", "Gifts", "Own losses", "Score", "Own error rate"],
+        byField.map(function (r) { return ["<b>" + esc(r.name) + "</b>", num(r.par_field, 3), "+" + num(r.gifts_field, 3), "−" + num(r.own_losses_field, 3), num(r.score_field, 3), pct(r.own_error_rate, 2)]; }), { cls: "lt" })], true));
+
+    var byErr = rec.slice().sort(function (a, b) { return b.opp_error_rate_field - a.opp_error_rate_field; });
+    var col = function (r) { return r.bot === PONS ? C.grey : (r.bot.indexOf("score") >= 0 ? C.gold : C.blue); };
+    body.appendChild(grid("g2", [
+      card("Opponents make more mistakes against the nets", "Share of the opponent's moves that changed the game's theoretical result, counted only when the opponent still had something to lose.",
+        hbarsCI(byErr.map(function (r) { return { label: r.name, value: r.opp_error_rate_field, color: col(r), bold: r.bot === PONS }; }), { min: 0, fmt: function (v) { return pct(v); }, tickFmt: function (v) { return pct(v, 0); }, labelW: 200 })),
+      card("…and face more only-move positions", "Share of those turns where the opponent had exactly one move that kept its result.",
+        hbarsCI(byErr.map(function (r) { return { label: r.name, value: r.opp_only_move_field, color: col(r), bold: r.bot === PONS }; }), { min: 0, fmt: function (v) { return pct(v); }, tickFmt: function (v) { return pct(v, 0); }, labelW: 200 }))]));
+
+    var mt = RT("matched");
+    body.appendChild(card("Same opponent, same opening: where the net and Pons first choose differently",
+      "Every player is deterministic, so Pons vs X and a net vs X from the same opening and colours are the same game until Pons and the net first choose differently. That position is identical, so the difference in result traces back to that choice. Rows are grouped by the position's theoretical value at the split.",
+      table(["Net", "Position", "Games", "Net better", "Same", "Net worse", "Mean score Δ", "Opp. error, Pons line", "Opp. error, net line", "Only-move, Pons line", "Only-move, net line", "Sign test p"],
+        mt.map(function (r) { var all = r.state === "all"; return { cls: all ? "sel" : "", cells: [all ? "<b>" + esc(r.net) + "</b>" : esc(r.net), all ? "<b>all</b>" : esc(r.state), fmtInt(r.n), num(r.net_better), num(r.same), num(r.net_worse), isNum(r.mean_score_diff) ? sgn(r.mean_score_diff, 3) : "", pct(r.opp_err_after_pons), pct(r.opp_err_after_net), pct(r.only_move_after_pons), pct(r.only_move_after_net), isNum(r.sign_p) ? (r.sign_p < 0.001 ? "&lt; 0.001" : num(r.sign_p, 3)) : ""] }; }),
+        { cls: "lt" }), true));
+
+    body.appendChild(card("The very next move after the divergence",
+      "Only the opponent's reply right after the split, in positions where Pons and the net were not winning. In the drawn rows some net moves were themselves mistakes, so the opponent's safe replies there include winning moves; the lost rows are the cleaner comparison.",
+      table(["Net", "Position", "Games", "Opp. safe replies after Pons", "…after net", "Only-move after Pons", "…after net", "Opp. error next move after Pons", "…after net"],
+        RT("next_turn").map(function (r) { return [esc(r.net), esc(r.state), fmtInt(r.n), num(r.mean_safe_pons, 2), num(r.mean_safe_net, 2), pct(r.only_move_pons), pct(r.only_move_net), pct(r.next_move_err_pons), pct(r.next_move_err_net)]; }),
+        { cls: "lt" }), true));
+
+    body.appendChild(card("Why", null, el("div", { "class": "answer" },
+      '<div class="sup"><h4>What the data shows</h4><ul>' +
+      "<li>In lost positions the ensemble + MCTS line did better than Pons's line in " + num(mLost.net_better) + " games and worse in " + num(mLost.net_worse) + ". Opponents erred on " + pct(mLost.opp_err_after_net) + " of moves on the net's line vs " + pct(mLost.opp_err_after_pons) + " on Pons's line.</li>" +
+      "<li>On the very next move after the split (lost positions), the opponent had " + num(nt.mean_safe_net, 2) + " safe replies after the net's move vs " + num(nt.mean_safe_pons, 2) + " after Pons's, and erred " + pct(nt.next_move_err_net) + " vs " + pct(nt.next_move_err_pons) + ".</li>" +
+      "<li>In won positions the net can only lose ground; it gave back " + num(mWon.net_worse) + " games.</li>" +
+      "<li>The same ensemble without MCTS sets no traps: in lost positions it did better " + num(pLost.net_better) + " times and worse " + num(pLost.net_worse) + " times. sup and az + MCTS do set some traps but throw away more won and drawn games, so they finish behind Pons on matched games.</li></ul></div>" +
+      '<div class="sug"><h4>Likely mechanism</h4><ul><li>Pons plays for the theoretical value only: the fastest win, the most central drawing move, the slowest loss. Nothing in that rule asks which move is hardest for the opponent to answer.</li>' +
+      "<li>MCTS values a move by averaging over the opponent's replies it explored, so a move that leaves only one good answer scores better than one where every reply works. That makes it prefer trappy moves without being designed to.</li>" +
+      "<li>Against Pons this earns nothing, because Pons never errs: the ensemble's few mistakes against Pons are its whole deficit.</li></ul></div>" +
+      '<div class="need"><h4>Next test</h4><ul><li>Re-run the matched comparison with Pons choosing, among its equal-value moves, the one that leaves the opponent the fewest safe replies. If the mechanism is right, that Pons should out-score the nets against the field too.</li></ul></div>')));
+
+    var pairNets = ["3-net score ensemble + MCTS200", "score 8x128 s0 + MCTS200", "3-net score ensemble (policy)", "sup 6x64 + MCTS200", "az 6x64 + MCTS200"];
+    if (!UI.pairBot) UI.pairBot = pairNets[0];
+    var pwrap = el("div");
+    var pctrl = el("div", { "class": "ctrl" }, select("pairBot", pairNets, UI.pairBot, "Compare Pons with"));
+    var pbox = el("div");
+    function drawPairs() {
+      var ps = RT("pairs"), opps = [];
+      ps.forEach(function (r) { if (r.bot === UI.pairBot && opps.indexOf(r.opponent) < 0) opps.push(r.opponent); });
+      var rows = [];
+      opps.forEach(function (o) { ["Pons solver", UI.pairBot].forEach(function (b) { var r = ps.filter(function (x) { return x.bot === b && x.opponent === o; })[0]; if (r) rows.push({ cls: b === "Pons solver" ? "" : "sel", cells: [esc(o), esc(b), num(r.score, 3), "+" + num(r.gifts, 3), "−" + num(r.own_losses, 3), pct(r.opp_error_rate), pct(r.opp_only_move_share)] }); }); });
+      pbox.innerHTML = ""; pbox.appendChild(table(["Opponent", "Bot", "Score", "Gifts", "Own losses", "Opp. error rate", "Opp. only-move share"], rows, { cls: "lt" }));
+    }
+    pctrl.querySelector("select").addEventListener("change", function () { UI.pairBot = this.value; drawPairs(); });
+    drawPairs(); pwrap.appendChild(pctrl); pwrap.appendChild(pbox);
+    body.appendChild(card("Per opponent: Pons vs one net", null, pwrap, true));
+
+    body.appendChild(card("Example divergences (ensemble + MCTS vs Pons)", "Moves are 1-indexed columns, as the solver writes them. Position = the shared game up to the split.",
+      table(["Opponent", "Position", "Value", "Pons played", "Net played", "Pons result", "Net result", "Net's game"],
+        RT("examples").map(function (r) { return [esc(r.opponent), '<span class="sm">' + esc(r.position) + "</span>", esc(r.state), r.pons_move, r.net_move, num(r.pons_score, 1), num(r.net_score, 1), '<span class="sm">' + esc(r.net_game) + "</span>"]; }),
+        { cls: "lt" }), true));
+  }
+  function decompChart(rows) {
+    var W = 640, rowH = 26, m = { l: 210, r: 60, t: 22, b: 30 }, H = m.t + m.b + rowH * rows.length;
+    var lo = Math.min(0.45, Math.min.apply(null, rows.map(function (r) { return r.score_field; })) - 0.03);
+    var hi = Math.max.apply(null, rows.map(function (r) { return 0.5 + r.gifts_field; })) + 0.02;
+    var X = function (v) { return m.l + (v - lo) / (hi - lo) * (W - m.l - m.r); };
+    var s = svgHead(W, H, "Score split into par, gifts and own losses") + '<g class="grid">';
+    niceTicks(lo, hi, 6).forEach(function (t) { s += '<line x1="' + X(t) + '" x2="' + X(t) + '" y1="' + m.t + '" y2="' + (H - m.b) + '"/><text x="' + X(t) + '" y="' + (H - m.b + 15) + '" text-anchor="middle">' + tickFmt(t) + "</text>"; });
+    s += '</g><g class="ref"><line x1="' + X(0.5) + '" x2="' + X(0.5) + '" y1="' + (m.t - 8) + '" y2="' + (H - m.b) + '" stroke="' + C.white + '"/><text x="' + (X(0.5) + 3) + '" y="' + (m.t - 10) + '" style="fill:' + C.white + '">par</text></g>';
+    rows.forEach(function (r, i) {
+      var y = m.t + i * rowH + rowH / 2, g1 = 0.5 + r.gifts_field;
+      s += '<text x="' + (m.l - 8) + '" y="' + (y + 4) + '" text-anchor="end" style="fill:' + (r.bot === PONS ? C.gold : "#e9ecf8") + '">' + esc(r.name) + "</text>";
+      s += '<rect x="' + X(0.5) + '" y="' + (y - 8) + '" width="' + Math.max(1, X(g1) - X(0.5)) + '" height="16" rx="2" fill="' + C.blue + '" fill-opacity=".75" data-tip="' + esc(r.name + "\ngifts +" + num(r.gifts_field, 3)) + '"/>';
+      if (r.own_losses_field > 0) s += '<rect x="' + X(g1 - r.own_losses_field) + '" y="' + (y - 4) + '" width="' + Math.max(1, X(g1) - X(g1 - r.own_losses_field)) + '" height="8" fill="' + C.orange + '" data-tip="' + esc(r.name + "\nown losses −" + num(r.own_losses_field, 3)) + '"/>';
+      s += shapeSvg("circle", X(r.score_field), y, 4.6, C.white, r.name + "\nscore " + num(r.score_field, 3) + " = 0.500 + " + num(r.gifts_field, 3) + " − " + num(r.own_losses_field, 3), ' stroke="#0f1220" stroke-width="1"');
+      s += '<text x="' + (Math.max(X(g1), X(r.score_field)) + 8) + '" y="' + (y + 4) + '" style="fill:#cfd5ee">' + num(r.score_field, 3) + "</text>";
+    });
+    var d = el("div"); d.innerHTML = s + "</svg>";
+    d.appendChild(legend([{ name: "gifts (from par)", color: C.blue }, { name: "own losses (taken off the gifts)", color: C.orange }, { name: "final score", color: C.white, shape: "circle" }]));
+    return d;
+  }
+
+  // ---------------------------------------------------------------- 7. inside all arena nets
+  var CONCEPT_ORDER = ["heights", "landing_row", "ply", "first_to_move", "win_now", "opp_win_now", "own_threats", "opp_threats", "own_double", "opp_double", "own_odd_thr", "own_even_thr", "opp_odd_thr", "opp_even_thr", "opt_set", "net_move", "outcome", "score", "opp_reply", "opp_net_move", "phase"];
+  function shortLayer(l) { return String(l).replace("block", "b"); }
+  function renderInside9() {
+    var body = $("inside9Body"); body.innerHTML = "";
+    if (!D.report) { reportMissing(body); return; }
+    var models = RT("models"), PS = RT("probe_summary"), KO = RT("knockouts");
+    if (!models.length) { body.appendChild(empty("report.json has no interpretability tables yet (needs interp_arena.json).")); return; }
+    var psv = function (mm, c) { return (PS.filter(function (r) { return r.key === mm + "|" + c; })[0] || {}); };
+    var kov = function (mm, b) { return (KO.filter(function (r) { return r.key === mm + "|" + b; })[0] || {}).d_agree; };
+    var sm = function (mm) { return rFind("models", "model", mm); };
+    body.appendChild(el("p", { "class": "note" }, "All nine nets in the last arena: the 8 of ours (the three score nets are the ensemble's members) plus the open-source Bruneton AlphaZero net. For every layer a linear probe reads a concept from the activations (trained on 35,000 positions, scored on 10,000 held out). <b>Skill</b> = (score − chance) / (1 − chance). A probe shows the information is there, not that the net uses it; the block knock-outs are the causal check. The earlier 4-net study with the channel explorer and patching is on the <a href=\"#interp\">Inside the net</a> tab."));
+    body.appendChild(card("What the nine nets share, and where they differ", null, el("div", { "class": "answer" }, '<div class="sup"><h4>Findings</h4><ul>' +
+      "<li><b>Immediate tactics come first, in every net.</b> By block 1 (the stem in Bruneton's net) every net reads its own immediate wins and the opponent's must-block columns. Geometry and phase are readable from the raw input, so the nets keep that information rather than compute it.</li>" +
+      "<li><b>Only nets trained on solver labels represent the opponent's best reply.</b> sup_6x64 reaches AUC " + num(psv("sup_6x64", "opp_reply").best, 2) + " (" + esc(psv("sup_6x64", "opp_reply").best_layer || "") + "), score_8x128_s0 " + num(psv("score_8x128_s0", "opp_reply").best, 2) + ". In az_6x64 the best layer is the raw input (" + num(psv("az_6x64", "opp_reply").best, 2) + "), and the same holds for ppo_6x64 and distill_az_2x32.</li>" +
+      "<li><b>The score nets encode exact solver scores:</b> R² " + num(psv("score_8x128_s0", "score").best, 2) + " vs " + num(psv("sup_6x64", "score").best, 2) + " for sup_6x64 and " + num(psv("az_6x64", "score").best, 2) + " for az_6x64.</li>" +
+      "<li><b>Block 1 matters most in every deep net:</b> skipping it changes sup_6x64's optimal-move rate by " + sgn(100 * kov("sup_6x64", "block1"), 1) + " points.</li>" +
+      "<li><b>Same recipe, different insides.</b> The three score nets differ only in seed, yet skipping block 5 costs s1 " + sgn(100 * kov("score_8x128_s1", "block5"), 1) + " points vs " + sgn(100 * kov("score_8x128_s0", "block5"), 1) + " (s0) and " + sgn(100 * kov("score_8x128_s2", "block5"), 1) + " (s2). \"The block that does X\" is a fact about one net, not about the recipe.</li>" +
+      "<li><b>Bruneton's net is one wide block with a one-filter value head.</b> Its raw policy is optimal on " + pct(sm("bruneton_az").intact_agree) + " of probe positions vs " + pct(sm("sup_6x64").intact_agree) + " for sup_6x64.</li></ul></div>")));
+
+    if (!UI.i9 || !models.some(function (x) { return x.model === UI.i9; })) UI.i9 = models[0].model;
+    var bar = el("div", { "class": "bar" }, select("i9model", models.map(function (x) { return { v: x.model, t: x.model + " (" + x.blocks + "x" + x.channels + ", " + params(x.params) + ")" }; }), UI.i9, "Net"));
+    bar.querySelector("select").addEventListener("change", function () { UI.i9 = this.value; renderInside9(); });
+    body.appendChild(bar);
+    var M = sm(UI.i9);
+    body.appendChild(el("div", { "class": "tiles" }, tile("Arena bot", '<span style="font-size:.9rem">' + esc(M.arena_bot || "–") + "</span>") + tile("Size", M.blocks + "x" + M.channels, params(M.params) + " params") +
+      tile("Policy optimal (probe set)", pct(M.intact_agree)) + tile("Value accuracy (probe set)", pct(M.intact_value_acc)) +
+      tile("Patching", M.patch_layer ? esc(M.patch_layer) : "–", isNum(M.patch_mean_abs_z) ? "mean |z| " + num(M.patch_mean_abs_z, 1) + " vs random directions" : "not run")));
+
+    var pr = RT("probes").filter(function (r) { return r.model === UI.i9; });
+    var layers = []; pr.slice().sort(function (a, b) { return a.layer_index - b.layer_index; }).forEach(function (r) { if (layers.indexOf(r.layer) < 0) layers.push(r.layer); });
+    var concepts = CONCEPT_ORDER.filter(function (c) { return pr.some(function (r) { return r.concept === c; }); });
+    var cell = {}; pr.forEach(function (r) { cell[r.concept + "|" + r.layer] = r; });
+    var rows = concepts.map(function (c) { var r0 = pr.filter(function (r) { return r.concept === c; })[0]; return { label: c, group: GROUP_NAME[r0.group] || r0.group, c: c }; });
+    var hm = heatmap({ rows: rows, cols: layers.map(shortLayer), cellW: 40, labelW: 130, top: 70, title: "probe skill per layer",
+      val: function (i, j) { var r = cell[rows[i].c + "|" + layers[j]]; return r ? r.skill : null; },
+      color: function (v) { return seqColor(v); }, text: function (v) { return num(v, 2); },
+      tip: function (i, j, v) { var r = cell[rows[i].c + "|" + layers[j]]; return r ? r.concept_label + "\n" + r.layer + ": " + r.metric + " " + num(r.flat, 3) + "\nskill " + num(v, 2) + (isNum(r.shuffled) ? "\nshuffled-label control " + num(r.shuffled, 3) : "") : "not probed"; } });
+    body.appendChild(card("Which layer knows what: " + UI.i9, "Rows grouped by concept type; columns run from the input through the stem and every block to the heads. Hover a cell for the raw probe score and the shuffled-label control.", [hm, scaleLegend("seq", "0", "1", "skill")], true));
+
+    var kos = KO.filter(function (r) { return r.model === UI.i9; });
+    var hasType = kos.length && isNum(kos[0].d_agree_own_win);
+    var koSeries = [{ name: "all positions", color: C.blue, values: kos.map(function (r) { return r.d_agree; }) }];
+    if (hasType) koSeries.push({ name: "own win available", color: C.green, values: kos.map(function (r) { return r.d_agree_own_win; }) },
+      { name: "must block", color: C.orange, values: kos.map(function (r) { return r.d_agree_must_block; }) },
+      { name: "quiet", color: C.purple, values: kos.map(function (r) { return r.d_agree_quiet; }) });
+    var ch = RT("channels").filter(function (r) { return r.model === UI.i9; });
+    var chLayers = [], chLabels = ["own-threat", "opponent-threat", "occupancy copy", "column detector", "row/height detector", "phase: early", "phase: late", "dead", "mixed"];
+    ch.forEach(function (r) { if (chLayers.indexOf(r.layer) < 0) chLayers.push(r.layer); if (chLabels.indexOf(r.label) < 0) chLabels.push(r.label); });
+    chLabels = chLabels.filter(function (l) { return ch.some(function (r) { return r.label === l; }); });
+    var chCols = { "own-threat": C.green, "opponent-threat": C.orange, "occupancy copy": C.yellow, "column detector": C.sky, "row/height detector": C.blue, "phase: early": C.purple, "phase: late": C.red, dead: "#39406a", mixed: C.grey };
+    body.appendChild(grid("g2", [
+      card("Knock out one block at a time", "Each residual block is skipped in turn; the bar is the change in how often the net's move is solver-optimal. A causal test, not a probe.",
+        groupBars({ categories: kos.map(function (r) { return "skip " + shortLayer(r.block); }), series: koSeries, yFmt: function (v) { return sgn(100 * v, 0); }, yLabel: "points of optimal moves" })),
+      card("Channel census", ch.length ? "One label per channel per layer from its activation pattern (rules in research/interp.py)." : null,
+        ch.length ? stackBars({ categories: chLayers.map(shortLayer), series: chLabels.map(function (l) { return { name: l, color: chCols[l] || C.white, values: chLayers.map(function (L) { var r = ch.filter(function (x) { return x.layer === L && x.label === l; })[0]; return r ? r.count : 0; }) }; }), yLabel: "channels" }) : empty("No channel census for this net (Bruneton was probed only)."))]));
+
+    // across nets: first layer reaching 90% of best skill, as relative depth
+    var showC = ["win_now", "opp_win_now", "own_threats", "opp_threats", "own_double", "opp_double", "opt_set", "net_move", "outcome", "score", "opp_reply"];
+    var mids = models.map(function (x) { return x.model; });
+    var depth = {};
+    mids.forEach(function (mm) { var ls = RT("probes").filter(function (r) { return r.model === mm; }), mx = Math.max.apply(null, ls.map(function (r) { return r.layer_index; })); ls.forEach(function (r) { depth[mm + "|" + r.layer] = r.layer_index / (mx || 1); }); });
+    var hm2 = heatmap({ rows: showC.map(function (c) { return { label: c }; }), cols: mids, cellW: 54, labelW: 110, top: 110, title: "first layer at 90% of best skill",
+      val: function (i, j) { var r = psv(mids[j], showC[i]); return r.first_layer ? depth[mids[j] + "|" + r.first_layer] : null; },
+      color: function (v) { return seqColor(isNum(v) ? 1 - v : null); }, text: function (v) { return pct(v, 0); },
+      tip: function (i, j) { var r = psv(mids[j], showC[i]); return r.first_layer ? mids[j] + " · " + showC[i] + "\nfirst at " + r.first_layer + ", best at " + r.best_layer + " (" + num(r.best, 3) + ")" : "not probed"; } });
+    body.appendChild(card("How early each net knows each concept", "Cell = the first layer that reaches 90% of that net's best probe skill, as a share of the net's depth (0% = input, 100% = heads). Brighter = earlier. A 0% cell means no layer beats the raw input, i.e. the net never builds that concept itself (see opp_reply in the self-play nets). Hover for the layer names and best score.", [hm2], true));
+  }
+
+  // ---------------------------------------------------------------- 8. every net benchmarked
+  var FAM_ORDER = ["perfect labels + score head (Pons, 3M)", "perfect labels (Pons)", "net teacher (distillation)", "search teacher (minimax d4)", "heuristic teacher (no search)", "RL-net teacher", "self-play (AlphaZero)", "self-play RL (PPO / DQN)"];
+  function renderAllNets() {
+    var body = $("allnetsBody"); body.innerHTML = "";
+    if (!D.report) { reportMissing(body); return; }
+    var nets = RT("nets");
+    body.appendChild(el("p", { "class": "note" }, "Every net in <code>runs/</code> (" + nets.length + ") on the same 3,000 held-out positions (<code>data/accuracy_positions.csv</code>, plies 8–30), so the numbers compare across nets. <b>Policy optimal</b>: the raw policy head's top move is solver-optimal. <b>Keeps result</b>: among positions not already lost, that move keeps the win or the draw. <b>Value acc.</b>: the W/D/L head's top class matches the solver; W / D / L split it by the true result. <b>Brier</b>: error of the W/D/L probabilities (lower is better). <b>Train-val</b> columns are the last line of each run's metrics.jsonl: its own split and its own labels (for sweep-B nets, the teacher's labels), so they do not compare across runs."));
+    body.appendChild(card("Grouped by label source", null, table(["Label source", "Nets", "Best net", "Best policy optimal", "Mean policy optimal", "Best value acc."],
+      RT("families").map(function (r) { return ["<b>" + esc(r.family) + "</b>", r.nets, esc(r.best_run), num(r.best_policy_optimal, 3), num(r.mean_policy_optimal, 3), num(r.best_value_acc, 3)]; }), { cls: "lt" }), true));
+    var fams = FAM_ORDER.filter(function (f) { return nets.some(function (r) { return r.family === f; }); });
+    body.appendChild(card("Policy vs value head, every net", "Each point is one net, coloured by the source of its training labels. Hover for the run.",
+      xyChart({ series: fams.map(function (f, i) { return { name: f, color: SEQ[i % SEQ.length], shape: SHAPES[i % SHAPES.length], points: nets.filter(function (r) { return r.family === f; }).map(function (r) { return { x: r.policy_optimal, y: r.value_acc, tip: r.run + " (" + r.size + ")\n" + r.teacher_label + "\npolicy optimal " + pct(r.policy_optimal) + "\nvalue acc. " + pct(r.value_acc) }; }) }; }),
+        xLabel: "policy optimal", yLabel: "value accuracy", xName: "policy", yName: "value", xFmt: function (v) { return pct(v, 0); }, yFmt: function (v) { return pct(v, 0); }, height: 330 }), true));
+
+    if (!UI.an) UI.an = { fam: "", group: true, key: "policy_optimal", dir: -1 };
+    var A = UI.an, wrap = el("div");
+    var ctrl = el("div", { "class": "ctrl" }, select("anFam", [{ v: "", t: "All label sources" }].concat(fams.map(function (f) { return { v: f, t: f }; })), A.fam, "Label source") +
+      '<label><input type="checkbox" id="anGroup"' + (A.group ? " checked" : "") + "> Group by label source</label>");
+    var tbox = el("div");
+    var cols = [["run", "Run", "s"], ["teacher_label", "Labels", "s"], ["params", "Size", "n"], ["policy_optimal", "Policy optimal", "n"], ["policy_keeps", "Keeps result", "n"], ["played_optimal", "As played", "n"],
+      ["value_acc", "Value acc.", "n"], ["value_acc_W", "W", "n"], ["value_acc_D", "D", "n"], ["value_acc_L", "L", "n"], ["value_brier", "Brier", "n"], ["score_mae", "Score MAE", "n"],
+      ["opt_8_15", "Opt. ply 8–15", "n"], ["opt_24_30", "Opt. ply 24–30", "n"], ["train_val_policy_acc", "Train-val policy", "n"], ["train_val_value_acc", "Train-val value", "n"]];
+    function draw() {
+      var rs = nets.filter(function (r) { return !A.fam || r.family === A.fam; }), text = cols.filter(function (c) { return c[0] === A.key; })[0][2] === "s";
+      rs.sort(function (a, b) {
+        if (A.group) { var fa = FAM_ORDER.indexOf(a.family), fb = FAM_ORDER.indexOf(b.family); if (fa !== fb) return fa - fb; }
+        var x = a[A.key], y = b[A.key];
+        if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+        return (text ? String(x).localeCompare(String(y)) : x - y) * A.dir;
+      });
+      var h = '<div class="scroll"><table class="t sortable lt"><thead><tr>' + cols.map(function (c) { return '<th scope="col"' + (A.key === c[0] ? ' aria-sort="' + (A.dir > 0 ? "ascending" : "descending") + '"' : "") + '><button type="button" data-k="' + c[0] + '">' + esc(c[1]) + "</button></th>"; }).join("") + "</tr></thead><tbody>";
+      var last = null;
+      rs.forEach(function (r) {
+        if (A.group && r.family !== last) { h += '<tr class="sel"><td colspan="' + cols.length + '"><b>' + esc(r.family) + "</b></td></tr>"; last = r.family; }
+        h += "<tr><td><b>" + esc(r.run) + '</b></td><td class="sm">' + esc(r.teacher_label) + "</td><td>" + esc(r.size) + ' <span class="muted sm">' + params(r.params) + "</span></td>" +
+          ["policy_optimal", "policy_keeps", "played_optimal", "value_acc", "value_acc_W", "value_acc_D", "value_acc_L"].map(function (k) { return "<td>" + num(r[k], 3) + "</td>"; }).join("") +
+          "<td>" + num(r.value_brier, 3) + "</td><td>" + (isNum(r.score_mae) ? num(r.score_mae, 2) : "") + "</td><td>" + num(r.opt_8_15, 3) + "</td><td>" + num(r.opt_24_30, 3) + "</td><td>" + (isNum(r.train_val_policy_acc) ? num(r.train_val_policy_acc, 3) : "") + "</td><td>" + (isNum(r.train_val_value_acc) ? num(r.train_val_value_acc, 3) : "") + "</td></tr>";
+      });
+      tbox.innerHTML = h + "</tbody></table></div>";
+    }
+    ctrl.addEventListener("change", function (e) { if (e.target.id === "anFam") A.fam = e.target.value; if (e.target.id === "anGroup") A.group = e.target.checked; draw(); });
+    tbox.addEventListener("click", function (e) { var b = e.target.closest("button[data-k]"); if (!b) return; var k = b.getAttribute("data-k"); if (A.key === k) A.dir = -A.dir; else { A.key = k; A.dir = ["run", "teacher_label", "value_brier", "score_mae"].indexOf(k) >= 0 ? 1 : -1; } draw(); var nb = tbox.querySelector('button[data-k="' + k + '"]'); if (nb) nb.focus(); });
+    draw(); wrap.appendChild(ctrl); wrap.appendChild(tbox);
+    body.appendChild(card("All nets", "Click a column header to sort. \"As played\" is the move the net actually plays with its own settings (score head, mirror averaging). Score MAE: score-head error in Pons score units (score-head nets only).", wrap, true));
+  }
+
   // =================================================================== tabs, refresh, start
-  var RENDER = { overview: renderOverview, roster: renderRoster, best: renderBest, sweep: renderSweep, interp: renderInterp };
+  var RENDER = { overview: renderOverview, roster: renderRoster, best: renderBest, sweep: renderSweep, interp: renderInterp,
+                 vspons: renderVsPons, inside9: renderInside9, allnets: renderAllNets };
   var DIRTY = {};
   function safe(name) {
     try { RENDER[name](); DIRTY[name] = false; }
     catch (e) { var b = $(name + "Body"); if (b) { b.innerHTML = ""; b.appendChild(empty("This section could not be drawn from the current data (" + esc(e.message) + "). The file may be mid-update; it will retry on the next refresh.")); } if (window.console) console.error(e); }
   }
   function markDirty(changed) {
-    var dep = { overview: ["arena_analysis", "roster", "arena_top15", "sweep", "interp"], roster: ["roster", "arena_analysis", "arena_top15"], best: ["arena_analysis"], sweep: ["sweep"], interp: ["interp"] };
+    var dep = { overview: ["arena_analysis", "roster", "arena_top15", "sweep", "interp", "report"], roster: ["roster", "arena_analysis", "arena_top15"], best: ["arena_analysis"], sweep: ["sweep"], interp: ["interp"],
+                vspons: ["report"], inside9: ["report"], allnets: ["report"] };
     Object.keys(dep).forEach(function (t) { if (dep[t].some(function (n) { return changed[n]; })) DIRTY[t] = true; });
   }
   function renderVisible() {
@@ -1256,7 +1489,7 @@
     window.addEventListener("hashchange", fromHash);
     fromHash();
   }
-  function needsPolling() { return sweepActive() || !D.sweep || !D.interp || !D.arena_top15 || !D.arena_analysis; }
+  function needsPolling() { return sweepActive() || !D.sweep || !D.interp || !D.arena_top15 || !D.arena_analysis || !D.report; }
   function poll() {
     if (document.hidden || !needsPolling()) return;
     loadIndex().then(function (changed) { markDirty(changed); renderVisible(); }).catch(function () { });

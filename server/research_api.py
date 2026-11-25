@@ -7,6 +7,8 @@ The page only reads files that the research scripts write (research/*.py):
   experiments/results/research/sweep.json            supervised size x teacher sweep (research/sweep.py)
   experiments/results/research/interp.json           interpretability (research/interp.py)
   experiments/results/research/interp_channels.json  per-channel mean maps (research/interp.py)
+  experiments/results/research/report.json           nets vs Pons, all arena nets inside, every net
+                                                     benchmarked (research/report_data.py)
 
 and keeps one file of its own, selection.json: which findings / bots / runs the owner
 wants in the paper, plus a free-text note per finding.
@@ -44,6 +46,7 @@ DATASETS = {
     "sweep": "Supervised sweep (student size x teacher)",
     "interp": "Interpretability (probes, channels, ablations)",
     "interp_channels": "Interpretability: per-channel mean maps",
+    "report": "Nets vs Pons, all arena nets inside, every net benchmarked",
 }
 # which data file each paper section's findings come from
 SECTIONS = [("arena_analysis", "Arena: which bot is strongest, and why"),
