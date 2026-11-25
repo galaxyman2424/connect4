@@ -12,7 +12,7 @@
 <main class="lab-main">
   <header>
     <h1>Connect <span class="four">4</span> Lab</h1>
-    <p class="sub">What we measured: training our own neural network seven different ways (supervised, AlphaZero, evolution, TD n-tuple, DQN, PPO, distillation), what each one costs to train, and how open-source Connect 4 bots do against each other. Charts are drawn from the results files in the repo, so they update when you re-run an experiment and refresh the page.</p>
+    <p class="sub">What we measured: training our own neural networks many different ways (perfect solver labels, a score head on 3M solver positions, other teachers, AlphaZero, PPO, DQN, evolution, TD n-tuple, distillation) at sizes from 1&times;16 to 10&times;128, what each one costs to train, and how the best of them do against the perfect solver and open-source bots. Charts are drawn from the results files in the repo, so they update when you re-run an experiment and refresh the page.</p>
   </header>
 
   <div class="tabs" role="tablist">
@@ -26,12 +26,19 @@
   <!-- ============================================================ training -->
   <section id="tab-training" class="tab on" role="tabpanel">
     <div class="bar">
+      <label for="sizeSel">Model size</label>
+      <select id="sizeSel"></select>
+      <label for="famSel">Method</label>
+      <select id="famSel"></select>
+      <label class="chk"><input type="checkbox" id="top8Only"> top-8 arena nets only</label>
+      <span class="spacer"></span>
+      <button type="button" class="btn" id="reload">Refresh</button>
+      <div class="break"></div>
       <label for="runSel">Training run</label>
       <select id="runSel"></select>
       <span id="runInfo" class="hint"></span>
-      <span class="spacer"></span>
-      <button type="button" class="btn" id="reload">Refresh</button>
     </div>
+    <div id="groupBody"></div>
     <div id="trainBody"></div>
   </section>
 
@@ -40,7 +47,7 @@
     <div class="bar">
       <label for="hypSel">Network</label>
       <select id="hypSel"></select>
-      <span class="hint">Results of <code>python -m nn.evaluate --run &lt;run&gt;</code></span>
+      <span class="hint">Results of <code>python -m nn.evaluate --run &lt;run&gt;</code> (runs/&lt;run&gt;/eval*.json)</span>
     </div>
     <div id="hypBody"></div>
   </section>
@@ -68,34 +75,61 @@
   <!-- ============================================================== method -->
   <section id="tab-method" class="tab prose" role="tabpanel">
     <div class="grid g2">
+      <div class="card wide">
+        <h3>The question, in one line</h3>
+        <p>Can a small network learn to judge Connect 4 positions, and how much does <em>what it learns from</em> matter compared with <em>how big it is</em> and <em>whether it searches</em>? Every net here is a residual CNN; only the training signal, the size and the search on top change. The best ones (the score-head nets) pick the perfect move in about 97% of held-out positions and, with a small tree search, rate level with the perfect solver in the arena.</p>
+      </div>
       <div class="card">
-        <h3>Phase A: learn from perfect play (supervised)</h3>
-        <p>We generate a few hundred thousand positions (random and minimax games), label every one with Pascal Pons' perfect solver (the exact result of each of the 7 moves), and train the network to predict the best moves (policy) and the win/draw/loss result (value). This answers the question: <em>can a small network learn to evaluate Connect 4 positions at all?</em></p>
+        <h3>The network</h3>
+        <p>A residual CNN: <code>blocks &times; channels</code> from 1&times;16 (17 k parameters) up to 10&times;128 (3 M). Input: 4 planes of 6&times;7: my stones, opponent's stones, a plane of ones, and "am I the first player?" (odd/even threats matter in Connect 4). Outputs: a <b>policy</b> (probability of each column) and a <b>value</b> (win / draw / loss for the side to move). The score nets add a third head with the exact solver score of all 7 columns. At play time the net is run on the board and its mirror image and the two answers are averaged.</p>
+      </div>
+      <div class="card">
+        <h3>Learning from perfect play (supervised)</h3>
+        <p>Positions from random and minimax games, each labelled by Pascal Pons' solver with the exact result of all 7 moves. The network learns the best moves (policy) and the result (value). 300 k positions gives ~91% optimal moves at 6&times;64 and barely more at 10&times;128: past that size the labels, not the network, are the limit.</p>
         <pre>python -m nn.make_dataset --positions 300000
 python -m nn.train_supervised --run sup_6x64</pre>
       </div>
       <div class="card">
-        <h3>Phase B: learn from nothing (AlphaZero self-play)</h3>
-        <p>The network starts random and only knows the rules. Each generation it plays ~1,000 games against itself, choosing moves with Monte Carlo Tree Search guided by the network. It then trains its policy toward what the search found and its value toward who actually won. Better network, better search, better training data, and so on.</p>
+        <h3>The score head (the strongest nets)</h3>
+        <p>Plain labels only say <em>which</em> moves win, not how fast, and most remaining mistakes were "right result, slower win". <code>nn/train_score.py</code> trains on 3.1 M solver positions with a soft policy target that ranks faster wins higher, a score head (regression + a ranking loss on the 7 exact scores), mirroring, an EMA of the weights, and a second round on ~117 k mined positions the first net got wrong (<code>_r1</code>). The head that plays (policy, score or a mix) is chosen on validation positions, never the benchmark. Three seeds of 8&times;128 reach 96.4-96.7%; averaging them (the ensemble) reaches ~97.4%.</p>
+        <pre>python -m nn.train_score --data nn_data/solver_3m.npz --run score_8x128_s0 --blocks 8 --channels 128</pre>
+      </div>
+      <div class="card">
+        <h3>Learning from nothing (AlphaZero, PPO, DQN)</h3>
+        <p><b>AlphaZero</b>: the net starts random and only knows the rules; each generation it plays ~1,000 games against itself with MCTS guided by the net, then learns the search's move choice and who won. <b>PPO</b>: policy-gradient self-play against a pool of its past selves, from scratch or starting from the supervised net (<code>ppo_from_sup</code>). <b>DQN</b>: learns a value per move from self-play. None of these see the solver, and none get close to the solver-labelled nets on move accuracy.</p>
         <pre>python -m nn.train_selfplay --run az_6x64 --preset standard</pre>
       </div>
       <div class="card">
-        <h3>The network</h3>
-        <p>A small residual CNN (default 6 blocks &times; 64 channels, ~0.46 M parameters). Input: 4 planes of 6&times;7: my stones, opponent's stones, a plane of ones, and "am I the first player?" (odd/even threats matter in Connect 4). Two outputs: a <b>policy</b> (probability of each column) and a <b>value</b> (probability of win / draw / loss for the side to move).</p>
+        <h3>Other teachers and distillation (research sweeps)</h3>
+        <ul>
+          <li><b>Sweep A</b>: Pons labels at 1&times;16, 2&times;32, 3&times;48, 4&times;64, 6&times;64, 6&times;96, 8&times;128, 10&times;128 (two seeds for the small ones): what size buys.</li>
+          <li><b>Sweep B</b>: the same recipe with a weaker teacher: minimax depth 4 (hand-crafted or evolved heuristic), the heuristic alone with no search (evolved for 10-60 generations), or a PPO net. Good teachers give good policies; value heads stay as poor as the teacher's value labels.</li>
+          <li><b>Sweep C</b> and distillation: small students (1&times;16 to 4&times;64) copy a 6&times;64 or 8&times;128 net. A 4&times;64 student copying sup_6x64 matches its teacher.</li>
+          <li><b>Evolution</b> (CMA-ES on the 10 heuristic weights) and <b>TD(&lambda;) n-tuple</b> networks: no CNN at all; the reference points for "learning without a deep net".</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Search on top</h3>
+        <p>Any net can be played three ways: <b>policy</b> (one forward pass, ~1-30 ms), <b>MCTS 200</b> (200 simulations guided by policy and value, ~0.3-4 s on one CPU thread), or as the evaluation inside our <b>minimax</b> (the hypothesis test). Search fixes most of a weak net's tactical slips; for the score nets it also turns a 97%-accurate policy into a player that sets traps (see Method comparison: it beats the rest of the field harder than Pons does).</p>
       </div>
       <div class="card">
         <h3>How we measure strength</h3>
         <ul>
-          <li><b>Accuracy vs perfect play</b>: on 3,000 held-out solver-labelled positions (never used in training), how often the chosen move is optimal, and how often it at least keeps a won/drawn game (non-blunder rate). Same set and definitions as the minimax accuracy experiment.</li>
-          <li><b>Value accuracy</b>: how often the value head's win/draw/loss call matches the solver.</li>
-          <li><b>Games vs minimax</b>: random 2-4 move openings, each played with both colours. The Elo is placed on the existing minimax ladder (depth 1 = 1000).</li>
-          <li><b>Arena</b>: round robin vs open-source bots, Bradley-Terry Elo with bootstrap 95% confidence intervals.</li>
+          <li><b>Benchmark</b>: 3,000 held-out solver-labelled positions (8-30 stones, never used in training). Optimal = the chosen move is one the solver rates best; keeps = it does not throw away a won or drawn game. Every net is re-measured on the same file (<code>research/bench_all.py</code>), so the numbers compare across runs.</li>
+          <li><b>Value accuracy</b>: the win/draw/loss call vs the solver, also split by the true result (draws are the hard part: 234 of the 3,000).</li>
+          <li><b>Arena</b>: round robin between bots from 100 random openings &times; 2 colours per pairing (the top-8 run: 10 bots, 9,000 games), Bradley-Terry Elo anchored at Bruneton's AlphaZero = 1609, bootstrap 95% intervals.</li>
+          <li><b>Minimax ladder</b> (<code>rl.compare</code>, <code>nn.evaluate</code>): games against our minimax at fixed depths, Elo with depth 1 = 1000. A different scale from the arena.</li>
+          <li><b>Training cost</b>: wall time from each run's log (plus energy where <code>rl.meter</code> measured it), including any run it was initialised or distilled from.</li>
         </ul>
+      </div>
+      <div class="card">
+        <h3>Which nets are "the top 8"</h3>
+        <p>The 7,599-game arena picked the 15 strongest bots; the top-8 runs keep our best nets per method next to Pons and Bruneton: sup_6x64 + MCTS, az_6x64 + MCTS, ppo_6x64 + MCTS, ppo_from_sup (policy), distill_az_2x32 (policy), score_8x128_s0_r1 + MCTS, and the 3-seed score ensemble with and without MCTS. Use the "top-8 arena nets only" box on the training tab to see just these.</p>
       </div>
       <div class="card wide">
         <h3>The hypothesis (from our dossier)</h3>
-        <p><em>"A small neural network can learn a board evaluation that plays as well as our hand-crafted minimax heuristic."</em> We test it by plugging the network's value into our own minimax search in place of the hand-crafted heuristic and comparing the two at the same search depth. <b>Success:</b> it scores at least 50% head to head, still takes immediate wins and makes forced blocks at least as often as the hand-crafted version at that depth, and stays under 2 s per move. <b>Failure:</b> a lower score, missed wins or blocks, or moves that take too long. See the "Hypothesis test" tab.</p>
-        <p class="muted">Full write-up: docs/NEURAL_NET.md, docs/ARENA.md and docs/PRESENTATION_GUIDE.md in the repo.</p>
+        <p><em>"A small neural network can learn a board evaluation that plays as well as our hand-crafted minimax heuristic."</em> We test it by plugging the network's value into our own minimax search in place of the hand-crafted heuristic and comparing the two at the same search depth. <b>Success:</b> it scores at least 50% head to head, still takes immediate wins and makes forced blocks at least as often as the hand-crafted version at that depth, and stays under 2 s per move. <b>Failure:</b> a lower score, missed wins or blocks, or moves that take too long. Bigger nets evaluate better but cost more per leaf, so the 2 s limit is the part the 8&times;128 nets and the ensemble can fail. See the "Hypothesis test" tab.</p>
+        <p class="muted">Full write-up: docs/NEURAL_NET.md, docs/ARENA.md, docs/ACCURACY_95.md and docs/PRESENTATION_GUIDE.md in the repo; the Research page has the analysis of what happens inside the nets.</p>
       </div>
     </div>
   </section>

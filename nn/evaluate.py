@@ -3,6 +3,8 @@
     python -m nn.evaluate --run az_6x64                  # uses runs/az_6x64/model.npz
     python -m nn.evaluate --run sup_6x64 --model best.npz
     python -m nn.evaluate --run az_6x64 --quick          # smaller, ~5 min smoke version
+    python -m nn.evaluate --run score_8x128_s0_r1 --out eval_ens3.json \
+        --model runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz
 
 Sections
 1. accuracy   held-out accuracy vs perfect play (3,000 solver-labelled
@@ -29,10 +31,14 @@ Sections
 import argparse
 import json
 import os
+import re
 import time
 
 from . import bench
 from .common import Run, load_evaluator, log, now_iso
+
+
+EVAL_NAME = re.compile(r"^eval(_[A-Za-z0-9_\-]{1,40})?\.json$")
 
 
 def parse_list(s):
@@ -89,7 +95,10 @@ def tactics_reference():
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--run", required=True)
-    ap.add_argument("--model", default="model.npz", help="file inside runs/<run>/ (or a path)")
+    ap.add_argument("--model", default="model.npz",
+                    help="file inside runs/<run>/ (or a path); 'a.npz+b.npz+c.npz' evaluates the averaged ensemble")
+    ap.add_argument("--out", default="eval.json",
+                    help="output file in runs/<run>/ (eval.json, or eval_<tag>.json e.g. for an ensemble)")
     ap.add_argument("--sims", default="50,200,800", help="MCTS simulation budgets to test")
     ap.add_argument("--ladder-sims", type=int, default=200, help="MCTS sims for the minimax ladder games")
     ap.add_argument("--depths", default="1-8", help="minimax depths for the ladder")
@@ -100,7 +109,6 @@ def main():
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 2))
     ap.add_argument("--quick", action="store_true", help="small version for a smoke test")
     ap.add_argument("--skip", default="", help="comma list of sections to skip: accuracy,tactics,ladder,hypothesis")
-    ap.add_argument("--out", default="eval.json", help="output file name inside runs/<run>/ (e.g. eval_ens3.json)")
     a = ap.parse_args()
     if a.quick:
         a.sims, a.depths, a.openings = "50", "1,2,4", 4
@@ -108,17 +116,18 @@ def main():
     skip = set(a.skip.split(","))
 
     run = Run(a.run, create=False)
-    def _resolve(m):
-        return m if os.path.isfile(m) else run.path(m)
-    # 'a.npz+b.npz+c.npz' = ensemble (load_evaluator averages them); each part may be a path or a file in runs/<run>/
-    model_path = "+".join(_resolve(m) for m in a.model.split("+"))
-    for m in model_path.split("+"):
-        if not os.path.isfile(m):
-            raise SystemExit("model not found: %s" % m)
+    # 'a.npz+b.npz+c.npz' = ensemble (averaged, like the arena); each part is a path or a file in runs/<run>/
+    parts = [p if os.path.isfile(p) else run.path(p) for p in a.model.split("+")]
+    for p in parts:
+        if not os.path.isfile(p):
+            raise SystemExit("model not found: %s" % p)
+    model_path = "+".join(parts)
     ev = load_evaluator(model_path, "auto")
     meta = getattr(ev, "meta", {})
-    out_path = run.path(os.path.basename(a.out))
-    out = {"run": a.run, "model": "+".join(os.path.relpath(m, bench.ROOT).replace("\\", "/") for m in model_path.split("+")),
+    if not EVAL_NAME.match(a.out):
+        raise SystemExit("--out must look like eval.json or eval_<tag>.json")
+    out_path = run.path(a.out)
+    out = {"run": a.run, "model": "+".join(os.path.relpath(p, bench.ROOT).replace("\\", "/") for p in parts),
            "model_meta": meta, "created": now_iso(), "settings": vars(a)}
     if os.path.isfile(out_path):                 # keep sections we skip this time
         with open(out_path, encoding="utf-8") as f:
