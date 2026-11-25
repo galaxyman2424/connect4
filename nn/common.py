@@ -169,7 +169,7 @@ def nn_backend():
     """'numpy' (default) or 'torch': how .npz files are run.  Set by the C4_NN_BACKEND
     environment variable (nn.evaluate --backend torch sets it, so worker processes follow)."""
     b = os.environ.get("C4_NN_BACKEND", "numpy").strip().lower() or "numpy"
-    return b if b in ("numpy", "torch") else "numpy"
+    return b if b in ("numpy", "torch", "native") else "numpy"
 
 
 def load_evaluator(path, device="auto", backend=None):
@@ -180,6 +180,11 @@ def load_evaluator(path, device="auto", backend=None):
     if "+" in path:
         return EnsembleEvaluator(load_evaluator(p, device, backend) for p in path.split("+"))
     if path.endswith(".npz"):
+        if (backend or nn_backend()) == "native":
+            from .native import NativeNet, available
+            if available():
+                return NativeNet(path)
+            log("WARNING: native net not built (python -m engine.cbuild) - using numpy")
         if (backend or nn_backend()) == "torch":
             from .torch_net import TorchNpzEvaluator
             threads = os.environ.get("C4_NN_THREADS")

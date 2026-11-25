@@ -91,6 +91,8 @@ class MCTSAgent:
         if cache is None:
             cache = os.environ.get("C4_MCTS_CACHE", "1") != "0"
         self.ev = CachedEvaluator(evaluator) if cache and not isinstance(evaluator, CachedEvaluator) else evaluator
+        if cache and type(evaluator).__name__ == "NativeNet":      # nn/native.py: cache lives in C
+            self.ev.native_cache = evaluator.new_cache()
         self.sims = sims
         self.c_puct = c_puct
         self.name = name or "nn_mcts%d" % sims

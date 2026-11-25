@@ -1,0 +1,17 @@
+{
+ "findings": {},
+ "roster": {
+  "bruneton_az": false,
+  "nn_az_6x64_mcts200": false,
+  "nn_distill_az_2x32_policy": false,
+  "nn_ens3_score_8x128_mcts200": false,
+  "nn_ens3_score_8x128_policy": false,
+  "nn_ppo_6x64_mcts200": false,
+  "nn_ppo_from_sup_policy": false,
+  "nn_score_8x128_s0_r1_mcts200": false,
+  "nn_sup_6x64_mcts200": false,
+  "pons_perfect": false
+ },
+ "runs": {},
+ "updated": "2026-11-25T13:54:28"
+}

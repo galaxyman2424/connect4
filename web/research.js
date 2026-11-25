@@ -10,7 +10,23 @@
   var SEQ = [C.blue, C.orange, C.green, C.purple, C.yellow, C.sky, C.red, C.grey, C.white];
   var SHAPES = ["circle", "square", "diamond", "triangle"];
   var BEST = "nn_sup_6x64_mcts200";
-  var D = { arena_analysis: null, roster: null, sweep: null, interp: null, interp_channels: null, report: null };
+  // the showcase field: the bots of the last arena (Roster, Overview, puzzles)
+  var SHOW = ["pons_perfect", "nn_ens3_score_8x128_mcts200", "nn_score_8x128_s0_r1_mcts200", "nn_ens3_score_8x128_policy", "nn_sup_6x64_mcts200",
+              "nn_az_6x64_mcts200", "nn_ppo_from_sup_policy", "bruneton_az", "nn_ppo_6x64_mcts200", "nn_distill_az_2x32_policy"];
+  var SCORE3 = ["score_8x128_s0_r1", "score_8x128_s1_r1", "score_8x128_s2_r1"];
+  var BOT_META = {
+    pons_perfect: { short: "Pons solver", tiny: "Pons", group: "open source", what: "Exact solver: negamax + alpha-beta, opening book (Pascal Pons)", search: "full search (perfect play)" },
+    nn_ens3_score_8x128_mcts200: { short: "3-net score ensemble + MCTS200", tiny: "ens+MCTS", group: "ours", what: "3 score-head nets (8x128, Pons labels), outputs averaged", search: "200 PUCT sims", runs: SCORE3 },
+    nn_score_8x128_s0_r1_mcts200: { short: "score 8x128 s0 + MCTS200", tiny: "score+MCTS", group: "ours", what: "One score-head net (8x128, Pons labels)", search: "200 PUCT sims", runs: ["score_8x128_s0_r1"] },
+    nn_ens3_score_8x128_policy: { short: "3-net score ensemble (policy)", tiny: "ens", group: "ours", what: "The same 3 nets, policy heads averaged", search: "none (1 forward pass)", runs: SCORE3 },
+    nn_sup_6x64_mcts200: { short: "sup 6x64 + MCTS200", tiny: "sup+MCTS", group: "ours", what: "Supervised on Pons labels (6x64)", search: "200 PUCT sims", runs: ["sup_6x64"] },
+    nn_az_6x64_mcts200: { short: "az 6x64 + MCTS200", tiny: "az+MCTS", group: "ours", what: "AlphaZero self-play (6x64)", search: "200 PUCT sims", runs: ["az_6x64"] },
+    nn_ppo_from_sup_policy: { short: "ppo_from_sup (policy)", tiny: "ppo_sup", group: "ours", what: "PPO self-play, started from sup_6x64", search: "none (1 forward pass)", runs: ["ppo_from_sup"] },
+    bruneton_az: { short: "Bruneton AlphaZero", tiny: "Bruneton", group: "open source", what: "Open-source AlphaZero (1 block × 256), pretrained weights", search: "200 PUCT sims", params: 1202866 },
+    nn_ppo_6x64_mcts200: { short: "ppo 6x64 + MCTS200", tiny: "ppo+MCTS", group: "ours", what: "PPO self-play from scratch (6x64)", search: "200 PUCT sims", runs: ["ppo_6x64"] },
+    nn_distill_az_2x32_policy: { short: "distill_az 2x32 (policy)", tiny: "distill", group: "ours", what: "50k-param student of az 6x64 + MCTS100", search: "none (1 forward pass)", runs: ["distill_az_2x32"] }
+  };
+  var D = { arena_analysis: null, roster: null, sweep: null, report: null, arena_final: null, interp_arena: null, interp_arena_channels: null, puzzles: null };
   var IDX = null, SEL = { findings: {}, roster: {}, runs: {} };
   var UI = { tab: "overview" };       // UI state kept across re-renders
 
@@ -398,7 +414,7 @@
   }
 
   // =================================================================== data + selection
-  var FILES = ["arena_analysis", "roster", "arena_top15", "sweep", "interp", "report"];   // interp_channels is loaded on demand
+  var FILES = ["arena_final", "report", "puzzles", "sweep", "interp_arena", "arena_analysis", "roster"];   // interp_arena_channels is loaded on demand
   var SEEN = {};
   function stamp(ent) { return ent && ent.exists ? (ent.mtime || "") + "|" + (ent.bytes || 0) : "none"; }
   function loadIndex() {
@@ -412,7 +428,7 @@
         return getJSON("/api/research/data/" + name).then(function (d) { D[name] = d; SEEN[name] = st; changed[name] = 1; })
           .catch(function () { /* mid-write: try again next poll */ });
       }).filter(Boolean);
-      if (stamp(IDX.interp_channels) !== SEEN.interp_channels) { D.interp_channels = null; SEEN.interp_channels = stamp(IDX.interp_channels); }
+      if (stamp(IDX.interp_arena_channels) !== SEEN.interp_arena_channels) { D.interp_arena_channels = null; SEEN.interp_arena_channels = stamp(IDX.interp_arena_channels); }
       return Promise.all(jobs).then(function () { return changed; });
     });
   }
@@ -440,7 +456,7 @@
   }
   function allFindings() {
     var out = [];
-    [["arena_analysis", "Arena"], ["sweep", "Supervised sweep"], ["interp", "Interpretability"]].forEach(function (p) {
+    [["arena_analysis", "Arena"], ["sweep", "Supervised sweep"], ["interp_arena", "Interpretability"]].forEach(function (p) {
       var d = D[p[0]];
       ((d && d.findings) || []).forEach(function (f) { if (f && f.id) out.push({ f: f, file: p[0], section: p[1] }); });
     });
@@ -449,17 +465,64 @@
   function countSel(map) { var n = 0; for (var k in map) if (map[k] === true || (map[k] && map[k].include)) n++; return n; }
 
   // =================================================================== 1. overview
-  var DESC = {
-    arena_analysis: "The part3 round robin (20 bots, 20 openings x both colours) re-analysed: Bradley-Terry Elo with bootstrap CIs, head-to-head scores, a top-15 refit, solver-judged blunders, time per move, regressions of Elo on cheap predictors, and the honest answer to “why is our net the best?”.",
-    roster: "The 15 strongest bots of part3, with label, family, search budget, size and both Elo fits, plus the five dropped bots and why.",
-    arena_top15: "A clean re-run of the top-15 tournament with the fixed arena (same format as part3/summary.json, anchor ours_minimax_d4 = 1409).",
-    sweep: "Supervised students of 8 sizes trained on the same 300k positions but labelled by different teachers (solver, heuristics, minimax depth 4, networks), each measured on 3,000 solver-scored positions and a gauntlet of games.",
-    interp: "Linear probes for 21 game concepts at every layer, a census of what each channel responds to, block / channel-group knock-outs, policy-head weights, probe-direction patching and cross-model similarity.",
-    interp_channels: "Per-channel 6x7 mean activation maps for the channel explorer (large; loaded only when you open a channel).",
-    report: "The last arena (top8_o100_mcts_fixed) with every position solved: why the score nets out-rate Pons; linear probes, knock-outs and channel census for all nine arena nets; and every net in runs/ on one benchmark (policy, value and score heads)."
-  };
+  function botName(b) { var r = rFind("records", "bot", b); return r.name || (BOT_META[b] || {}).short || b; }
+  function goLink(tab, text) { return '<a class="golink" href="#' + tab + '">' + esc(text) + " &rarr;</a>"; }
+  function sweepRun(name) { return ((D.sweep && D.sweep.runs) || []).filter(function (r) { return r.name === name; })[0] || null; }
   function renderOverview() {
     var body = $("overviewBody"); body.className = ""; body.innerHTML = "";
+    var AF = D.arena_final, R = D.report, Z = D.puzzles;
+    var E = rFind("records", "bot", ENS), P = rFind("records", "bot", PONS);
+    var nets = RT("nets"), bestNet = nets.slice().sort(function (a, b) { return (b.policy_optimal || 0) - (a.policy_optimal || 0); })[0] || {};
+    var supNet = nets.filter(function (r) { return r.run === "sup_6x64"; })[0] || {};
+
+    // ---- the question and the short answer
+    var ans = "";
+    if (R && isNum(E.elo)) ans += "Our best player, a <b>3-net score-head ensemble with 200 MCTS simulations</b>, rates <b>" + num(E.elo, 0) + "</b> Elo in the last arena, next to the perfect solver Pons at <b>" + num(P.elo, 0) + "</b>. It still loses to Pons head to head (" + num(E.h2h_w) + "–" + num(E.h2h_d) + "–" + num(E.h2h_l) + "); its rating comes from beating the rest of the field more often than Pons does. ";
+    if (isNum(bestNet.policy_optimal)) ans += "Without any search, the best single network plays the solver-optimal move in <b>" + pct(bestNet.policy_optimal) + "</b> of 3,000 held-out positions (" + esc(bestNet.run) + ", " + params(bestNet.params) + " parameters). ";
+    ans += "The rest of this page shows how we got there: which training signal and size work, what the networks compute inside, and where they still differ from perfect play.";
+    body.appendChild(el("div", { "class": "hero" }, "<h2>Can a small neural network learn Connect 4 well enough to rival a perfect solver?</h2><p>" + ans + "</p>"));
+
+    // ---- headline numbers
+    var tl = "";
+    if (R) tl += tile("Best bot vs Pons (Elo)", num(E.elo, 0) + " / " + num(P.elo, 0), "score ensemble + MCTS / Pons solver");
+    if (isNum(bestNet.policy_optimal)) tl += tile("Best raw net, optimal moves", pct(bestNet.policy_optimal), esc(bestNet.run) + ", no search");
+    var small = sweepRun("rs_A_pons_2x32"), big = sweepRun("rs_A_pons_8x128");
+    if (small && big) tl += tile("2x32 vs 8x128 (solver labels)", pct(g(small, "bench.optimal")) + " / " + pct(g(big, "bench.optimal")), params(small.params) + " vs " + params(big.params) + " params");
+    if (Z && Z.positions) {
+      var tac = Z.positions.filter(function (p) { return p.cat !== "arena"; }), ok = tac.filter(function (p) { return p.optimal.indexOf(p.picks[ENS]) >= 0; }).length;
+      tl += tile("Tactical puzzles solved", ok + " / " + tac.length, "score ensemble + MCTS (win now, block, forced wins, only draw)");
+    }
+    if (AF) tl += tile("Last arena", fmtInt(AF.games) + " games", (AF.bots || []).length + " bots, " + ((AF.meta && AF.meta.openings) || []).length + " openings × both colours");
+    body.appendChild(el("div", { "class": "tiles" }, tl));
+
+    // ---- the field at a glance
+    if (AF && AF.elo) {
+      var bots = SHOW.filter(function (b) { return AF.elo[b]; }).sort(function (a, b) { return AF.elo[b].elo - AF.elo[a].elo; });
+      var items = bots.map(function (b) { var e = AF.elo[b]; return { label: botName(b), value: e.elo, lo: e.lo, hi: e.hi, color: b === PONS ? C.grey : (BOT_META[b] || {}).group === "ours" ? C.gold : C.blue, bold: b === ENS || b === PONS,
+        tip: botName(b) + "\nElo " + num(e.elo, 0) + " [" + num(e.lo, 0) + ", " + num(e.hi, 0) + "]\nscore " + num(g(AF, "per_bot." + b + ".score"), 3) }; });
+      body.appendChild(grid("g2", [
+        card("The final arena", "Bradley-Terry Elo with 95% bootstrap intervals (anchor " + esc(AF.elo_anchor || "") + " = " + num(AF.elo_anchor_value, 0) + "). Gold = our nets, blue = open source, grey = the solver. Details on the " + goLink("roster", "Roster") + " tab.",
+          hbarsCI(items, { fmt: function (v) { return num(v, 0); }, tickFmt: function (v) { return num(v, 0); }, xLabel: "Elo", labelW: 210 })),
+        card("How the project fits together", null, el("div", null,
+          '<div class="flow"><span><b>Labels</b><br>Pons solver, minimax, heuristics, other nets</span><i>&rarr;</i><span><b>Training</b><br>supervised, score head, AlphaZero, PPO, distillation</span><i>&rarr;</i>' +
+          '<span><b>Play</b><br>policy head alone, or + MCTS</span><i>&rarr;</i><span><b>Arena</b><br>round robins vs open-source bots and Pons</span><i>&rarr;</i><span><b>Analysis</b><br>this page</span></div>' +
+          '<p class="stats">Every network is a ResNet (blocks × channels) with a policy head and a W/D/L value head; the score nets add a head that predicts the exact solver score. ' +
+          "Accuracy numbers are measured on the same 3,000 solver-scored positions (plies 8–30) for every net.</p>"))]));
+    }
+
+    // ---- what we found, one card per question
+    var f = [];
+    f.push(card("1 · Is our net really the best?", null, el("div", { "class": "answer" }, "<p>" + (R ? "In the last arena the score ensemble + MCTS (" + num(E.elo, 0) + ") and Pons (" + num(P.elo, 0) + ") have overlapping intervals, and the ensemble loses to Pons head to head. It out-scores Pons against the other bots because opponents make more mistakes against it (" + pct(E.opp_error_rate_field) + " of their moves vs " + pct(P.opp_error_rate_field) + " against Pons)." : "Waiting for report.json.") + "</p>" + goLink("vspons", "Nets vs Pons") + " " + goLink("best", "Why ours is the best net"))));
+    var sz = ["rs_A_pons_2x32", "rs_A_pons_6x64", "rs_A_pons_10x128"].map(sweepRun).filter(Boolean);
+    var mmT = ((D.sweep && D.sweep.teachers) || []).filter(function (t) { return t.id === "mm_d4_evo60"; })[0], mmS = sweepRun("rs_B_mm_d4_evo60_6x64");
+    f.push(card("2 · How much do size and teacher matter?", null, el("div", { "class": "answer" }, "<p>" + (sz.length ? "Trained on solver labels, students go " + sz.map(function (r) { return sizeOf(r) + " " + pct(g(r, "bench.optimal")); }).join(" → ") + " optimal moves: most of the gain comes before ~0.5 M parameters. " : "") +
+      (mmT && mmS ? "Students land close to their teacher: the depth-4 minimax teacher plays " + pct(mmT.bench_optimal) + " optimal moves and its 6x64 student " + pct(g(mmS, "bench.optimal")) + ". The label source sets the ceiling." : "") + "</p>" + goLink("sweep", "Size & teachers"))));
+    var ps = function (m, c) { return rFind("probe_summary", "key", m + "|" + c); };
+    f.push(card("3 · What does the network compute?", null, el("div", { "class": "answer" }, "<p>" + (R ? "Every net reads its own immediate wins and the opponent's must-block columns by the first block. Only nets trained on solver labels represent the opponent's best reply (probe AUC " + num(ps("sup_6x64", "opp_reply").best, 2) + " in sup_6x64; the self-play nets never beat the raw input). The score nets also encode exact solver scores (R² " + num(ps("score_8x128_s0", "score").best, 2) + ")." : "Waiting for report.json.") + "</p>" + goLink("interp", "Inside the nets"))));
+    f.push(card("4 · Where do the nets still go wrong?", null, el("div", { "class": "answer" }, "<p>" + (Z && Z.positions ? "On the board puzzles the searching score nets solve every tactical type; the no-search and self-play nets miss " + (function () { var b = "nn_ppo_6x64_mcts200", tac = Z.positions.filter(function (p) { return p.cat !== "arena"; }); return tac.filter(function (p) { return p.optimal.indexOf(p.picks[b]) < 0; }).length + " of " + tac.length + " (ppo 6x64 + MCTS)"; })() + ". " + (function () { var ar = Z.positions.filter(function (p) { return p.cat === "arena"; }); if (!ar.length) return ""; var t = ar.filter(function (p) { return p.optimal.indexOf(p.picks[ENS]) >= 0; }).length; return "In the " + ar.length + " real arena positions where the ensemble + MCTS and Pons first chose differently, the ensemble's move was just as good by the solver's score in " + t + "; in the other " + (ar.length - t) + " it scored worse."; })() : "") + " Raw-policy accuracy is " + pct(supNet.policy_optimal) + " for sup_6x64 and " + pct(bestNet.policy_optimal) + " for the best score net.</p>" + goLink("vspons", "Board puzzles") + " " + goLink("allnets", "All nets benchmarked"))));
+    body.appendChild(grid("g2", f));
+
+    // ---- housekeeping, folded away
     var dg = el("div", { "class": "dsgrid" });
     Object.keys(DESC).forEach(function (k) {
       var e = (IDX && IDX[k]) || {};
@@ -468,16 +531,24 @@
         '<span class="state" style="color:' + (ok ? C.blue : C.grey) + '">' + (ok ? "&#9679; available" : e.exists ? "&#9675; unreadable (being written?)" : "&#9675; not available yet") + "</span>" +
         "<h3>" + esc(e.label || k) + "</h3>" +
         '<dl class="kv">' + (e.exists ? "<dt>generated</dt><dd>" + esc(when(e.generated || e.mtime)) + "</dd><dt>file size</dt><dd>" + (e.bytes >= 1e6 ? (e.bytes / 1e6).toFixed(1) + " MB" : Math.round((e.bytes || 0) / 1e3) + " kB") + "</dd>" : "") +
-        (isNum(e.n_findings) ? "<dt>findings</dt><dd>" + e.n_findings + "</dd>" : "") + "</dl><p>" + esc(DESC[k]) + "</p>"));
+        "</dl><p>" + esc(DESC[k]) + "</p>"));
     });
-    body.appendChild(dg);
-    var g2 = el("div", { "class": "grid g2" });
-    g2.appendChild(sweepStatusCard());
-    var sc = card("Your selection", "What <code>python -m research.paper_outline --selected</code> puts in docs/PAPER_OUTLINE.md (change it on the Roster and Size & teachers tabs).", el("div", { id: "ovCounts" }));
-    g2.appendChild(sc);
-    body.appendChild(g2);
+    var det = el("details", { "class": "notes housekeeping" }, "<summary>Data files, paper selection and sweep progress</summary>");
+    det.appendChild(dg);
+    det.appendChild(grid("g2", [sweepStatusCard(), card("Your selection", "What <code>python -m research.paper_outline --selected</code> puts in docs/PAPER_OUTLINE.md (change it on the Roster and Size & teachers tabs).", el("div", { id: "ovCounts" }))]));
+    body.appendChild(det);
     renderOverviewCounts();
   }
+  var DESC = {
+    arena_final: "The last arena (top8_o100_mcts_fixed): the 10 showcase bots, 100 openings × both colours.",
+    report: "That arena with every position solved (nets vs Pons), probes / knock-outs for the arena nets, and every net in runs/ on one benchmark.",
+    puzzles: "Tactical board positions by type with every showcase bot's move next to Pons's scores (python -m research.puzzles).",
+    sweep: "Supervised students of several sizes trained on the same 300k positions but labelled by different teachers.",
+    interp_arena: "Linear probes, channel census, knock-outs, head weights and patching for the arena nets (python -m research.interp).",
+    interp_arena_channels: "Per-channel 6x7 mean activation maps for the channel explorer (large; loaded only when you open a channel).",
+    arena_analysis: "The older 20-bot part3 round robin re-analysed (used by “Why ours is the best net”).",
+    roster: "Labels, families and sizes of the part3 bots (extra metadata for the Roster tab)."
+  };
   function renderOverviewCounts() {
     var box = $("ovCounts"); if (!box) return;
     var fs = allFindings(), per = {};
@@ -502,79 +573,67 @@
   }
   function sweepActive() { var st = D.sweep && D.sweep.status; return !!(st && st.counts && ((st.counts.running || 0) + (st.counts.queued || 0) > 0) && st.state !== "done"); }
 
-  // =================================================================== 2. roster
+  // =================================================================== 2. roster (the showcase field = the last arena)
   function shortBot(n) { return String(n).replace(/^nn_/, "").replace("_mcts200", "+mcts").replace("_policy", "").replace("ntuple_td_ntuple", "ntuple").replace("_minimax", " mm").replace("ours mm", "ours_mm"); }
+  function botParams(b) {
+    var m = BOT_META[b] || {};
+    if (isNum(m.params)) return m.params;
+    var runs = m.runs || [], tot = 0, ok = runs.length > 0;
+    runs.forEach(function (r) { var n = RT("nets").filter(function (x) { return x.run === r; })[0]; if (n && isNum(n.params)) tot += n.params; else ok = false; });
+    if (ok) return tot;
+    var ro = ((D.roster && D.roster.top15) || []).filter(function (x) { return x.name === b; })[0];
+    return ro && isNum(ro.params) ? ro.params : null;
+  }
   function renderRoster() {
     var body = $("rosterBody"); body.innerHTML = "";
-    var R = D.roster, A = D.arena_analysis, T = D.arena_top15;
-    if (!R || !R.top15) { body.appendChild(empty("roster.json is not available yet (written by <code>python -m research.arena_analysis</code>).")); return; }
-    var top = R.top15.slice().sort(function (a, b) { return (a.rank_top15 != null ? a.rank_top15 : 99) - (b.rank_top15 != null ? b.rank_top15 : 99); }), t15elo = T && T.elo ? T.elo : null;
-    var bar = el("div", { "class": "bar" }, '<span class="hint">' + esc(R.anchor || "") + '</span><span class="spacer"></span><button type="button" class="btn" id="rsAll">Select all 15</button><button type="button" class="btn" id="rsNone">Select none</button>');
+    var AF = D.arena_final;
+    if (!AF || !AF.elo) { body.appendChild(empty("The last arena's summary (experiments/results/arena/top8_o100_mcts_fixed/summary.json) is not available yet.")); return; }
+    var bots = SHOW.filter(function (b) { return AF.elo[b]; }).sort(function (a, b) { return AF.elo[b].elo - AF.elo[a].elo; });
+    var mt = AF.meta || {};
+    var bar = el("div", { "class": "bar" }, '<span class="hint">Arena <code>' + esc(mt.name || "") + "</code>: " + fmtInt(AF.games) + " games, " + (mt.openings || []).length + " openings × both colours, " +
+      (mt.missing || 0) + " missing, " + (AF.forfeits || 0) + " forfeits. Elo anchor " + esc(AF.elo_anchor || "") + " = " + num(AF.elo_anchor_value, 0) + '.</span><span class="spacer"></span><button type="button" class="btn" id="rsAll">Select all</button><button type="button" class="btn" id="rsNone">Select none</button>');
     body.appendChild(bar);
-    // shared CI-bar domain
+    body.appendChild(el("p", { "class": "note" }, "The bots we show off: our strongest networks (with and without MCTS), the open-source AlphaZero of Bruneton et al., and the Pons solver as the perfect-play reference. Weaker bots from the earlier 20-bot round robin (minimax, random-roll-out MCTS, DQN, n-tuple, …) are left out here; they are still in the part3 analysis on the " + goLink("best", "Why ours is the best net") + " tab."));
     var lo = Infinity, hi = -Infinity;
-    top.forEach(function (r) { [r.top15_lo, r.top15_hi, r.part3_lo, r.part3_hi].forEach(function (v) { if (isNum(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }); });
-    function ciBar(r) {
-      if (!isNum(r.top15_elo) || !isFinite(lo)) return "";
+    bots.forEach(function (b) { var e = AF.elo[b]; [e.lo, e.hi].forEach(function (v) { if (isNum(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }); });
+    function ciBar(e, b) {
       var w = 150, X = function (v) { return 4 + (v - lo) / (hi - lo) * (w - 8); };
-      return '<svg class="cibar" width="' + w + '" height="14" aria-hidden="true"><line x1="4" x2="' + (w - 4) + '" y1="7" y2="7" stroke="#252c4d"/>' +
-        (isNum(r.top15_lo) ? '<line x1="' + X(r.top15_lo) + '" x2="' + X(r.top15_hi) + '" y1="7" y2="7" stroke="#e9ecf8" stroke-width="1.5"/>' : "") +
-        '<circle cx="' + X(r.top15_elo) + '" cy="7" r="4" fill="' + (r.group === "ours" ? C.gold : C.blue) + '"/></svg>';
+      return '<svg class="cibar" width="' + w + '" height="14" aria-hidden="true"><line x1="4" x2="' + (w - 4) + '" y1="7" y2="7" stroke="#252c4d"/><line x1="' + X(e.lo) + '" x2="' + X(e.hi) + '" y1="7" y2="7" stroke="#e9ecf8" stroke-width="1.5"/>' +
+        '<circle cx="' + X(e.elo) + '" cy="7" r="4" fill="' + (b === PONS ? C.grey : (BOT_META[b] || {}).group === "ours" ? C.gold : C.blue) + '"/></svg>';
     }
-    var head = ["Use", "Rank", "Bot", "Family", "Group", "Top-15 Elo [95% CI]", "", "Part3 Elo [CI]"];
-    if (t15elo) head.push("Re-run Elo [CI]");
-    head = head.concat(["Score", "ms / move (avg)", "Params", "Search budget"]);
-    var rows = top.map(function (r) {
-      var cells = ['<input type="checkbox" data-bot="' + esc(r.name) + '" aria-label="use ' + esc(r.name) + ' in the paper"' + (SEL.roster[r.name] ? " checked" : "") + ">",
-        r.rank_top15 != null ? r.rank_top15 : r.rank_part3,
-        '<b>' + esc(r.label || r.name) + '</b><br><span class="muted sm">' + esc(r.name) + "</span>",
-        '<span class="sm">' + esc(r.family || "") + "</span>",
-        '<span class="badge ' + (r.group === "ours" ? "ours" : r.group === "open source" ? "os" : "base") + '">' + esc(r.group || "") + "</span>",
-        ciCell(r.top15_elo, r.top15_lo, r.top15_hi, 0), ciBar(r), ciCell(r.part3_elo, r.part3_lo, r.part3_hi, 0)];
-      if (t15elo) { var e = t15elo[r.name]; cells.push(e ? ciCell(e.elo, e.lo, e.hi, 0) : "–"); }
-      cells = cells.concat([num(r.part3_score, 3), ms(r.part3_avg_ms) + (isNum(r.part3_max_ms) ? '<br><span class="muted sm">max ' + ms(r.part3_max_ms) + "</span>" : ""), params(r.params), '<span class="sm">' + esc(r.search_budget || "–") + "</span>"]);
-      return { cls: (r.group === "ours" ? "ours " : "") + (SEL.roster[r.name] ? "sel" : ""), cells: cells };
+    var rows = bots.map(function (b, i) {
+      var m = BOT_META[b] || {}, e = AF.elo[b], pb = (AF.per_bot || {})[b] || {}, vp = b === PONS ? null : g(AF, "wdl." + b + "." + PONS);
+      var vps = vp ? (vp[0] + 0.5 * vp[1]) / (vp[0] + vp[1] + vp[2]) : null;
+      return { cls: (m.group === "ours" ? "ours " : "") + (SEL.roster[b] ? "sel" : ""), cells: [
+        '<input type="checkbox" data-bot="' + esc(b) + '" aria-label="use ' + esc(b) + ' in the paper"' + (SEL.roster[b] ? " checked" : "") + ">",
+        i + 1, "<b>" + esc(botName(b)) + '</b><br><span class="muted sm">' + esc(b) + "</span>",
+        '<span class="sm">' + esc(m.what || "") + "</span>",
+        '<span class="badge ' + (m.group === "ours" ? "ours" : "os") + '">' + esc(m.group || "") + "</span>",
+        '<span class="sm">' + esc(m.search || "") + "</span>", params(botParams(b)),
+        ciCell(e.elo, e.lo, e.hi, 0), ciBar(e, b), num(pb.score, 3), pb.wins + "–" + pb.draws + "–" + pb.losses,
+        vp ? vp[0] + "–" + vp[1] + "–" + vp[2] + ' <span class="muted">(' + num(vps, 3) + ")</span>" : '<span class="muted">–</span>',
+        ms(pb.avg_ms) + (isNum(pb.max_ms) ? '<br><span class="muted sm">max ' + ms(pb.max_ms) + "</span>" : "")] };
     });
-    var tbl = table(head, rows, { cls: "lt", caption: "Score and ms / move are from part3 (all 20 bots). Elo: Bradley-Terry with bootstrap 95% CI. The CI bar shows the top-15 refit on a shared scale (" + num(lo, 0) + " to " + num(hi, 0) + ")." });
-    tbl.querySelectorAll("td").forEach(function (td) { td.classList.add("l"); });
-    body.appendChild(card("Top 15", "Tick the bots you want to report (saved to selection.json).", tbl, true));
+    var tbl = table(["Use", "#", "Bot", "What it is", "Group", "Search", "Params", "Elo [95% CI]", "", "Score", "W–D–L", "vs Pons W–D–L (score)", "ms / move"], rows,
+      { cls: "lt", caption: "Elo: Bradley-Terry with bootstrap 95% CI. Score: mean points per game (win 1, draw ½) over all " + fmtInt(AF.games) + " games. The CI bar uses a shared scale (" + num(lo, 0) + " to " + num(hi, 0) + "). Ensemble params = the three member nets together." });
+    body.appendChild(card("The showcase bots", "Tick the bots you want to report (saved to selection.json).", tbl, true));
     tbl.addEventListener("change", function (e) { var b = e.target.getAttribute("data-bot"); if (!b) return; SEL.roster[b] = e.target.checked; e.target.closest("tr").classList.toggle("sel", e.target.checked); saveSoon(); });
-    $("rsAll").onclick = function () { top.forEach(function (r) { SEL.roster[r.name] = true; }); saveSoon(); renderRoster(); };
-    $("rsNone").onclick = function () { top.forEach(function (r) { SEL.roster[r.name] = false; }); saveSoon(); renderRoster(); };
+    $("rsAll").onclick = function () { bots.forEach(function (b) { SEL.roster[b] = true; }); saveSoon(); renderRoster(); };
+    $("rsNone").onclick = function () { bots.forEach(function (b) { SEL.roster[b] = false; }); saveSoon(); renderRoster(); };
 
-    var series = [{ name: "part3 (all 20 bots)", color: C.grey, shape: "diamond", get: function (r) { return { v: r.part3_elo, lo: r.part3_lo, hi: r.part3_hi }; } },
-                  { name: "top-15 refit (games among the 15)", color: C.blue, shape: "circle", get: function (r) { return { v: r.top15_elo, lo: r.top15_lo, hi: r.top15_hi }; } }];
-    if (t15elo) series.push({ name: "top-15 re-run (fixed arena)", color: C.orange, shape: "square", get: function (r) { var e = t15elo[r.name]; return e ? { v: e.elo, lo: e.lo, hi: e.hi } : null; } });
-    var dmRows = top.map(function (r) { return { label: shortBot(r.name), bold: r.name === BEST, top15_elo: r.top15_elo, top15_lo: r.top15_lo, top15_hi: r.top15_hi, part3_elo: r.part3_elo, part3_lo: r.part3_lo, part3_hi: r.part3_hi, name: r.name }; });
-    var shifts = (A && A.elo_top15) || [];
-    var shiftTbl = table(["Bot", "Rank (top-15)", "Rank (full pool)", "Change", "Shift in Elo"], shifts.map(function (r) { return [esc(r.name), r.rank, r.rank_full_pool, sgn(r.rank_change), sgn(r.shift_vs_full_pool, 1)]; }));
-    var meta = A && A.elo_top15_meta;
+    var items = bots.map(function (b) { var e = AF.elo[b]; return { label: botName(b), value: e.elo, lo: e.lo, hi: e.hi, color: b === PONS ? C.grey : (BOT_META[b] || {}).group === "ours" ? C.gold : C.blue, bold: b === ENS || b === PONS }; });
+    var idx = {}; (AF.bots || []).forEach(function (b, i) { idx[b] = i; });
+    var hm = heatmap({ rows: bots.map(function (b) { return { label: botName(b) }; }), cols: bots.map(function (b) { return (BOT_META[b] || {}).tiny || shortBot(b); }), cellW: 44, cellH: 24, labelW: 210, top: 96,
+      val: function (i, j) { var r = AF.matrix[idx[bots[i]]]; return r ? r[idx[bots[j]]] : null; }, color: function (v) { return isNum(v) ? divColor((v - 0.5) * 2) : "#141832"; },
+      text: function (v) { return v.toFixed(2); }, tip: function (i, j, v) { var w = g(AF, "wdl." + bots[i] + "." + bots[j]); return botName(bots[i]) + " vs " + botName(bots[j]) + "\nscore of row bot " + (isNum(v) ? v.toFixed(3) : "–") + (w ? "\nW–D–L " + w.join("–") : ""); }, title: "head-to-head score matrix" });
     body.appendChild(grid("g2", [
-      card("Full pool vs top-15 refit", "Same anchor value (ours_minimax_d4 = 1409 in both fits). Bars are 95% bootstrap CIs." + (meta ? " Top-15 refit uses " + fmtInt(meta.games) + " games." : ""), dumbbell(dmRows, series, { xLabel: "Elo", labelW: 150 })),
-      card("Rank changes when the five weakest bots are removed", null, shiftTbl)]));
-
-    var dr = R.dropped || [];
-    body.appendChild(card("The five dropped bots", null, table(["Bot", "Part3 rank", "Part3 Elo", "Score", "Family", "Reason"], dr.map(function (r) { return [esc(r.name), r.rank_part3, num(r.part3_elo, 1), num(r.part3_score, 3), esc(r.family || ""), '<span class="sm">' + esc(r.reason || "") + "</span>"]; })), true));
-
-    var M = A && A.head_to_head && A.head_to_head.top15_score_matrix;
-    if (M && M.bots && M.matrix) {
-      var hm = heatmap({ rows: M.bots.map(function (b) { return { label: shortBot(b) }; }), cols: M.bots.map(shortBot), cellW: 36, cellH: 22, labelW: 150, top: 110,
-        val: function (i, j) { return M.matrix[i] ? M.matrix[i][j] : null; }, color: function (v) { return isNum(v) ? divColor((v - 0.5) * 2) : "#141832"; },
-        text: function (v) { return v.toFixed(2); }, tip: function (i, j, v) { return M.bots[i] + " vs " + M.bots[j] + "\nmean score of row bot: " + (isNum(v) ? v.toFixed(4) : "–"); }, title: "head-to-head score matrix" });
-      body.appendChild(card("Head-to-head scores (top 15)", esc(M.note || "Row bot's mean score against column bot."), [hm, scaleLegend("div", "0 (row bot loses all)", "1 (row bot wins all)", "0.5 = even")], true));
-    }
-    body.appendChild(top15Health(T));
-  }
-  function top15Health(T) {
-    if (!T) return card("Top-15 re-run (fixed arena)", null, empty("experiments/results/arena/top15/summary.json is not there yet. When the clean top-15 tournament finishes, its Elo appears in the table and chart above and its health here."));
-    var mt = T.meta || {}, pb = T.per_bot || {};
-    var miss = Array.isArray(mt.missing) ? mt.missing.length : mt.missing, tos = Array.isArray(mt.timeouts) ? mt.timeouts.length : mt.timeouts;
-    var fz = Array.isArray(T.forfeits) ? T.forfeits.length : T.forfeits;
-    var line = "Games scheduled " + (mt.scheduled != null ? fmtInt(mt.scheduled) : "–") + ", recorded " + (mt.recorded != null ? fmtInt(mt.recorded) : fmtInt(T.games)) +
-      ", missing " + (miss != null ? miss : "–") + ", timeouts " + (tos != null ? tos : "–") + ", forfeits " + (fz != null ? fz : "–") + (mt.created ? " (created " + when(mt.created) + ")" : "") + ". Elo anchor: " + esc(T.elo_anchor || "–") + ".";
-    var bots = (T.bots || Object.keys(pb));
-    var rows = bots.map(function (b) { var p = pb[b] || {}, e = (T.elo || {})[b] || {}; return [esc(b), fmtInt(p.games), num(p.score, 3), ciCell(e.elo, e.lo, e.hi, 0), ms(p.avg_ms), ms(p.max_ms), p.forfeits != null ? p.forfeits : "–"]; });
-    return card("Top-15 re-run (fixed arena): tournament health", '<b>' + esc(line) + "</b>", table(["Bot", "Games", "Score", "Elo [CI]", "avg ms / move", "max ms / move", "Forfeits"], rows), true);
+      card("Elo with 95% intervals", "Gold = ours, blue = open source, grey = Pons.", hbarsCI(items, { fmt: function (v) { return num(v, 0); }, tickFmt: function (v) { return num(v, 0); }, xLabel: "Elo", labelW: 210 })),
+      card("What the tags mean", null, el("div", { "class": "answer" }, "<ul>" +
+        "<li><b>+ MCTS200</b>: the network guides a PUCT tree search of 200 simulations per move (AlphaZero style).</li>" +
+        "<li><b>policy only</b>: one forward pass, the column the policy head likes most. No search.</li>" +
+        "<li><b>score</b> nets: trained on Pons labels with an extra head that predicts the exact solver score; the ensemble averages three seeds.</li>" +
+        "<li><b>sup</b> = supervised on Pons labels, <b>az</b> = AlphaZero self-play, <b>ppo</b> = PPO self-play (ppo_from_sup starts from sup), <b>distill</b> = a 50k-parameter student of az + MCTS.</li></ul>"))]));
+    body.appendChild(card("Head-to-head scores", "Row bot's mean score against the column bot (" + fmtInt(AF.games / ((bots.length * (bots.length - 1)) / 2)) + " games per pair). Orange = row bot wins more, blue = loses more.", [hm, scaleLegend("div", "0 (row bot loses all)", "1 (row bot wins all)", "0.5 = even")], true));
   }
 
   // =================================================================== 3. why ours is the best net
@@ -772,25 +831,52 @@
   function stBadge(s) { s = s || "unknown"; return '<span class="st ' + esc(s) + '">' + esc(s) + "</span>"; }
   function sizeOf(r) { return r.blocks + "x" + r.channels; }
   function teacherLabel(id) { var t = ((D.sweep && D.sweep.teachers) || []).filter(function (x) { return x.id === id; })[0]; return t ? t.label : id; }
+  // only the strong teachers and sizes are shown; everything else stays in sweep.json
+  var SWEEP_TEACHERS = ["pons", "sup8x128", "sup6x64", "mm_d4_evo60", "mm_d4_hand", "ppo_from_sup"];
+  var SWEEP_MIN_PARAMS = 40000;      // 2x32 (50k params) and up; drops the 1x16 students
+  function sweepKeep(r) { return SWEEP_TEACHERS.indexOf(r.teacher) >= 0 && (r.params || 0) >= SWEEP_MIN_PARAMS; }
+  function ols(pts) {            // [{x, y}] -> {slope, intercept, r2, n}
+    pts = pts.filter(function (p) { return isNum(p.x) && isNum(p.y); });
+    var n = pts.length; if (n < 2) return null;
+    var mx = 0, my = 0; pts.forEach(function (p) { mx += p.x / n; my += p.y / n; });
+    var sxx = 0, sxy = 0, syy = 0; pts.forEach(function (p) { sxx += (p.x - mx) * (p.x - mx); sxy += (p.x - mx) * (p.y - my); syy += (p.y - my) * (p.y - my); });
+    if (!sxx) return null;
+    var slope = sxy / sxx; return { slope: slope, intercept: my - slope * mx, r2: syy ? (sxy * sxy) / (sxx * syy) : 1, n: n, small_n: n < 4 };
+  }
+  function sweepView(S) {
+    var V = {}; for (var k in S) V[k] = S[k];
+    V.runs = (S.runs || []).filter(sweepKeep);
+    V.teachers = (S.teachers || []).filter(function (t) { return SWEEP_TEACHERS.indexOf(t.id) >= 0; });
+    V.sizes = (S.sizes || []).filter(function (z) { return z.params >= SWEEP_MIN_PARAMS; });
+    var an = S.analysis || {}, A = {}; for (var j in an) A[j] = an[j];
+    var tvs = {}; var okSize = {}; V.sizes.forEach(function (z) { okSize[z.blocks + "x" + z.channels] = 1; });
+    Object.keys(an.teacher_vs_student || {}).filter(function (sz) { return okSize[sz]; }).forEach(function (sz) { var e = an.teacher_vs_student[sz], rows = (e.rows || []).filter(function (r) { return SWEEP_TEACHERS.indexOf(r.teacher) >= 0; });
+      if (rows.length) tvs[sz] = { rows: rows, student_vs_teacher: ols(rows.map(function (r) { return { x: r.teacher_optimal, y: r.student_optimal }; })), pearson_r: null }; });
+    A.teacher_vs_student = tvs;
+    A.seed_noise = (an.seed_noise || []).filter(function (r) { return SWEEP_TEACHERS.indexOf(r.teacher) >= 0 && okSize[r.size]; });
+    if (an.distill_vs_direct) A.distill_vs_direct = { teachers: an.distill_vs_direct.teachers, rows: (an.distill_vs_direct.rows || []).filter(function (r) { return !isNum(r.params) || r.params >= SWEEP_MIN_PARAMS; }) };
+    V.analysis = A;
+    return V;
+  }
   function renderSweep() {
     var body = $("sweepBody"); body.innerHTML = "";
-    var S = D.sweep;
-    if (!S) { body.appendChild(empty("sweep.json is not available yet. Start the sweep with <code>python -m research.sweep --run</code>; this tab fills in as runs finish (the page re-checks every 30 s).")); return; }
-    var runs = S.runs || [], done = runs.filter(function (r) { return r.status === "done" && r.bench; }), an = S.analysis || {};
-    var st = S.status || {}, c = st.counts || {};
-    body.appendChild(el("div", { "class": "bar" }, "<span>" + stBadge(st.state === "done" ? "done" : st.state === "running" ? "running" : "queued") + " " + (c.done || 0) + " of " + (st.total || runs.length) + " runs done" + (c.failed ? ", " + c.failed + " failed" : "") + (st.running ? " · running <b>" + esc(st.running) + "</b>" : "") + (st.eta_clock && sweepActive() ? " · estimated finish " + esc(when(st.eta_clock)) : "") + '</span><span class="spacer"></span><span class="hint">generated ' + esc(when(S.generated)) + "</span>"));
-    var notes = S.notes || [];
-    var sizeNote = notes.filter(function (n) { return /billion/i.test(n); })[0];
+    var S0 = D.sweep;
+    if (!S0) { body.appendChild(empty("sweep.json is not available yet. Start the sweep with <code>python -m research.sweep --run</code>; this tab fills in as runs finish (the page re-checks every 30 s).")); return; }
+    var S = sweepView(S0);
+    var runs = S.runs, done = runs.filter(function (r) { return r.status === "done" && r.bench; }), an = S.analysis;
+    var hiddenT = (S0.teachers || []).filter(function (t) { return SWEEP_TEACHERS.indexOf(t.id) < 0; }).map(function (t) { return t.id; });
+    body.appendChild(el("p", { "class": "note" }, "Showing the <b>" + S.teachers.length + " strongest teachers</b> (" + S.teachers.map(function (t) { return esc(t.id); }).join(", ") + ") and student sizes from <b>2x32</b> up: " + runs.length + " of " + (S0.runs || []).length + " runs. " +
+      "Hidden but still in sweep.json: the no-search heuristic teachers and the weak PPO net (" + esc(hiddenT.join(", ")) + ") and the 1x16 students. Fitted lines on this tab are refit on the runs shown."));
     var sizes = S.sizes || [];
     var nk = [];
-    nk.push(el("p", { "class": "note" }, "<b>The size ladder.</b> Parameters grow roughly with blocks × channels² (each residual block has two 3×3 convolutions of channels × channels weights), so doubling the width quadruples the size. " + (sizeNote ? esc(sizeNote) : "")));
+    nk.push(el("p", { "class": "note" }, "<b>The size ladder.</b> Parameters grow roughly with blocks × channels² (each residual block has two 3×3 convolutions of channels × channels weights), so doubling the width quadruples the size."));
     if (sizes.length) nk.push(table(["Size", "Blocks", "Channels", "Params"], sizes.map(function (z) { return [z.blocks + "x" + z.channels, z.blocks, z.channels, fmtInt(z.params)]; })));
-    var det = el("details", { "class": "notes" }, "<summary>Method notes from sweep.json (" + notes.length + ")</summary>" + list(notes));
-    nk.push(det);
+    nk.push(table(["Teacher", "What it is", "Own optimal-move rate", "Agrees with Pons"], S.teachers.map(function (t) { return ["<b>" + esc(t.id) + "</b>", esc(t.label || ""), pct(t.bench_optimal), pct(t.agree_pons)]; }), { cls: "lt" }));
+    var notes = S0.notes || [];
+    nk.push(el("details", { "class": "notes" }, "<summary>Method notes from sweep.json (" + notes.length + ")</summary>" + list(notes)));
     body.appendChild(card("What was trained", null, nk, true));
     body.appendChild(sizeChartCard(S, done, an));
     body.appendChild(teacherCard(S, an));
-    body.appendChild(grid("g2", [evoCard(an.evo_curve), searchCard(an.search_vs_nosearch)]));
     body.appendChild(grid("g2", [distillCard(an.distill_vs_direct), paretoCard(done, an)]));
     body.appendChild(runsCard(runs));
   }
@@ -815,7 +901,8 @@
       keys = keys.filter(function (k) { return !UI.swHide[k]; });
       var ser = keys.map(function (k) {
         var i = allKeys.indexOf(k);   // stable colour / marker per series when others are hidden
-        var regs = UI.swBy === "teacher" && M.reg ? g(an, "size_regression." + k + "." + M.reg) : null;
+        var xs = {}; by[k].forEach(function (r) { xs[r.params] = 1; });
+        var regs = UI.swBy === "teacher" && Object.keys(xs).length >= 3 ? ols(by[k].map(function (r) { return { x: Math.log10(r.params), y: M.get(r) }; })) : null;
         var nm = (UI.swBy === "teacher" ? teacherLabel(k) : k) + (regs && isNum(regs.slope) ? " (" + (M.pct ? sgn(100 * regs.slope, 1) + " pts" : sgn(regs.slope, 3)) + " per 10× params, R² " + num(regs.r2, 2) + ", n=" + regs.n + (regs.small_n ? ", small n" : "") + ")" : "");
         return { name: nm, color: SEQ[i % SEQ.length], shape: SHAPES[i % SHAPES.length], line: !regs || !isNum(regs.slope), fit: regs && isNum(regs.slope) ? { slope: regs.slope, intercept: regs.intercept, log10x: true } : null,
           points: by[k].map(function (r) { var v = M.get(r), ci = M.ci ? M.ci(r) : null; return { x: r.params, y: v, lo: ci ? ci[0] : null, hi: ci ? ci[1] : null,
@@ -824,14 +911,16 @@
       var refs = [];
       if (UI.swRefs && M.tq && UI.swBy === "teacher") keys.forEach(function (k) { var i = allKeys.indexOf(k); var t = (S.teachers || []).filter(function (x) { return x.id === k; })[0]; if (t && isNum(t[M.tq])) refs.push({ y: t[M.tq], label: "teacher " + k, color: SEQ[i % SEQ.length] }); });
       box.appendChild(xyChart({ series: ser, logX: true, refs: refs, height: 330, xLabel: "parameters (log scale)", yLabel: M.t, yFmt: M.pct ? function (v) { return pct(v, 0); } : tickFmt, xName: "params", yName: M.t, emptyText: "No finished runs yet" }));
-      if (!M.reg) box.appendChild(el("p", { "class": "stats" }, "No fitted line for this metric (sweep.json only has regressions for optimal-rate and gauntlet score); points are joined in size order."));
     }
     ctrl.addEventListener("change", function (e) { if (e.target.id === "swMetric") UI.swMetric = e.target.value; if (e.target.id === "swBy") UI.swBy = e.target.value; if (e.target.id === "swRefs") UI.swRefs = e.target.checked; draw(); });
     draw();
     // regression table + seed noise side by side
-    var SR = an.size_regression || {}, rr = [];
-    Object.keys(SR).forEach(function (t) { ["optimal_vs_log10_params", "gauntlet_vs_log10_params"].forEach(function (k) { var r = SR[t][k]; if (r) rr.push([esc(t), k.replace("_vs_log10_params", ""), r.n, isNum(r.slope) ? sgn(r.slope, 4) : "–", r.slope_ci95 ? "[" + r.slope_ci95.map(function (v) { return num(v, 4); }).join(", ") + "]" : "–", num(r.r2, 3), r.small_n ? '<span class="st failed">small n</span>' : "", r.slope_ci95 && r.slope_ci95[0] < 0 && r.slope_ci95[1] > 0 ? "CI includes 0" : ""]); }); });
-    side.appendChild(table(["Teacher", "Y", "n", "Slope per 10× params", "95% CI (bootstrap)", "R²", "", ""], rr, { caption: "OLS of the metric on log10(params) for each teacher, from analysis.size_regression." }));
+    var rr = [], byT = {};
+    done.forEach(function (r) { (byT[r.teacher] = byT[r.teacher] || []).push(r); });
+    Object.keys(byT).forEach(function (t) { var xs = {}; byT[t].forEach(function (r) { xs[r.params] = 1; }); if (Object.keys(xs).length < 3) return;
+      [["optimal", function (r) { return g(r, "bench.optimal"); }], ["gauntlet", function (r) { return g(r, "gauntlet.mean_score"); }]].forEach(function (q) {
+        var f = ols(byT[t].map(function (r) { return { x: Math.log10(r.params), y: q[1](r) }; })); if (f) rr.push([esc(t), q[0], f.n, sgn(f.slope, 4), num(f.r2, 3), f.small_n ? '<span class="st failed">small n</span>' : ""]); }); });
+    side.appendChild(table(["Teacher", "Y", "n", "Slope per 10× params", "R²", ""], rr, { caption: "OLS of the metric on log10(params) for each teacher with at least 3 sizes, refit on the runs shown (2x32 and up)." }));
     var sn = an.seed_noise || [];
     side.appendChild(el("h3", { style: "margin:14px 0 4px;font-size:.95rem" }, "Seed noise (same teacher and size, seed 0 vs seed 1)"));
     side.appendChild(sn.length ? table(["Size", "Teacher", "Optimal s0", "s1", "|diff|", "Gauntlet s0", "s1", "|diff|"], sn.map(function (r) { return [r.size, esc(r.teacher), num(r.optimal_s0, 4), num(r.optimal_s1, 4), "<b>" + num(r.abs_diff_optimal, 4) + "</b>", num(r.gauntlet_s0, 3), num(r.gauntlet_s1, 3), "<b>" + num(r.abs_diff_gauntlet, 3) + "</b>"]; }),
@@ -861,35 +950,9 @@
           fit: isNum(r.slope) && !r.small_n ? { slope: r.slope, intercept: r.intercept } : null };
       });
       kids.push(xyChart({ series: ser, height: 320, refs: [], xLabel: "teacher's own optimal-move rate", yLabel: "student optimal-move rate (no search)", xName: "teacher", yName: "student", yFmt: function (v) { return pct(v, 1); }, xFmt: function (v) { return pct(v, 0); } }));
-      kids.push(el("p", { "class": "stats" }, "Student vs teacher (OLS, from analysis.teacher_vs_student; fitted lines drawn only when n is not small): " + stx.join(" · ")));
+      kids.push(el("p", { "class": "stats" }, "Student vs teacher (OLS refit on the teachers shown; fitted lines drawn only when n is not small): " + stx.join(" · ")));
     }
     return card("Teachers: own quality vs the students trained from them", null, kids, true);
-  }
-
-  function evoCard(E) {
-    var rows = (E && E.rows) || [];
-    var evo = rows.filter(function (r) { return r.search_depth === 0 || r.search_depth == null && /heur/.test(r.teacher); });
-    var mm = rows.filter(function (r) { return /^mm_/.test(r.teacher); });
-    var pick = function (k, name, col, dash) { return { name: name, color: col, line: true, dash: dash, points: evo.map(function (r) { return { x: r.gen, y: r[k], tip: r.teacher + " (gen " + r.gen + ")\n" + name + ": " + pct(r[k], 2) }; }) }; };
-    var ser = [pick("teacher_optimal", "teacher (heuristic, no search)", C.grey), pick("student_2x32_optimal", "2x32 student", C.blue), pick("student_6x64_optimal", "6x64 student", C.orange)];
-    var refs = mm.filter(function (r) { return isNum(r.teacher_optimal); }).map(function (r, i) { return { y: r.teacher_optimal, label: r.teacher + " teacher (depth 4)", color: [C.purple, C.green][i % 2], legend: r.teacher + " teacher (minimax depth 4)" }; });
-    var regs = (E && E.regressions) || {};
-    var txt = Object.keys(regs).map(function (k) { var r = regs[k]; return k.replace(/_/g, " ") + ": " + (isNum(r.slope) ? sgn(r.slope, 5) + " per generation, R² " + num(r.r2, 3) + ", n=" + r.n + (r.small_n ? " (small n)" : "") : "not enough points"); }).join(" · ");
-    var t = table(["Teacher", "Gen", "Depth", "Teacher optimal", "2x32 student", "2x32 gauntlet", "6x64 student", "6x64 gauntlet"], rows.map(function (r) { return [esc(r.teacher), r.gen, r.search_depth == null ? "–" : r.search_depth, pct(r.teacher_optimal), pct(r.student_2x32_optimal), num(r.student_2x32_gauntlet, 3), pct(r.student_6x64_optimal), num(r.student_6x64_gauntlet, 3)]; }));
-    return card("Evolved heuristic: generation → teacher and student quality", "Heuristic weights from evolution generation 0 (hand-made) to 60, used as no-search teachers. Horizontal lines: the depth-4 minimax teachers.", [xyChart({ series: ser, refs: refs, xLabel: "evolution generation of the heuristic", yLabel: "benchmark optimal-move rate", yFmt: function (v) { return pct(v, 0); }, xName: "generation", yName: "optimal", height: 260 }), el("p", { "class": "stats" }, esc(txt)), t]);
-  }
-
-  function searchCard(rows) {
-    rows = rows || [];
-    var cats = rows.map(function (r) { return r.heuristic; });
-    var ser = [
-      { name: "teacher, no search", color: C.grey, values: rows.map(function (r) { return r.no_search_teacher_optimal; }) },
-      { name: "teacher, depth-4 search", color: C.purple, values: rows.map(function (r) { return r.search_d4_teacher_optimal; }) },
-      { name: "2x32 student of no-search teacher", color: C.sky, values: rows.map(function (r) { return r.no_search_student_2x32_optimal; }) },
-      { name: "2x32 student of depth-4 teacher", color: C.blue, values: rows.map(function (r) { return r.search_d4_student_2x32_optimal; }) },
-      { name: "6x64 student of no-search teacher", color: C.red, values: rows.map(function (r) { return r.no_search_student_6x64_optimal; }) },
-      { name: "6x64 student of depth-4 teacher", color: C.orange, values: rows.map(function (r) { return r.search_d4_student_6x64_optimal; }) }];
-    return card("Does a searching teacher make a better student?", "Same heuristic with and without depth-4 minimax as the labeller. Missing bars = run not finished.", groupBars({ categories: cats, series: ser, yMin: 0, yMax: 1, yFmt: function (v) { return pct(v, 0); }, yLabel: "benchmark optimal-move rate", emptyText: "No data yet" }));
   }
 
   function distillCard(Dd) {
@@ -917,7 +980,9 @@
     var box = el("div");
     function draw() {
       box.innerHTML = "";
-      var xk = UI.prX, front = (xk === "params" ? an.pareto_params : an.pareto_ms) || [];
+      var xk = UI.prX, best = -1, front = [];
+      done.filter(function (r) { return isNum(r[xk]) && isNum(g(r, "bench.optimal")); }).sort(function (a, b) { return a[xk] - b[xk]; })
+        .forEach(function (r) { var o = g(r, "bench.optimal"); if (o > best) { best = o; front.push({ name: r.name, optimal: o, params: r.params, ms_per_pos: r.ms_per_pos }); } });
       var onF = {}; front.forEach(function (p) { onF[p.name] = 1; });
       box.appendChild(xyChart({ series: [
         { name: "all finished runs", color: C.grey, points: done.filter(function (r) { return !onF[r.name]; }).map(function (r) { return { x: r[xk], y: g(r, "bench.optimal"), label: r.name }; }) },
@@ -971,26 +1036,69 @@
   var GROUP_NAME = { geometry: "geometry", tactics: "tactics", own_move: "own move", opp_move: "opponent move", phase: "phase" };
   function renderInterp() {
     var body = $("interpBody"); body.innerHTML = "";
-    var I = D.interp;
-    if (!I) {
-      body.appendChild(empty("interp.json is not available yet (written by <code>python -m research.interp</code>). When it appears this tab shows: the layer × concept probe matrix, a channel explorer with 6×7 activation maps, block and channel-group knock-outs, policy-head weight maps, probe-direction patching and a cross-model comparison. The page checks for it every 30 s."));
+    var I = D.interp_arena, R = D.report;
+    if (!I && !R) {
+      body.appendChild(empty("Neither interp_arena.json nor report.json is available yet. Run <code>python -m research.interp --models sup_6x64 az_6x64 ppo_from_sup ppo_6x64 distill_az_2x32 score_8x128_s0 score_8x128_s1 score_8x128_s2 --out experiments/results/research/interp_arena.json</code> and <code>python -m research.report_data</code>."));
       return;
     }
-    var models = I.models || [];
-    if (!models.length) { body.appendChild(empty("interp.json has no models yet.")); return; }
-    if (!UI.imodel || !models.some(function (m) { return m.id === UI.imodel; })) UI.imodel = models[0].id;
-    var M = models.filter(function (m) { return m.id === UI.imodel; })[0];
-    var chk = (I.checks || {})[M.id] || {};
-    var bar = el("div", { "class": "bar" }, select("imodel", models.map(function (m) { return { v: m.id, t: m.id + " (" + m.blocks + "x" + m.channels + ", " + params(m.params) + ")" }; }), UI.imodel, "Model") +
-      '<span class="hint">run ' + esc(M.run || "") + (isNum(chk.bench_agreement) ? " · agreement with solver on its benchmark " + pct(chk.bench_agreement) + (chk.bench_n ? " (n=" + chk.bench_n + ")" : "") : "") + (isNum(chk.forward_max_abs_diff_vs_numpy) ? " · torch vs numpy max |diff| " + chk.forward_max_abs_diff_vs_numpy : "") + "</span>");
+    var models = RT("models"), PS = RT("probe_summary");
+    var psv = function (mm, c) { return (PS.filter(function (r) { return r.key === mm + "|" + c; })[0] || {}); };
+    var kov = function (mm, b) { return (RT("knockouts").filter(function (r) { return r.key === mm + "|" + b; })[0] || {}).d_agree; };
+    var sm = function (mm) { return rFind("models", "model", mm); };
+    body.appendChild(el("p", { "class": "note" }, "All nine nets of the last arena: our 8 (the three score nets are the ensemble's members) plus the open-source Bruneton AlphaZero net. For every layer a linear probe reads a concept from the activations (trained on 35,000 positions, scored on 10,000 held out). <b>Skill</b> = (score − chance) / (1 − chance). A probe shows the information is there, not that the net uses it; the knock-outs are the causal check. Pick a net below for its full breakdown: probes, channel explorer, knock-outs, head weights and patching."));
+    if (models.length) {
+      body.appendChild(card("What the nine nets share, and where they differ", null, el("div", { "class": "answer" }, '<div class="sup"><h4>Findings</h4><ul>' +
+        "<li><b>Immediate tactics come first, in every net.</b> By block 1 (the stem in Bruneton's net) every net reads its own immediate wins and the opponent's must-block columns. Geometry and phase are readable from the raw input, so the nets keep that information rather than compute it.</li>" +
+        "<li><b>Only nets trained on solver labels represent the opponent's best reply.</b> sup_6x64 reaches AUC " + num(psv("sup_6x64", "opp_reply").best, 2) + " (" + esc(psv("sup_6x64", "opp_reply").best_layer || "") + "), score_8x128_s0 " + num(psv("score_8x128_s0", "opp_reply").best, 2) + ". In az_6x64 the best layer is the raw input (" + num(psv("az_6x64", "opp_reply").best, 2) + "), and the same holds for ppo_6x64 and distill_az_2x32.</li>" +
+        "<li><b>The score nets encode exact solver scores:</b> R² " + num(psv("score_8x128_s0", "score").best, 2) + " vs " + num(psv("sup_6x64", "score").best, 2) + " for sup_6x64 and " + num(psv("az_6x64", "score").best, 2) + " for az_6x64.</li>" +
+        "<li><b>Block 1 matters most in every deep net:</b> skipping it changes sup_6x64's optimal-move rate by " + sgn(100 * kov("sup_6x64", "block1"), 1) + " points.</li>" +
+        "<li><b>Same recipe, different insides.</b> The three score nets differ only in seed, yet skipping block 5 costs s1 " + sgn(100 * kov("score_8x128_s1", "block5"), 1) + " points vs " + sgn(100 * kov("score_8x128_s0", "block5"), 1) + " (s0) and " + sgn(100 * kov("score_8x128_s2", "block5"), 1) + " (s2). \"The block that does X\" is a fact about one net, not about the recipe.</li>" +
+        "<li><b>Bruneton's net is one wide block with a one-filter value head.</b> Its raw policy is optimal on " + pct(sm("bruneton_az").intact_agree) + " of probe positions vs " + pct(sm("sup_6x64").intact_agree) + " for sup_6x64.</li></ul></div>"), true));
+      var showC = ["win_now", "opp_win_now", "own_threats", "opp_threats", "own_double", "opp_double", "opt_set", "net_move", "outcome", "score", "opp_reply"];
+      var mids = models.map(function (x) { return x.model; }), depth = {};
+      mids.forEach(function (mm) { var ls = RT("probes").filter(function (r) { return r.model === mm; }), mx = Math.max.apply(null, ls.map(function (r) { return r.layer_index; })); ls.forEach(function (r) { depth[mm + "|" + r.layer] = r.layer_index / (mx || 1); }); });
+      var hm2 = heatmap({ rows: showC.map(function (c) { return { label: c }; }), cols: mids, cellW: 54, labelW: 110, top: 110, title: "first layer at 90% of best skill",
+        val: function (i, j) { var r = psv(mids[j], showC[i]); return r.first_layer ? depth[mids[j] + "|" + r.first_layer] : null; },
+        color: function (v) { return seqColor(isNum(v) ? 1 - v : null); }, text: function (v) { return pct(v, 0); },
+        tip: function (i, j) { var r = psv(mids[j], showC[i]); return r.first_layer ? mids[j] + " · " + showC[i] + "\nfirst at " + r.first_layer + ", best at " + r.best_layer + " (" + num(r.best, 3) + ")" : "not probed"; } });
+      body.appendChild(card("How early each net knows each concept", "Cell = the first layer that reaches 90% of that net's best probe skill, as a share of the net's depth (0% = input, 100% = heads). Brighter = earlier. A 0% cell means no layer beats the raw input, i.e. the net never builds that concept itself (see opp_reply in the self-play nets). Hover for the layer names and best score.", [hm2], true));
+    }
+
+    // ---- one net in detail
+    var ids = models.map(function (x) { return x.model; });
+    ((I && I.models) || []).forEach(function (m) { if (ids.indexOf(m.id) < 0) ids.push(m.id); });
+    if (!UI.imodel || ids.indexOf(UI.imodel) < 0) UI.imodel = ids.indexOf("sup_6x64") >= 0 ? "sup_6x64" : ids[0];
+    var M = I ? (I.models || []).filter(function (m) { return m.id === UI.imodel; })[0] : null, RM = sm(UI.imodel);
+    var lab = function (id) { var a = sm(id), b = I ? (I.models || []).filter(function (m) { return m.id === id; })[0] : null, z = a.model ? a : b || {}; return id + " (" + z.blocks + "x" + z.channels + ", " + params(z.params) + ")"; };
+    var chk = M ? (I.checks || {})[M.id] || {} : {};
+    var bar = el("div", { "class": "bar" }, select("imodel", ids.map(function (id) { return { v: id, t: lab(id) }; }), UI.imodel, "Net") +
+      '<span class="hint">' + (M ? "run " + esc(M.run || "") + (isNum(chk.bench_agreement) ? " · agreement with solver on its benchmark " + pct(chk.bench_agreement) : "") : "probed only (no channel / knock-out study for this net)") + "</span>");
     bar.querySelector("select").addEventListener("change", function () { UI.imodel = this.value; UI.iconcept = null; UI.ich = null; renderInterp(); });
     body.appendChild(bar);
-    if (I.notes && I.notes.length) body.appendChild(el("details", { "class": "notes" }, "<summary>Method notes from interp.json (" + I.notes.length + ")</summary>" + list(I.notes)));
-    body.appendChild(probeCard(I, M));
-    body.appendChild(channelCard(I, M));
-    body.appendChild(ablationCard(I, M));
-    body.appendChild(headCard(I, M));
-    body.appendChild(grid("g2", [patchCard(I, M), crossCard(I, M)]));
+    if (RM.model) body.appendChild(el("div", { "class": "tiles" }, tile("Arena bot", '<span style="font-size:.9rem">' + esc(RM.arena_bot || "–") + "</span>") + tile("Size", RM.blocks + "x" + RM.channels, params(RM.params) + " params") +
+      tile("Policy optimal (probe set)", pct(RM.intact_agree)) + tile("Value accuracy (probe set)", pct(RM.intact_value_acc)) +
+      tile("Patching", RM.patch_layer ? esc(RM.patch_layer) : "–", isNum(RM.patch_mean_abs_z) ? "mean |z| " + num(RM.patch_mean_abs_z, 1) + " vs random directions" : "not run")));
+    if (M) {
+      if (I.notes && I.notes.length) body.appendChild(el("details", { "class": "notes" }, "<summary>Method notes from interp_arena.json (" + I.notes.length + ")</summary>" + list(I.notes)));
+      body.appendChild(probeCard(I, M));
+      body.appendChild(channelCard(I, M));
+      body.appendChild(ablationCard(I, M));
+      body.appendChild(headCard(I, M));
+      body.appendChild(grid("g2", [patchCard(I, M), crossCard(I, M)]));
+      return;
+    }
+    // a net only in report.json (Bruneton): its probe matrix and block knock-outs
+    var pr = RT("probes").filter(function (r) { return r.model === UI.imodel; });
+    var layers = []; pr.slice().sort(function (a, b) { return a.layer_index - b.layer_index; }).forEach(function (r) { if (layers.indexOf(r.layer) < 0) layers.push(r.layer); });
+    var concepts = CONCEPT_ORDER.filter(function (c) { return pr.some(function (r) { return r.concept === c; }); });
+    var cell = {}; pr.forEach(function (r) { cell[r.concept + "|" + r.layer] = r; });
+    var rows = concepts.map(function (c) { var r0 = pr.filter(function (r) { return r.concept === c; })[0]; return { label: c, group: GROUP_NAME[r0.group] || r0.group, c: c }; });
+    body.appendChild(card("Which layer knows what: " + UI.imodel, "Rows grouped by concept type; columns run from the input through the stem and every block to the heads. Hover a cell for the raw probe score and the shuffled-label control.", [heatmap({ rows: rows, cols: layers.map(shortLayer), cellW: 40, labelW: 130, top: 70, title: "probe skill per layer",
+      val: function (i, j) { var r = cell[rows[i].c + "|" + layers[j]]; return r ? r.skill : null; }, color: function (v) { return seqColor(v); }, text: function (v) { return num(v, 2); },
+      tip: function (i, j, v) { var r = cell[rows[i].c + "|" + layers[j]]; return r ? r.concept_label + "\n" + r.layer + ": " + r.metric + " " + num(r.flat, 3) + "\nskill " + num(v, 2) + (isNum(r.shuffled) ? "\nshuffled-label control " + num(r.shuffled, 3) : "") : "not probed"; } }), scaleLegend("seq", "0", "1", "skill")], true));
+    var kos = RT("knockouts").filter(function (r) { return r.model === UI.imodel; });
+    if (kos.length) body.appendChild(card("Knock out one block at a time", "The bar is the change in how often the net's move is solver-optimal when that block is skipped.",
+      groupBars({ categories: kos.map(function (r) { return "skip " + shortLayer(r.block); }), series: [{ name: "all positions", color: C.blue, values: kos.map(function (r) { return r.d_agree; }) }], yFmt: function (v) { return sgn(100 * v, 0); }, yLabel: "points of optimal moves" })));
   }
 
   function probeCard(I, M) {
@@ -1073,12 +1181,12 @@
       loadChannels().then(function (H) {
         var m = g(H, "channels." + M.id + "." + UI.ilayer + "." + UI.ich);
         mapBox.innerHTML = "";
-        if (!m || !m.map) { mapBox.appendChild(na("No map for this channel in interp_channels.json")); return; }
+        if (!m || !m.map) { mapBox.appendChild(na("No map for this channel in interp_arena_channels.json")); return; }
         mapBox.appendChild(boardMap(m.map, { title: UI.ilayer + " ch " + r.ch + " mean activation", cell: 30, maxW: 320, scaleLabel: "mean activation (row 0 of the data = top row)" }));
         mapBox.appendChild(grid("g2", [
           groupBars({ categories: ["top", "5", "4", "3", "2", "bottom"], series: [{ name: "row mean", color: C.sky, values: m.row || [] }], height: 170, xLabel: "board row" }),
           groupBars({ categories: ["1", "2", "3", "4", "5", "6", "7"], series: [{ name: "column mean", color: C.orange, values: m.col || [] }], height: 170, xLabel: "board column" })]));
-      }).catch(function () { mapBox.innerHTML = ""; mapBox.appendChild(na("interp_channels.json is not available yet")); });
+      }).catch(function () { mapBox.innerHTML = ""; mapBox.appendChild(na("interp_arena_channels.json is not available yet")); });
       right.appendChild(groupBars({ categories: ["early", "mid", "late"], series: [{ name: "mean pooled activation by phase", color: C.purple, values: r.phase || [] }], height: 170, xLabel: "game phase" }));
       var cont = r.content || [];
       right.appendChild(table(["Property", "Value"], [["label", esc(r.label)], ["dead", r.dead ? "yes" : "no"], ["top concept", esc(r.top_concept || "–") + " (r = " + num(r.top_corr, 3) + ")"], ["active (share > 0)", pct(r.active)], ["row selectivity", num(r.row_sel, 3)], ["column selectivity", num(r.col_sel, 3)], ["positional share of variance", num(r.pos_frac, 3)], ["phase index (late−early)", num(r.phase_idx, 3)],
@@ -1096,8 +1204,8 @@
   }
   var CH_PROMISE = null;
   function loadChannels() {
-    if (D.interp_channels) return Promise.resolve(D.interp_channels);
-    if (!CH_PROMISE) CH_PROMISE = getJSON("/api/research/data/interp_channels").then(function (d) { D.interp_channels = d; CH_PROMISE = null; return d; }, function (e) { CH_PROMISE = null; throw e; });
+    if (D.interp_arena_channels) return Promise.resolve(D.interp_arena_channels);
+    if (!CH_PROMISE) CH_PROMISE = getJSON("/api/research/data/interp_arena_channels").then(function (d) { D.interp_arena_channels = d; CH_PROMISE = null; return d; }, function (e) { CH_PROMISE = null; throw e; });
     return CH_PROMISE;
   }
 
@@ -1236,6 +1344,8 @@
       tile("Score vs the 7 common opponents", num(E.score_field, 3) + " vs " + num(P.score_field, 3), "ensemble + MCTS vs Pons") +
       tile("Matched games vs Pons", num(mAll.net_better) + " / " + num(mAll.net_worse), "net line better / worse, p " + (mAll.sign_p < 0.001 ? "< 0.001" : num(mAll.sign_p, 3)))));
 
+    body.appendChild(puzzleCard());
+
     var sorted = rec.slice().sort(function (a, b) { return b.elo - a.elo; });
     body.appendChild(card("Ratings measured four ways",
       "Elo gives each bot one number, which only works if results are transitive. Here they are not: Pons beats both score nets head to head, but they score more than Pons against the weaker bots. <b>Elo from Pons games only</b> converts each bot's score against Pons into Elo; <b>top-group Elo</b> is refit on games among the six strongest bots only; <b>strength-weighted score</b> weights each opponent by its own overall score.",
@@ -1297,10 +1407,6 @@
     drawPairs(); pwrap.appendChild(pctrl); pwrap.appendChild(pbox);
     body.appendChild(card("Per opponent: Pons vs one net", null, pwrap, true));
 
-    body.appendChild(card("Example divergences (ensemble + MCTS vs Pons)", "Moves are 1-indexed columns, as the solver writes them. Position = the shared game up to the split.",
-      table(["Opponent", "Position", "Value", "Pons played", "Net played", "Pons result", "Net result", "Net's game"],
-        RT("examples").map(function (r) { return [esc(r.opponent), '<span class="sm">' + esc(r.position) + "</span>", esc(r.state), r.pons_move, r.net_move, num(r.pons_score, 1), num(r.net_score, 1), '<span class="sm">' + esc(r.net_game) + "</span>"]; }),
-        { cls: "lt" }), true));
   }
   function decompChart(rows) {
     var W = 640, rowH = 26, m = { l: 210, r: 60, t: 22, b: 30 }, H = m.t + m.b + rowH * rows.length;
@@ -1323,73 +1429,113 @@
     return d;
   }
 
-  // ---------------------------------------------------------------- 7. inside all arena nets
+  // ---------------------------------------------------------------- probe helpers (Inside the nets)
   var CONCEPT_ORDER = ["heights", "landing_row", "ply", "first_to_move", "win_now", "opp_win_now", "own_threats", "opp_threats", "own_double", "opp_double", "own_odd_thr", "own_even_thr", "opp_odd_thr", "opp_even_thr", "opt_set", "net_move", "outcome", "score", "opp_reply", "opp_net_move", "phase"];
   function shortLayer(l) { return String(l).replace("block", "b"); }
-  function renderInside9() {
-    var body = $("inside9Body"); body.innerHTML = "";
-    if (!D.report) { reportMissing(body); return; }
-    var models = RT("models"), PS = RT("probe_summary"), KO = RT("knockouts");
-    if (!models.length) { body.appendChild(empty("report.json has no interpretability tables yet (needs interp_arena.json).")); return; }
-    var psv = function (mm, c) { return (PS.filter(function (r) { return r.key === mm + "|" + c; })[0] || {}); };
-    var kov = function (mm, b) { return (KO.filter(function (r) { return r.key === mm + "|" + b; })[0] || {}).d_agree; };
-    var sm = function (mm) { return rFind("models", "model", mm); };
-    body.appendChild(el("p", { "class": "note" }, "All nine nets in the last arena: the 8 of ours (the three score nets are the ensemble's members) plus the open-source Bruneton AlphaZero net. For every layer a linear probe reads a concept from the activations (trained on 35,000 positions, scored on 10,000 held out). <b>Skill</b> = (score − chance) / (1 − chance). A probe shows the information is there, not that the net uses it; the block knock-outs are the causal check. The earlier 4-net study with the channel explorer and patching is on the <a href=\"#interp\">Inside the net</a> tab."));
-    body.appendChild(card("What the nine nets share, and where they differ", null, el("div", { "class": "answer" }, '<div class="sup"><h4>Findings</h4><ul>' +
-      "<li><b>Immediate tactics come first, in every net.</b> By block 1 (the stem in Bruneton's net) every net reads its own immediate wins and the opponent's must-block columns. Geometry and phase are readable from the raw input, so the nets keep that information rather than compute it.</li>" +
-      "<li><b>Only nets trained on solver labels represent the opponent's best reply.</b> sup_6x64 reaches AUC " + num(psv("sup_6x64", "opp_reply").best, 2) + " (" + esc(psv("sup_6x64", "opp_reply").best_layer || "") + "), score_8x128_s0 " + num(psv("score_8x128_s0", "opp_reply").best, 2) + ". In az_6x64 the best layer is the raw input (" + num(psv("az_6x64", "opp_reply").best, 2) + "), and the same holds for ppo_6x64 and distill_az_2x32.</li>" +
-      "<li><b>The score nets encode exact solver scores:</b> R² " + num(psv("score_8x128_s0", "score").best, 2) + " vs " + num(psv("sup_6x64", "score").best, 2) + " for sup_6x64 and " + num(psv("az_6x64", "score").best, 2) + " for az_6x64.</li>" +
-      "<li><b>Block 1 matters most in every deep net:</b> skipping it changes sup_6x64's optimal-move rate by " + sgn(100 * kov("sup_6x64", "block1"), 1) + " points.</li>" +
-      "<li><b>Same recipe, different insides.</b> The three score nets differ only in seed, yet skipping block 5 costs s1 " + sgn(100 * kov("score_8x128_s1", "block5"), 1) + " points vs " + sgn(100 * kov("score_8x128_s0", "block5"), 1) + " (s0) and " + sgn(100 * kov("score_8x128_s2", "block5"), 1) + " (s2). \"The block that does X\" is a fact about one net, not about the recipe.</li>" +
-      "<li><b>Bruneton's net is one wide block with a one-filter value head.</b> Its raw policy is optimal on " + pct(sm("bruneton_az").intact_agree) + " of probe positions vs " + pct(sm("sup_6x64").intact_agree) + " for sup_6x64.</li></ul></div>")));
-
-    if (!UI.i9 || !models.some(function (x) { return x.model === UI.i9; })) UI.i9 = models[0].model;
-    var bar = el("div", { "class": "bar" }, select("i9model", models.map(function (x) { return { v: x.model, t: x.model + " (" + x.blocks + "x" + x.channels + ", " + params(x.params) + ")" }; }), UI.i9, "Net"));
-    bar.querySelector("select").addEventListener("change", function () { UI.i9 = this.value; renderInside9(); });
-    body.appendChild(bar);
-    var M = sm(UI.i9);
-    body.appendChild(el("div", { "class": "tiles" }, tile("Arena bot", '<span style="font-size:.9rem">' + esc(M.arena_bot || "–") + "</span>") + tile("Size", M.blocks + "x" + M.channels, params(M.params) + " params") +
-      tile("Policy optimal (probe set)", pct(M.intact_agree)) + tile("Value accuracy (probe set)", pct(M.intact_value_acc)) +
-      tile("Patching", M.patch_layer ? esc(M.patch_layer) : "–", isNum(M.patch_mean_abs_z) ? "mean |z| " + num(M.patch_mean_abs_z, 1) + " vs random directions" : "not run")));
-
-    var pr = RT("probes").filter(function (r) { return r.model === UI.i9; });
-    var layers = []; pr.slice().sort(function (a, b) { return a.layer_index - b.layer_index; }).forEach(function (r) { if (layers.indexOf(r.layer) < 0) layers.push(r.layer); });
-    var concepts = CONCEPT_ORDER.filter(function (c) { return pr.some(function (r) { return r.concept === c; }); });
-    var cell = {}; pr.forEach(function (r) { cell[r.concept + "|" + r.layer] = r; });
-    var rows = concepts.map(function (c) { var r0 = pr.filter(function (r) { return r.concept === c; })[0]; return { label: c, group: GROUP_NAME[r0.group] || r0.group, c: c }; });
-    var hm = heatmap({ rows: rows, cols: layers.map(shortLayer), cellW: 40, labelW: 130, top: 70, title: "probe skill per layer",
-      val: function (i, j) { var r = cell[rows[i].c + "|" + layers[j]]; return r ? r.skill : null; },
-      color: function (v) { return seqColor(v); }, text: function (v) { return num(v, 2); },
-      tip: function (i, j, v) { var r = cell[rows[i].c + "|" + layers[j]]; return r ? r.concept_label + "\n" + r.layer + ": " + r.metric + " " + num(r.flat, 3) + "\nskill " + num(v, 2) + (isNum(r.shuffled) ? "\nshuffled-label control " + num(r.shuffled, 3) : "") : "not probed"; } });
-    body.appendChild(card("Which layer knows what: " + UI.i9, "Rows grouped by concept type; columns run from the input through the stem and every block to the heads. Hover a cell for the raw probe score and the shuffled-label control.", [hm, scaleLegend("seq", "0", "1", "skill")], true));
-
-    var kos = KO.filter(function (r) { return r.model === UI.i9; });
-    var hasType = kos.length && isNum(kos[0].d_agree_own_win);
-    var koSeries = [{ name: "all positions", color: C.blue, values: kos.map(function (r) { return r.d_agree; }) }];
-    if (hasType) koSeries.push({ name: "own win available", color: C.green, values: kos.map(function (r) { return r.d_agree_own_win; }) },
-      { name: "must block", color: C.orange, values: kos.map(function (r) { return r.d_agree_must_block; }) },
-      { name: "quiet", color: C.purple, values: kos.map(function (r) { return r.d_agree_quiet; }) });
-    var ch = RT("channels").filter(function (r) { return r.model === UI.i9; });
-    var chLayers = [], chLabels = ["own-threat", "opponent-threat", "occupancy copy", "column detector", "row/height detector", "phase: early", "phase: late", "dead", "mixed"];
-    ch.forEach(function (r) { if (chLayers.indexOf(r.layer) < 0) chLayers.push(r.layer); if (chLabels.indexOf(r.label) < 0) chLabels.push(r.label); });
-    chLabels = chLabels.filter(function (l) { return ch.some(function (r) { return r.label === l; }); });
-    var chCols = { "own-threat": C.green, "opponent-threat": C.orange, "occupancy copy": C.yellow, "column detector": C.sky, "row/height detector": C.blue, "phase: early": C.purple, "phase: late": C.red, dead: "#39406a", mixed: C.grey };
-    body.appendChild(grid("g2", [
-      card("Knock out one block at a time", "Each residual block is skipped in turn; the bar is the change in how often the net's move is solver-optimal. A causal test, not a probe.",
-        groupBars({ categories: kos.map(function (r) { return "skip " + shortLayer(r.block); }), series: koSeries, yFmt: function (v) { return sgn(100 * v, 0); }, yLabel: "points of optimal moves" })),
-      card("Channel census", ch.length ? "One label per channel per layer from its activation pattern (rules in research/interp.py)." : null,
-        ch.length ? stackBars({ categories: chLayers.map(shortLayer), series: chLabels.map(function (l) { return { name: l, color: chCols[l] || C.white, values: chLayers.map(function (L) { var r = ch.filter(function (x) { return x.layer === L && x.label === l; })[0]; return r ? r.count : 0; }) }; }), yLabel: "channels" }) : empty("No channel census for this net (Bruneton was probed only)."))]));
-
-    // across nets: first layer reaching 90% of best skill, as relative depth
-    var showC = ["win_now", "opp_win_now", "own_threats", "opp_threats", "own_double", "opp_double", "opt_set", "net_move", "outcome", "score", "opp_reply"];
-    var mids = models.map(function (x) { return x.model; });
-    var depth = {};
-    mids.forEach(function (mm) { var ls = RT("probes").filter(function (r) { return r.model === mm; }), mx = Math.max.apply(null, ls.map(function (r) { return r.layer_index; })); ls.forEach(function (r) { depth[mm + "|" + r.layer] = r.layer_index / (mx || 1); }); });
-    var hm2 = heatmap({ rows: showC.map(function (c) { return { label: c }; }), cols: mids, cellW: 54, labelW: 110, top: 110, title: "first layer at 90% of best skill",
-      val: function (i, j) { var r = psv(mids[j], showC[i]); return r.first_layer ? depth[mids[j] + "|" + r.first_layer] : null; },
-      color: function (v) { return seqColor(isNum(v) ? 1 - v : null); }, text: function (v) { return pct(v, 0); },
-      tip: function (i, j) { var r = psv(mids[j], showC[i]); return r.first_layer ? mids[j] + " · " + showC[i] + "\nfirst at " + r.first_layer + ", best at " + r.best_layer + " (" + num(r.best, 3) + ")" : "not probed"; } });
-    body.appendChild(card("How early each net knows each concept", "Cell = the first layer that reaches 90% of that net's best probe skill, as a share of the net's depth (0% = input, 100% = heads). Brighter = earlier. A 0% cell means no layer beats the raw input, i.e. the net never builds that concept itself (see opp_reply in the self-play nets). Hover for the layer names and best score.", [hm2], true));
+  // ---------------------------------------------------------------- board puzzles (research/puzzles.py)
+  var PZ_COL = { opt: "#3ddc97", keep: C.yellow, bad: C.orange };
+  var PZ_TXT = { opt: "✓ optimal", keep: "≈ same result, not the best score", bad: "✗ changes the result" };
+  function pzReplay(moves) {
+    var h = [0, 0, 0, 0, 0, 0, 0], cells = {}, last = null;
+    for (var i = 0; i < moves.length; i++) { var c = +moves[i] - 1; cells[c + "," + h[c]] = i % 2 === 0 ? 1 : 2; last = [c, h[c]]; h[c]++; }
+    return { h: h, cells: cells, last: last };
+  }
+  function pzOutcome(v, n) {        // Pons score of a move -> "W3" (win on own 3rd move), "D", "L2" (opponent wins on its 2nd move)
+    if (v == null) return null;
+    if (v > 0) return { t: "W" + (22 - v - Math.floor(n / 2)), k: "w" };
+    if (v === 0) return { t: "D", k: "d" };
+    return { t: "L" + (22 + v - Math.ceil(n / 2)), k: "l" };
+  }
+  function pzVerdict(p, col) { return p.optimal.indexOf(col) >= 0 ? "opt" : p.keeps.indexOf(col) >= 0 ? "keep" : "bad"; }
+  function pzBoard(p, bot, bots) {
+    var cs = 32, m = { l: 4, r: 4, t: 20, b: 46 }, W = m.l + m.r + 7 * cs, H = m.t + m.b + 6 * cs, R = pzReplay(p.moves), n = p.moves.length;
+    var X = function (c) { return m.l + c * cs + cs / 2; }, Y = function (hb) { return m.t + (5 - hb) * cs + cs / 2; };
+    var mover = n % 2 === 0 ? 1 : 2, pick = p.picks[bot], v = pzVerdict(p, pick);
+    var s = '<svg class="pzb" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc((mover === 1 ? "Red" : "Yellow") + " to move. Pons optimal column " + p.optimal.map(function (c) { return c + 1; }).join(", ") + ". Selected bot plays column " + (pick + 1)) + '">';
+    p.optimal.forEach(function (c) { s += '<path d="M' + (X(c) - 7) + " " + (m.t - 15) + "h14l-7 11z" + '" fill="' + PZ_COL.opt + '" data-tip="' + esc("Pons: column " + (c + 1) + " is optimal") + '"/>'; });
+    s += '<rect x="' + m.l + '" y="' + m.t + '" width="' + 7 * cs + '" height="' + 6 * cs + '" rx="8" fill="#2a3a8f"/>';
+    for (var c = 0; c < 7; c++) for (var hb = 0; hb < 6; hb++) {
+      var who = R.cells[c + "," + hb];
+      s += '<circle cx="' + X(c) + '" cy="' + Y(hb) + '" r="' + (cs * 0.4) + '" fill="' + (who === 1 ? "#ef476f" : who === 2 ? "#ffd166" : "#0f1220") + '"/>';
+    }
+    if (R.last) s += '<circle cx="' + X(R.last[0]) + '" cy="' + Y(R.last[1]) + '" r="3.2" fill="#0f1220" opacity=".55"/>';
+    if (isNum(pick) && R.h[pick] < 6) {
+      s += '<circle cx="' + X(pick) + '" cy="' + Y(R.h[pick]) + '" r="' + (cs * 0.4) + '" fill="' + (mover === 1 ? "#ef476f" : "#ffd166") + '" fill-opacity=".35" stroke="' + PZ_COL[v] + '" stroke-width="3"' + (v === "opt" ? "" : ' stroke-dasharray="5 3"') + ' data-tip="' + esc(botName(bot) + " plays column " + (pick + 1)) + '"/>';
+    }
+    for (c = 0; c < 7; c++) {
+      var o = pzOutcome(p.scores[c], n); if (!o) continue;
+      s += '<text x="' + X(c) + '" y="' + (m.t + 6 * cs + 14) + '" text-anchor="middle" class="pzs ' + o.k + (p.optimal.indexOf(c) >= 0 ? " best" : "") + '" data-tip="' + esc("column " + (c + 1) + ": " + (o.k === "w" ? "wins on the mover's move " + o.t.slice(1) : o.k === "d" ? "draw with best play" : "loses: opponent wins on its move " + o.t.slice(1)) + " (Pons score " + p.scores[c] + ")") + '">' + o.t + "</text>";
+      var who2 = bots.filter(function (b) { return p.picks[b.id] === c; });
+      who2.forEach(function (b, k) {
+        var sel = b.id === bot;
+        s += '<circle cx="' + (X(c) - (who2.length - 1) * 3.4 + k * 6.8) + '" cy="' + (m.t + 6 * cs + 30) + '" r="' + (sel ? 3.6 : 2.6) + '" fill="' + (sel ? "#fff" : "#8e96b5") + '" data-tip="' + esc(who2.map(function (x) { return botName(x.id); }).join("\n") + "\n→ column " + (c + 1)) + '"/>';
+      });
+    }
+    return s + "</svg>";
+  }
+  function puzzleCard() {
+    var Z = D.puzzles;
+    if (!Z || !Z.positions) return card("Board puzzles: each bot's move next to Pons", null, empty("puzzles.json is not there yet: run <code>python -m research.puzzles</code> (about 10 min on a CPU; add <code>--budget 150</code> to run it in pieces)."));
+    var cats = (Z.categories || []).filter(function (c) { return Z.positions.some(function (p) { return p.cat === c.id; }); });
+    var bots = (Z.bots || []).filter(function (b) { return b.id !== PONS; });
+    if (!UI.pzCat || !cats.some(function (c) { return c.id === UI.pzCat; })) UI.pzCat = cats[0].id;
+    if (!UI.pzBot || !bots.some(function (b) { return b.id === UI.pzBot; })) UI.pzBot = bots.some(function (b) { return b.id === ENS; }) ? ENS : bots[0].id;
+    var wrap = el("div");
+    function count(b, cat) { var ps = Z.positions.filter(function (p) { return !cat || p.cat === cat; }); return { n: ps.length, opt: ps.filter(function (p) { return pzVerdict(p, p.picks[b]) === "opt"; }).length, keep: ps.filter(function (p) { return pzVerdict(p, p.picks[b]) !== "bad"; }).length }; }
+    // scoreboard: bots x categories
+    var sb = el("div", { "class": "scroll" });
+    function drawBoard() {
+      var h = '<table class="t lt pzscore"><thead><tr><th scope="col">Bot (click to select)</th>' + cats.map(function (c) { return '<th scope="col"><button type="button" class="linkbtn' + (c.id === UI.pzCat ? " on" : "") + '" data-cat="' + c.id + '">' + esc(c.label) + "</button></th>"; }).join("") + '<th scope="col">Tactics total</th></tr></thead><tbody>';
+      bots.forEach(function (b) {
+        h += '<tr class="' + (b.id === UI.pzBot ? "sel" : "") + '" data-bot="' + esc(b.id) + '"><td><button type="button" class="linkbtn" data-bot="' + esc(b.id) + '">' + esc(botName(b.id)) + "</button></td>";
+        cats.forEach(function (c) { var k = count(b.id, c.id), f = k.n ? k.opt / k.n : 0; h += '<td class="pzc" style="background:' + seqColor(f) + ";color:" + (f > 0.6 ? "#0b0e1c" : "#e9ecf8") + '" data-tip="' + esc(botName(b.id) + " · " + c.label + "\noptimal " + k.opt + " / " + k.n + "\nkeeps the result " + k.keep + " / " + k.n) + '">' + k.opt + "/" + k.n + "</td>"; });
+        var tp = Z.positions.filter(function (p) { return p.cat !== "arena"; }), to = tp.filter(function (p) { return pzVerdict(p, p.picks[b.id]) === "opt"; }).length;
+        h += "<td><b>" + to + "/" + tp.length + "</b></td></tr>";
+      });
+      sb.innerHTML = h + "</tbody></table>";
+    }
+    var ctrl = el("div", { "class": "ctrl" });
+    var gridBox = el("div"), head = el("div");
+    function drawCtrl() {
+      ctrl.innerHTML = '<div class="pzcats" role="tablist" aria-label="Puzzle type">' + cats.map(function (c) { return '<button type="button" role="tab" aria-selected="' + (c.id === UI.pzCat) + '" class="btn' + (c.id === UI.pzCat ? " on" : "") + '" data-cat="' + c.id + '">' + esc(c.label) + "</button>"; }).join("") + "</div>" +
+        select("pzBot", bots.map(function (b) { return { v: b.id, t: botName(b.id) }; }), UI.pzBot, "Compare Pons with") +
+        ' <label><input type="checkbox" id="pzMiss"' + (UI.pzMiss ? " checked" : "") + "> only positions it gets wrong</label>";
+    }
+    function drawGrid() {
+      var c = cats.filter(function (x) { return x.id === UI.pzCat; })[0], k = count(UI.pzBot, UI.pzCat);
+      head.innerHTML = '<p class="stats"><b>' + esc(c.label) + "</b>: " + esc(c.rule) + " " + (c.id !== "arena" ? fmtInt(c.candidates) + " such positions in the 60k pool; " + k.n + " drawn at random, spread over the game. " : "") +
+        "<b>" + esc(botName(UI.pzBot)) + "</b>: optimal on " + k.opt + " / " + k.n + ", keeps the result on " + k.keep + " / " + k.n + ".</p>";
+      var ps = Z.positions.filter(function (p) { return p.cat === UI.pzCat && (!UI.pzMiss || pzVerdict(p, p.picks[UI.pzBot]) !== "opt"); });
+      if (!ps.length) { gridBox.innerHTML = ""; gridBox.appendChild(empty(UI.pzMiss ? "It finds the optimal move in every position of this type." : "No positions.")); return; }
+      gridBox.innerHTML = '<div class="pzgrid">' + ps.map(function (p) {
+        var pick = p.picks[UI.pzBot], v = pzVerdict(p, pick), n = p.moves.length, pp = p.picks[PONS];
+        var po = pzOutcome(p.scores[pp], n), mo = pzOutcome(p.scores[pick], n);
+        var cap = '<b>' + (n % 2 === 0 ? '<span class="pzdot r"></span>Red' : '<span class="pzdot y"></span>Yellow') + " to move</b> · move " + (n + 1) +
+          '<br>Pons: <b>col ' + (pp + 1) + "</b> (" + po.t + ")" + (p.optimal.length > 1 ? ' <span class="muted">· also optimal: ' + p.optimal.filter(function (c) { return c !== pp; }).map(function (c) { return c + 1; }).join(", ") + "</span>" : "") +
+          '<br><span style="color:' + PZ_COL[v] + '">' + esc(botName(UI.pzBot)) + ": <b>col " + (pick + 1) + " (" + mo.t + ")</b> " + PZ_TXT[v] + "</span>";
+        if (p.cat === "arena") cap += '<br><span class="muted sm">vs ' + esc(p.opponent) + " · position was " + esc(p.state) + " · in the arena: Pons line scored " + num(p.pons_result, 1) + ", ensemble line " + num(p.net_result, 1) + "</span>";
+        return '<figure class="pz ' + v + '">' + pzBoard(p, UI.pzBot, bots) + '<figcaption>' + cap + '<br><span class="muted sm">moves ' + esc(p.moves) + "</span></figcaption></figure>";
+      }).join("") + "</div>";
+    }
+    function redraw() { drawBoard(); drawCtrl(); drawGrid(); }
+    wrap.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-cat]"), r = e.target.closest("[data-bot]");
+      if (b) { UI.pzCat = b.getAttribute("data-cat"); redraw(); var nb = wrap.querySelector('.pzcats [data-cat="' + UI.pzCat + '"]'); if (nb) nb.focus(); }
+      else if (r) { UI.pzBot = r.getAttribute("data-bot"); redraw(); }
+    });
+    wrap.addEventListener("change", function (e) { if (e.target.id === "pzBot") UI.pzBot = e.target.value; if (e.target.id === "pzMiss") UI.pzMiss = e.target.checked; redraw(); });
+    redraw();
+    var leg = '<div class="legend pzleg"><span><svg width="14" height="12"><path d="M0 0h14l-7 11z" fill="' + PZ_COL.opt + '"/></svg> Pons optimal column(s)</span>' +
+      '<span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="none" stroke="' + PZ_COL.opt + '" stroke-width="3"/></svg> selected bot\'s move: optimal</span>' +
+      '<span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="none" stroke="' + PZ_COL.keep + '" stroke-width="3" stroke-dasharray="5 3"/></svg> keeps the result but slower</span>' +
+      '<span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="none" stroke="' + PZ_COL.bad + '" stroke-width="3" stroke-dasharray="5 3"/></svg> changes the result</span>' +
+      '<span><b>W3</b> / <b>D</b> / <b>L2</b> under a column: that move wins on the mover\'s 3rd move / draws / loses with the opponent winning on its 2nd move</span>' +
+      '<span><svg width="30" height="10"><circle cx="5" cy="5" r="2.6" fill="#8e96b5"/><circle cx="13" cy="5" r="2.6" fill="#8e96b5"/><circle cx="22" cy="5" r="3.6" fill="#fff"/></svg> one dot per bot that picked that column (white = selected; hover for names)</span></div>';
+    [sb, ctrl, head, el("div", null, leg), gridBox].forEach(function (x) { wrap.appendChild(x); });
+    var un = (Z.unavailable || []).map(function (u) { return esc(u.label) + " (" + esc(u.reason) + ")"; });
+    return card("Board puzzles: each bot's move next to Pons",
+      "Positions sorted by type, each with Pons's verdict on every column. Pick a type and a bot; the board marks what that bot plays. Every bot is built exactly as in the arena, so these are the moves it would play in a game (the arena rows reproduce all 20 recorded divergences). " + esc((Z.notes || [])[2] || "") + (un.length ? " Not included: " + un.join("; ") + "." : ""),
+      wrap, true);
   }
 
   // ---------------------------------------------------------------- 8. every net benchmarked
@@ -1440,15 +1586,15 @@
 
   // =================================================================== tabs, refresh, start
   var RENDER = { overview: renderOverview, roster: renderRoster, best: renderBest, sweep: renderSweep, interp: renderInterp,
-                 vspons: renderVsPons, inside9: renderInside9, allnets: renderAllNets };
+                 vspons: renderVsPons, allnets: renderAllNets };
   var DIRTY = {};
   function safe(name) {
     try { RENDER[name](); DIRTY[name] = false; }
     catch (e) { var b = $(name + "Body"); if (b) { b.innerHTML = ""; b.appendChild(empty("This section could not be drawn from the current data (" + esc(e.message) + "). The file may be mid-update; it will retry on the next refresh.")); } if (window.console) console.error(e); }
   }
   function markDirty(changed) {
-    var dep = { overview: ["arena_analysis", "roster", "arena_top15", "sweep", "interp", "report"], roster: ["roster", "arena_analysis", "arena_top15"], best: ["arena_analysis"], sweep: ["sweep"], interp: ["interp"],
-                vspons: ["report"], inside9: ["report"], allnets: ["report"] };
+    var dep = { overview: ["arena_final", "report", "puzzles", "sweep", "interp_arena", "arena_analysis", "roster"], roster: ["arena_final", "report", "roster"], best: ["arena_analysis"], sweep: ["sweep"], interp: ["interp_arena", "report"],
+                vspons: ["report", "puzzles"], allnets: ["report"] };
     Object.keys(dep).forEach(function (t) { if (dep[t].some(function (n) { return changed[n]; })) DIRTY[t] = true; });
   }
   function renderVisible() {
@@ -1479,6 +1625,7 @@
     function fromHash() {
       // deep links, e.g. #interp&model=sup_6x64&layer=block3&ch=5&concept=opp_win_now
       var parts = location.hash.replace("#", "").split("&"), h = parts[0];
+      if (h === "inside9") h = "interp";                // the two interpretability tabs were merged
       parts.slice(1).forEach(function (p) {
         var kv = p.split("="), v = decodeURIComponent(kv[1] || "");
         if (kv[0] === "model") UI.imodel = v; else if (kv[0] === "layer") UI.ilayer = v; else if (kv[0] === "ch") UI.ich = +v; else if (kv[0] === "concept") UI.iconcept = v;
@@ -1489,7 +1636,7 @@
     window.addEventListener("hashchange", fromHash);
     fromHash();
   }
-  function needsPolling() { return sweepActive() || !D.sweep || !D.interp || !D.arena_top15 || !D.arena_analysis || !D.report; }
+  function needsPolling() { return sweepActive() || !D.sweep || !D.interp_arena || !D.arena_final || !D.arena_analysis || !D.report || !D.puzzles; }
   function poll() {
     if (document.hidden || !needsPolling()) return;
     loadIndex().then(function (changed) { markDirty(changed); renderVisible(); }).catch(function () { });

@@ -39,6 +39,7 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setattr(ra, "RESULTS_DIR", str(res))
     monkeypatch.setattr(ra, "DOCS_DIR", str(docs))
     monkeypatch.setattr(ra, "ARENA_TOP15", str(tmp_path / "top15_summary.json"))
+    monkeypatch.setattr(ra, "ARENA_FINAL", str(tmp_path / "final_summary.json"))
     ra._CACHE.clear()
     _write(str(res), "arena_analysis", ARENA)
     _write(str(res), "roster", ROSTER)

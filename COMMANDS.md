@@ -341,7 +341,9 @@ cd ~/projects/introAI/connect4 && source .venv/bin/activate
 # 0. C minimax + C MCTS tree (identical results); used automatically once built
 python -m engine.cbuild --check
 python -m nn.cmcts --bench --run score_8x128_s0_r1 --backend torch --positions 1024 --sims 800 --batch 1024
-python -m pytest -q tests/test_cminimax.py tests/test_cmcts.py tests/test_speedups.py
+python -m nn.native --bench                     # native C net + MCTS vs numpy vs torch (same moves)
+#    play with the native backend (arena / website / ladder):  C4_NN_BACKEND=native python -m arena.tournament ...
+python -m pytest -q tests/test_cminimax.py tests/test_cmcts.py tests/test_native.py tests/test_speedups.py
 
 # 1. 50,000-position benchmark (per-bucket CI +-0.5 instead of +-1.9), CPU ~10-20 min
 python experiments/data_prep/make_accuracy_set.py --n 60000 --workers 14 --seed 20261125 \

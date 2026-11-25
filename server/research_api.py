@@ -9,6 +9,9 @@ The page only reads files that the research scripts write (research/*.py):
   experiments/results/research/interp_channels.json  per-channel mean maps (research/interp.py)
   experiments/results/research/report.json           nets vs Pons, all arena nets inside, every net
                                                      benchmarked (research/report_data.py)
+  experiments/results/research/interp_arena*.json    interpretability of the arena nets (research/interp.py)
+  experiments/results/research/puzzles.json          board puzzles, each bot's move vs Pons (research/puzzles.py)
+  experiments/results/arena/top8_o100_mcts_fixed/summary.json   the last arena (Roster tab)
 
 and keeps one file of its own, selection.json: which findings / bots / runs the owner
 wants in the paper, plus a free-text note per finding.
@@ -38,6 +41,8 @@ RESULTS_DIR = os.environ.get("C4_RESEARCH_DIR") or os.path.join(ROOT, "experimen
 DOCS_DIR = os.path.join(ROOT, "docs")
 # the clean top-15 re-run of the arena (arena/tournament.py, same format as part3/summary.json)
 ARENA_TOP15 = os.environ.get("C4_ARENA_TOP15") or os.path.join(ROOT, "experiments", "results", "arena", "top15", "summary.json")
+# the last arena (the showcase line-up on the Roster tab)
+ARENA_FINAL = os.environ.get("C4_ARENA_FINAL") or os.path.join(ROOT, "experiments", "results", "arena", "top8_o100_mcts_fixed", "summary.json")
 
 DATASETS = {
     "arena_analysis": "Arena analysis (part3 round robin re-analysed)",
@@ -47,6 +52,10 @@ DATASETS = {
     "interp": "Interpretability (probes, channels, ablations)",
     "interp_channels": "Interpretability: per-channel mean maps",
     "report": "Nets vs Pons, all arena nets inside, every net benchmarked",
+    "arena_final": "Last arena (arena/top8_o100_mcts_fixed/summary.json)",
+    "interp_arena": "Interpretability of the arena nets (probes, channels, ablations)",
+    "interp_arena_channels": "Interpretability of the arena nets: per-channel mean maps",
+    "puzzles": "Board puzzles: each showcase bot's move vs Pons (research/puzzles.py)",
 }
 # which data file each paper section's findings come from
 SECTIONS = [("arena_analysis", "Arena: which bot is strongest, and why"),
@@ -67,6 +76,8 @@ bp = Blueprint("research", __name__)
 def _path(name):
     if name == "arena_top15":
         return ARENA_TOP15
+    if name == "arena_final":
+        return ARENA_FINAL
     return os.path.join(RESULTS_DIR, name + ".json")
 
 
@@ -181,7 +192,7 @@ def research_index():
             st = os.stat(p)
             ent["bytes"] = st.st_size
             ent["mtime"] = datetime.datetime.fromtimestamp(st.st_mtime).isoformat(timespec="seconds")
-            if name != "interp_channels":       # big file: do not parse it just for the timestamp
+            if name not in ("interp_channels", "interp_arena_channels"):       # big file: do not parse it just for the timestamp
                 d = _load(name)
                 ent["valid"] = isinstance(d, dict)
                 if isinstance(d, dict):
@@ -203,7 +214,7 @@ def research_data(name):
     if not os.path.isfile(p):
         return jsonify({"error": "not available yet", "id": name}), 404
     # big per-channel file is sent as is (parsing it per request would be slow); the others are checked
-    if name != "interp_channels" and _load(name) is None:   # being rewritten right now, or broken
+    if name not in ("interp_channels", "interp_arena_channels") and _load(name) is None:   # being rewritten right now, or broken
         return jsonify({"error": "file could not be parsed (it may be mid-write; retry)", "id": name}), 503
     resp = send_from_directory(os.path.dirname(p), os.path.basename(p), mimetype="application/json", max_age=0)
     resp.headers["Cache-Control"] = "no-store"

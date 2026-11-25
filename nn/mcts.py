@@ -154,6 +154,9 @@ def search(roots, evaluator, sims, c_puct=1.5, fpu=0.0):
     of network evaluations made.  Fresh roots are searched by the C tree (nn/cmcts.py,
     identical results) when it is built; C4_MCTS_TREE_C=0 keeps this Python tree."""
     if roots and sims > 0 and _fresh(roots):
+        net = evaluator.ev if type(evaluator).__name__ == "CachedEvaluator" else evaluator
+        if type(net).__name__ == "NativeNet":        # whole search in C, network included
+            return net.search(roots, sims, c_puct, fpu, cache=getattr(evaluator, "native_cache", None))
         from . import cmcts
         if cmcts.available():
             return cmcts.search_c(roots, evaluator, sims, c_puct, fpu)

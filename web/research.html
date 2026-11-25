@@ -13,7 +13,7 @@
 <main class="lab-main">
   <header>
     <h1>Connect <span class="four">4</span> Research</h1>
-    <p class="sub">The data behind the paper: the 20-bot arena re-analysed, the supervised size &times; teacher sweep, what the network computes inside, why the score nets out-rate Pons, every arena net probed, and every trained net on one benchmark. Tick the bots and runs you want to use; <code>python -m research.paper_outline</code> writes the paper outline to <code>docs/PAPER_OUTLINE.md</code>. Everything is read from <code>experiments/results/research/</code> and refreshes when those files change.</p>
+    <p class="sub">How far a neural network gets at Connect 4 against a perfect solver: the showcase bots, the size &times; teacher sweep, what the networks compute inside, and board-by-board where they differ from Pons. Tick the bots and runs you want to use; <code>python -m research.paper_outline</code> writes the paper outline to <code>docs/PAPER_OUTLINE.md</code>. Everything is read from <code>experiments/results/</code> and refreshes when those files change.</p>
   </header>
 
   <div class="tabs" role="tablist" aria-label="Research sections">
@@ -21,9 +21,8 @@
     <button type="button" role="tab" id="tb-roster" aria-controls="tab-roster" data-tab="roster">Roster</button>
     <button type="button" role="tab" id="tb-best" aria-controls="tab-best" data-tab="best">Why ours is the best net</button>
     <button type="button" role="tab" id="tb-sweep" aria-controls="tab-sweep" data-tab="sweep">Size &amp; teachers</button>
-    <button type="button" role="tab" id="tb-interp" aria-controls="tab-interp" data-tab="interp">Inside the net</button>
+    <button type="button" role="tab" id="tb-interp" aria-controls="tab-interp" data-tab="interp">Inside the nets</button>
     <button type="button" role="tab" id="tb-vspons" aria-controls="tab-vspons" data-tab="vspons">Nets vs Pons</button>
-    <button type="button" role="tab" id="tb-inside9" aria-controls="tab-inside9" data-tab="inside9">Inside all arena nets</button>
     <button type="button" role="tab" id="tb-allnets" aria-controls="tab-allnets" data-tab="allnets">All nets benchmarked</button>
   </div>
 
@@ -33,7 +32,6 @@
   <section id="tab-sweep" class="tab" role="tabpanel" aria-labelledby="tb-sweep"><div id="sweepBody"></div></section>
   <section id="tab-interp" class="tab" role="tabpanel" aria-labelledby="tb-interp"><div id="interpBody"></div></section>
   <section id="tab-vspons" class="tab" role="tabpanel" aria-labelledby="tb-vspons"><div id="vsponsBody"></div></section>
-  <section id="tab-inside9" class="tab" role="tabpanel" aria-labelledby="tb-inside9"><div id="inside9Body"></div></section>
   <section id="tab-allnets" class="tab" role="tabpanel" aria-labelledby="tb-allnets"><div id="allnetsBody"></div></section>
 
   <p id="saveState" class="savestate" role="status" aria-live="polite"></p>

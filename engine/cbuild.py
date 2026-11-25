@@ -19,7 +19,7 @@ import sys
 
 HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cminimax")
 SRC = os.path.join(HERE, "minimax.c")
-SRCS = [SRC, os.path.join(HERE, "mcts.c")]          # one library: C minimax + C MCTS tree
+SRCS = [SRC, os.path.join(HERE, "mcts.c"), os.path.join(HERE, "net.c")]   # minimax + MCTS tree + native net
 
 
 def lib_path():
@@ -37,27 +37,51 @@ def build(verbose=True):
     if sys.platform.startswith("win"):
         for cc in ("gcc", "clang"):
             if shutil.which(cc):
-                tries.append([cc, "-O3", "-shared", "-o", tmp] + SRCS)
+                # -static-libgcc: the DLL must not need libgcc_s from PATH (ctypes on Windows
+                # only searches the DLL's own folder and System32 for dependencies)
+                tries.append([cc, "-O3", "-march=native", "-static-libgcc", "-shared", "-o", tmp] + SRCS)
+                tries.append([cc, "-O3", "-mavx2", "-mfma", "-static-libgcc", "-shared", "-o", tmp] + SRCS)
+                tries.append([cc, "-O3", "-static-libgcc", "-shared", "-o", tmp] + SRCS)
         if shutil.which("cl"):
+            tries.append(["cl", "/nologo", "/O2", "/arch:AVX2", "/fp:contract", "/LD"] + SRCS + ["/Fe" + tmp])
             tries.append(["cl", "/nologo", "/O2", "/LD"] + SRCS + ["/Fe" + tmp])
     else:
         for cc in (os.environ.get("CC"), "cc", "gcc", "clang"):
             if cc and shutil.which(cc):
                 tries.append([cc, "-O3", "-march=native", "-fPIC", "-shared", "-o", tmp] + SRCS + ["-lm"])
+                tries.append([cc, "-O3", "-mavx2", "-mfma", "-fPIC", "-shared", "-o", tmp] + SRCS + ["-lm"])
                 tries.append([cc, "-O3", "-fPIC", "-shared", "-o", tmp] + SRCS + ["-lm"])
     if not tries:
         raise SystemExit("no C compiler found (Linux: sudo apt install build-essential; "
                          "Windows: install MSYS2/MinGW gcc or use an MSVC Developer prompt)")
     last = None
-    for cmd in tries:
+    first_err = None
+    for i, cmd in enumerate(tries):
         r = subprocess.run(cmd, capture_output=True, text=True, cwd=HERE)
         if r.returncode == 0 and os.path.isfile(tmp):
             os.replace(tmp, out)
+            if i and verbose:
+                print("NOTE: the faster build options failed, used a fallback. First failure:\n  %s\n%s"
+                      % (" ".join(tries[0][:6]), (first_err or "").strip()[-1500:]))
             if verbose:
-                print("built %s with: %s" % (out, " ".join(cmd[:4])))
+                print("built %s with: %s" % (out, " ".join(c for c in cmd if c.startswith("-m") or c in cmd[:2])))
+                _report_simd(out)
             return out
         last = (cmd, r.stdout + r.stderr)
+        if i == 0:
+            first_err = r.stdout + r.stderr
     raise SystemExit("C build failed:\n%s\n%s" % (" ".join(last[0]), last[1]))
+
+
+def _report_simd(path):
+    try:
+        import ctypes
+        lib = ctypes.CDLL(path)
+        on = bool(lib.c4n_simd())
+        print("network kernel: %s" % ("AVX2/FMA (fast)" if on else
+                                       "plain C fallback (3-4x slower: no AVX2 flags were used)"))
+    except Exception as e:  # noqa: BLE001
+        print("could not check the kernel type: %s" % e)
 
 
 def check(n=300, depths=(2, 4, 6, 8)):

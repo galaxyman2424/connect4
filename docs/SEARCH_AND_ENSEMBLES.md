@@ -249,3 +249,50 @@ Measured *(cloud, 1 CPU thread)*:
   positions at 800 sims, and is now under 1 ms.
 - Measure it on the 3050 with
   `python -m nn.cmcts --bench --run score_8x128_s0_r1 --backend torch --positions 1024 --sims 800 --batch 1024`.
+
+
+## 8. Fully native MCTS (network in C too)
+
+`engine/cminimax/net.c` + `nn/native.py`, built into the same library by `python -m engine.cbuild`.
+- **What it is.** It runs an exported `model.npz` in C with the same maths as
+  `nn/numpy_net.py`: PCA projection, score head, mirror averaging, play head, value source.
+  The 3×3 convs use im2col plus a hand-written AVX2/FMA kernel (about 80 GFLOP/s on one
+  core), with a plain-C fallback when AVX2 isn't available.
+- **Native search.** `MCTSAgent` runs the whole search inside one C call: tree + network +
+  position cache, no Python per simulation.
+- **How to use it.** `load_evaluator(path, backend="native")`, or `C4_NN_BACKEND=native`
+  for the arena, `nn.evaluate`, the website and everything else.
+- **Same results.** It matches NumpyNet to about 3e-6, with the same move on all 3,000
+  benchmark positions for both nets and identical self-play games
+  (`tests/test_native.py`, `python -m nn.native --bench`).
+
+Measured *(cloud, 1 CPU thread, ms per move in self-play games, MCTS 200 sims)*:
+
+| net | numpy | torch CPU | native C | native vs numpy / torch |
+|---|---|---|---|---|
+| sup_6x64 | 71.7 | 37.6 | **22.7** | 3.2× / 1.7× |
+| score_8x128_s0_r1 | 324.7 | 167.9 | **154.1** | 2.1× / 1.1× |
+
+One network call (1 position, mirror included for the score net):
+
+| net | numpy | torch | native |
+|---|---|---|---|
+| sup_6x64 | 2.03 ms | 1.00 ms | 0.64 ms |
+| 8x128 | 10.0 ms | 5.7 ms | 5.0 ms |
+
+**Where it doesn't win.**
+- Big batches: for 3,000 positions at once, torch is 8.2 s vs native 18.3 s. torch's
+  oneDNN library tiles large convolutions better.
+- Batched benchmark MCTS (128 positions × 200 sims, 8x128): torch 30.8 s vs native 73 s.
+
+So use native for playing (arena, website, ladder: one root at a time) and
+`--backend torch` (GPU) for benchmarks and sweeps.
+
+**Why the 8x128 gain is small.** That net is 0.4 GFLOP per call with mirror averaging. At
+about 80 GFLOP/s that's roughly 5 ms of pure arithmetic, which is already close to one
+core's peak, so the language no longer matters. Smaller nets gain the most, because
+there the per-call overhead was most of the cost.
+
+**Website on Windows.** The native backend needs no torch, so the Windows PC gets 2–3× faster
+nets once the library is built there (MinGW/MSYS2 gcc or an MSVC Developer prompt:
+`python -m engine.cbuild`).
