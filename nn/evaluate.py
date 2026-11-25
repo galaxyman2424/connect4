@@ -3,6 +3,8 @@
     python -m nn.evaluate --run az_6x64                  # uses runs/az_6x64/model.npz
     python -m nn.evaluate --run sup_6x64 --model best.npz
     python -m nn.evaluate --run az_6x64 --quick          # smaller, ~5 min smoke version
+    python -m nn.evaluate --run score_8x128_s0_r1 --out eval_ens3.json \
+        --model runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz
 
 Sections
 1. accuracy   held-out accuracy vs perfect play (3,000 solver-labelled
@@ -29,10 +31,14 @@ Sections
 import argparse
 import json
 import os
+import re
 import time
 
 from . import bench
 from .common import Run, load_evaluator, log, now_iso
+
+
+EVAL_NAME = re.compile(r"^eval(_[A-Za-z0-9_\-]{1,40})?\.json$")
 
 
 def parse_list(s):
@@ -89,7 +95,10 @@ def tactics_reference():
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--run", required=True)
-    ap.add_argument("--model", default="model.npz", help="file inside runs/<run>/ (or a path)")
+    ap.add_argument("--model", default="model.npz",
+                    help="file inside runs/<run>/ (or a path); 'a.npz+b.npz+c.npz' evaluates the averaged ensemble")
+    ap.add_argument("--out", default="eval.json",
+                    help="output file in runs/<run>/ (eval.json, or eval_<tag>.json e.g. for an ensemble)")
     ap.add_argument("--sims", default="50,200,800", help="MCTS simulation budgets to test")
     ap.add_argument("--ladder-sims", type=int, default=200, help="MCTS sims for the minimax ladder games")
     ap.add_argument("--depths", default="1-8", help="minimax depths for the ladder")
@@ -107,13 +116,18 @@ def main():
     skip = set(a.skip.split(","))
 
     run = Run(a.run, create=False)
-    model_path = a.model if os.path.isfile(a.model) else run.path(a.model)
-    if not os.path.isfile(model_path):
-        raise SystemExit("model not found: %s" % model_path)
+    # 'a.npz+b.npz+c.npz' = ensemble (averaged, like the arena); each part is a path or a file in runs/<run>/
+    parts = [p if os.path.isfile(p) else run.path(p) for p in a.model.split("+")]
+    for p in parts:
+        if not os.path.isfile(p):
+            raise SystemExit("model not found: %s" % p)
+    model_path = "+".join(parts)
     ev = load_evaluator(model_path, "auto")
     meta = getattr(ev, "meta", {})
-    out_path = run.path("eval.json")
-    out = {"run": a.run, "model": os.path.relpath(model_path, bench.ROOT).replace("\\", "/"),
+    if not EVAL_NAME.match(a.out):
+        raise SystemExit("--out must look like eval.json or eval_<tag>.json")
+    out_path = run.path(a.out)
+    out = {"run": a.run, "model": "+".join(os.path.relpath(p, bench.ROOT).replace("\\", "/") for p in parts),
            "model_meta": meta, "created": now_iso(), "settings": vars(a)}
     if os.path.isfile(out_path):                 # keep sections we skip this time
         with open(out_path, encoding="utf-8") as f:

@@ -77,3 +77,17 @@ table.t tr.ours td:first-child{color:var(--p2)}
 [hidden]{display:none!important}
 html{background:var(--bg)}
 .heat td:first-child{color:var(--ink);background:none;text-align:left!important;font-weight:400;white-space:nowrap}
+
+/* training filters, ranked bars, command blocks */
+.bar .break{flex-basis:100%;height:0}
+.bar label.chk{display:flex;align-items:center;gap:6px;color:var(--ink);cursor:pointer}
+.bar optgroup{color:var(--muted);font-style:normal}
+.rank{display:flex;flex-direction:column;gap:3px}
+.rrow{display:grid;grid-template-columns:minmax(120px,42%) 1fr 64px;gap:8px;align-items:center;font-size:.84rem;padding:2px 4px;border-radius:6px}
+.rrow.click{cursor:pointer}.rrow.click:hover{background:#1d2340}
+.rrow.on{background:#232a4a;outline:1px solid var(--accent)}
+.rrow .rl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrow .rt{height:10px;background:#141832;border-radius:5px;overflow:hidden}
+.rrow .rf{display:block;height:100%;border-radius:5px;opacity:.85}
+.rrow .rv{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.cmd{background:#0f1325;border-radius:10px;padding:10px 12px;color:var(--ink);overflow-x:auto;font-size:.82rem;user-select:all}
