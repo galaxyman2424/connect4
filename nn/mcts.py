@@ -35,7 +35,7 @@ _CENTER_RANK = {c: i for i, c in enumerate(CENTER_ORDER)}
 
 class Node:
     __slots__ = ("cur", "mask", "terminal", "expanded", "legal", "P", "P_raw",
-                 "N", "W", "children", "n", "value")
+                 "N", "W", "children", "n", "value", "c_pv", "c_max_depth")
 
     def __init__(self, cur, mask, terminal=None):
         self.cur = cur
@@ -50,6 +50,8 @@ class Node:
         self.children = [None] * COLS
         self.n = 0                    # total visits through this node's edges
         self.value = 0.0              # network value of this node (side to move)
+        self.c_pv = None              # set when the tree was searched in C (nn/cmcts.py)
+        self.c_max_depth = None
 
     def q(self):
         """Average backed-up value of the root from the side-to-move view."""
@@ -143,9 +145,18 @@ def expand_roots(roots, evaluator):
             _set_priors(r, p, v)
 
 
+def _fresh(roots):
+    return all(not r.expanded and r.terminal is None and r.n == 0 for r in roots)
+
+
 def search(roots, evaluator, sims, c_puct=1.5, fpu=0.0):
     """Run ``sims`` simulations on every root (in place).  Returns the number
-    of network evaluations made."""
+    of network evaluations made.  Fresh roots are searched by the C tree (nn/cmcts.py,
+    identical results) when it is built; C4_MCTS_TREE_C=0 keeps this Python tree."""
+    if roots and sims > 0 and _fresh(roots):
+        from . import cmcts
+        if cmcts.available():
+            return cmcts.search_c(roots, evaluator, sims, c_puct, fpu)
     expand_roots(roots, evaluator)
     evals = 0
     live = [r for r in roots if r.terminal is None]
@@ -200,6 +211,8 @@ def choose_move(node, temperature=0.0, rng=None):
 
 
 def principal_variation(node, max_len=8):
+    if node is not None and node.c_pv is not None:
+        return node.c_pv[:max_len]
     pv = []
     while node is not None and node.expanded and node.n > 0 and len(pv) < max_len:
         a = max(node.legal, key=lambda c: (node.N[c], -_CENTER_RANK[c]))

@@ -1,12 +1,14 @@
-"""Build the C minimax (engine/cminimax/minimax.c) into a shared library next to it.
+"""Build the C minimax (engine/cminimax/minimax.c) and C MCTS tree (mcts.c) into one shared
+library next to them.
 
     python -m engine.cbuild            # once per machine (Linux: gcc/clang; Windows: gcc from
                                        # MinGW/MSYS2, clang, or MSVC 'cl' in a Developer prompt)
     python -m engine.cbuild --check    # build, then compare with the Python search and time both
 
 After building, engine.minimax.search() uses the C version automatically whenever it can
-give the identical answer (hand-crafted heuristic, no custom evaluator).  Turn it off with
-C4_MINIMAX_C=0.  The library is git-ignored (it is machine-specific).
+give the identical answer (hand-crafted heuristic, no custom evaluator); turn it off with
+C4_MINIMAX_C=0.  nn.mcts.search() likewise runs its tree in C (nn/cmcts.py); C4_MCTS_TREE_C=0
+turns that off.  python -m nn.cmcts --bench times both.  The library is git-ignored (it is machine-specific).
 """
 
 import argparse
@@ -17,6 +19,7 @@ import sys
 
 HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cminimax")
 SRC = os.path.join(HERE, "minimax.c")
+SRCS = [SRC, os.path.join(HERE, "mcts.c")]          # one library: C minimax + C MCTS tree
 
 
 def lib_path():
@@ -34,14 +37,14 @@ def build(verbose=True):
     if sys.platform.startswith("win"):
         for cc in ("gcc", "clang"):
             if shutil.which(cc):
-                tries.append([cc, "-O3", "-shared", "-o", tmp, SRC])
+                tries.append([cc, "-O3", "-shared", "-o", tmp] + SRCS)
         if shutil.which("cl"):
-            tries.append(["cl", "/nologo", "/O2", "/LD", SRC, "/Fe" + tmp, "/Fo" + os.path.join(HERE, "minimax.obj")])
+            tries.append(["cl", "/nologo", "/O2", "/LD"] + SRCS + ["/Fe" + tmp])
     else:
         for cc in (os.environ.get("CC"), "cc", "gcc", "clang"):
             if cc and shutil.which(cc):
-                tries.append([cc, "-O3", "-march=native", "-fPIC", "-shared", "-o", tmp, SRC])
-                tries.append([cc, "-O3", "-fPIC", "-shared", "-o", tmp, SRC])
+                tries.append([cc, "-O3", "-march=native", "-fPIC", "-shared", "-o", tmp] + SRCS + ["-lm"])
+                tries.append([cc, "-O3", "-fPIC", "-shared", "-o", tmp] + SRCS + ["-lm"])
     if not tries:
         raise SystemExit("no C compiler found (Linux: sudo apt install build-essential; "
                          "Windows: install MSYS2/MinGW gcc or use an MSVC Developer prompt)")

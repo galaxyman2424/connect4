@@ -193,7 +193,11 @@ def test_exact_tail_and_hybrid():
             late = b
     if True:
         r2 = mcts.root_from_board(late)
-        mcts.search([r2], ExactTailEvaluator(net, from_ply=27), 40)
+        os.environ["C4_MCTS_TREE_C"] = "0"            # Python tree: its children are inspectable
+        try:
+            mcts.search([r2], ExactTailEvaluator(net, from_ply=27), 40)
+        finally:
+            os.environ.pop("C4_MCTS_TREE_C", None)
         assert any(ch is not None and ch.terminal is not None for ch in r2.children)
         ag = HybridAgent(net, root_from=20, sims=20)
         assert ag.choose(late) in late.legal_moves() and ag.last_info["mode"] == "exact_search"

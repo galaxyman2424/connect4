@@ -22,6 +22,24 @@ Numbers marked *(cloud)* were measured in a 2-core cloud workspace without a GPU
 | 3,000 (now) | ±1.9 | ±0.56 | ±0.36 |
 | 50,000 | ±0.47 | ±0.14 | ±0.09 |
 
+**First result** *(cloud: 60,000 positions, 10,000 per bucket, not yet filtered against the
+training sets).*
+- score_8x128_s0_r1 scores **96.85% (CI 96.70–96.98)**. That's 0.35 points below its
+  3,000-position number (97.20), but still inside the old interval.
+- The old set flattered the late buckets. Plies 20–23 come out at 97.4% here, vs 98.6% on
+  the 3,000.
+- Per-bucket results (± is the 95% interval):
+
+| plies | 8–11 | 12–15 | 16–19 | 20–23 | 24–27 | 28–30 |
+|---|---|---|---|---|---|---|
+| optimal | 94.7% ±0.4 | 95.1% | 96.0% | 97.4% | 98.5% | 99.4% ±0.2 |
+
+- sup_6x64 scores 90.52 ±0.23.
+- Paired comparison: 4,448 positions only the score net gets right vs 654 only sup_6x64
+  gets right.
+- Filtering can only lower these numbers, since overlap with training data inflates a
+  net's score.
+
 ## 2. What MCTS does here, and how far it looks
 
 **One simulation** (`nn/mcts.py`):
@@ -77,6 +95,11 @@ benchmark *(cloud)*:
 | 3-net ensemble + MCTS 200 (eval_ens3.json) | 98.07% | 99.81% |
 | **score net policy + exact C search from ply 16** | **98.43%** | 99.48% |
 | … exact from ply 20 / 24 | 97.73% / 97.50% | 99.06% |
+| *60k benchmark:* score net policy alone | 96.85% ±0.14 | 98.80% |
+| *60k benchmark:* **policy + exact from ply 16** | **98.31% ±0.10** | 99.46% |
+
+On the 60k set the exact search matched Pons on all 40,000 positions from ply 16 on
+(100.00%), averaging about 10 ms each. That also checks the C minimax against the solver.
 
 After that, every remaining error is in plies 8–15. Those are positions where no search
 reaches the end of the game, so the heuristic or the net has to judge them.
@@ -185,11 +208,44 @@ numpy and torch already do:
 | Pons solver, labels | C++ (Pons) | no |
 | minimax / ladder / arena minimax bots | **C now** | no |
 | net inference | numpy (website) / torch GPU (`--backend torch`) | no on GPU |
-| MCTS tree walk | Python, ~0.16 ms per simulation | becomes the bottleneck at thousands of sims on the GPU (3,000 positions × 3,200 sims ≈ 25 min of pure tree code) |
+| MCTS tree walk | **C now** for fresh roots (`engine/cminimax/mcts.c`, section 7); Python for self-play roots with Dirichlet noise | no |
 | benchmark position generation | Python | minutes, acceptable |
 | website / Lab / research scripts | Flask + Python | no |
 
-**If more C is ever needed**, the next port is the MCTS tree: a C tree that asks Python for
-one batched net evaluation per step. Only do it if `nn.search_sweep` with 1,600–3,200 sims
-turns out to matter. Rewriting everything (in C++ or Rust) would cost weeks and break the
-website, Lab, arena adapters and research scripts, for no accuracy gain.
+**More C is not needed.** The MCTS tree is now in C too (section 7). The Python tree cost
+about 8–14 µs per simulation, not the 0.16 ms I estimated earlier (that figure included the
+network). Rewriting everything (in C++ or Rust) would cost weeks and break the website, Lab,
+arena adapters and research scripts, for no accuracy gain.
+
+## 7. C MCTS tree
+
+`engine/cminimax/mcts.c` (built into the same library by `python -m engine.cbuild`;
+Python side `nn/cmcts.py`).
+- **What runs where.** C does select / expand / back up. Python still runs the network:
+  each step C walks every tree to its next leaf, Python evaluates that batch in one call,
+  and C backs the values up.
+- **Same results.** Same arithmetic and tie-breaks as `nn/mcts.py`, so visit counts, W, Q,
+  the principal variation and moves are identical (`tests/test_cmcts.py`, including exact
+  leaves and full agent games).
+- **When it's used.** `nn.mcts.search` uses it automatically for fresh roots.
+  `C4_MCTS_TREE_C=0` forces the Python tree. Self-play roots with Dirichlet noise stay in
+  Python.
+
+Measured *(cloud, 1 CPU thread)*:
+
+| setup | Python tree | C tree | speed-up |
+|---|---|---|---|
+| instant "network", 512 positions × 200 sims (tree + glue only) | 0.81 s | 0.10 s | **8.1×** |
+| instant "network", 512 positions × 800 sims | 5.55 s | 0.53 s | **10.5×** |
+| real sup_6x64 on CPU numpy, 256 positions × 200 sims | 19.9 s (tree 0.67 s) | 19.0 s (tree 0.06 s) | tree 11×, total 1.04× |
+| one game, `MCTSAgent` 200 sims (batch of 1) | 2.55 s | 2.49 s | 1.0× |
+
+**What this means.**
+- On CPU the network is 97% of the time, so the C tree changes almost nothing there.
+- On a single root (the arena and website), the per-step call overhead is about the same as
+  the Python tree's.
+- It pays off where the network is fast and the batch is big: `nn.evaluate` and
+  `nn.search_sweep` on the GPU. There the tree was about 6–7 ms of every step for 512
+  positions at 800 sims, and is now under 1 ms.
+- Measure it on the 3050 with
+  `python -m nn.cmcts --bench --run score_8x128_s0_r1 --backend torch --positions 1024 --sims 800 --batch 1024`.

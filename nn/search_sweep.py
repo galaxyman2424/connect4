@@ -35,6 +35,8 @@ from .common import RESULTS, RUNS, load_evaluator, log
 
 def tree_stats(root):
     """(pv length, max depth, root children visited)."""
+    if root.c_max_depth is not None:          # searched by the C tree
+        return len(root.c_pv), root.c_max_depth, sum(1 for c in root.legal if root.N[c] > 0)
     best = 0
     stack = [(root, 0)]
     while stack:
