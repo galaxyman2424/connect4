@@ -46,11 +46,51 @@ class PolicyAgent:
         return best
 
 
-class MCTSAgent:
-    """Deterministic at play time: no Dirichlet noise, most-visited move."""
+class CachedEvaluator:
+    """Wraps an evaluator with a position -> (prior, value, wdl) cache.
 
-    def __init__(self, evaluator, sims=200, c_puct=1.5, name=None):
+    Within one game the MCTS trees of consecutive moves overlap heavily (and Connect 4 has
+    many transpositions), so most leaves were already evaluated on an earlier move.
+    Measured on a full 200-sim game with sup_6x64: 5,763 evaluations asked, 1,178 computed
+    (4.9x fewer network calls).  The network is deterministic, so moves are unchanged."""
+
+    def __init__(self, evaluator, max_size=400_000):
         self.ev = evaluator
+        self.cache = {}
+        self.max_size = max_size
+        self.asked = 0
+        self.computed = 0
+        self.meta = getattr(evaluator, "meta", {})
+
+    def evaluate(self, curs, masks):
+        keys = list(zip((int(c) for c in curs), (int(m) for m in masks)))
+        self.asked += len(keys)
+        cache = self.cache
+        need = [k for k in dict.fromkeys(keys) if k not in cache]
+        if need:
+            self.computed += len(need)
+            if len(cache) + len(need) > self.max_size:
+                cache.clear()
+            pri, val, wdl = self.ev.evaluate([k[0] for k in need], [k[1] for k in need])
+            for k, p, v, w in zip(need, pri, val, wdl):
+                cache[k] = (p, v, w)
+        got = [cache[k] for k in keys]
+        return (np.array([g[0] for g in got]), np.array([g[1] for g in got]),
+                np.array([g[2] for g in got]))
+
+
+class MCTSAgent:
+    """Deterministic at play time: no Dirichlet noise, most-visited move.
+    cache=True (default) keeps a network-output cache for the agent's lifetime (one game in
+    the arena / ladder), which removes ~80% of the network calls without changing moves.
+    The ms/move it reports therefore drops too: set C4_MCTS_CACHE=0 to measure the old,
+    uncached speed (e.g. to compare ms/move with arena runs made before the cache)."""
+
+    def __init__(self, evaluator, sims=200, c_puct=1.5, name=None, cache=None):
+        import os
+        if cache is None:
+            cache = os.environ.get("C4_MCTS_CACHE", "1") != "0"
+        self.ev = CachedEvaluator(evaluator) if cache and not isinstance(evaluator, CachedEvaluator) else evaluator
         self.sims = sims
         self.c_puct = c_puct
         self.name = name or "nn_mcts%d" % sims
@@ -97,6 +137,19 @@ class NNValueEvaluator:
                 self.cache.clear()
             self.cache[key] = v
         return v
+
+    def prefetch(self, pairs):
+        """engine.minimax calls this at depth-1 nodes with every child leaf (me, opp):
+        one batched network call instead of up to 7 single-position calls."""
+        need = [k for k in dict.fromkeys(pairs) if k not in self.cache]
+        if len(need) < 2:
+            return
+        self.calls += 1
+        _, val, _ = self.ev.evaluate([k[0] for k in need], [k[0] | k[1] for k in need])
+        if len(self.cache) + len(need) >= self.cache_size:
+            self.cache.clear()
+        for k, v in zip(need, val):
+            self.cache[k] = float(v) * self.scale
 
 
 class NNMinimaxAgent(MinimaxAgent):

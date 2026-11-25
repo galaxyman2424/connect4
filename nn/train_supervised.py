@@ -27,6 +27,7 @@ import time
 import numpy as np
 
 from .common import NN_DATA, Run, log, machine_info, now_iso, pick_device
+from .fasttrain import SPEEDS
 
 ILLEGAL = -128
 
@@ -92,6 +93,8 @@ def main():
     ap.add_argument("--mcts-sims", type=int, default=100)
     ap.add_argument("--device", default="auto")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--speed", choices=SPEEDS, default="safe",
+                    help="GPU speed settings (nn/fasttrain.py): off | safe (default) | max = + channels_last + torch.compile")
     a = ap.parse_args()
 
     import torch
@@ -108,9 +111,12 @@ def main():
         raise SystemExit("runs/%s already exists - choose another --run name" % a.run)
     D, tr, va = load_data(a.data, a.val_frac, a.seed)
     model = build({"blocks": a.blocks, "channels": a.channels}).to(device)
+    from . import fasttrain
+    speed_info = fasttrain.configure(a.speed, device)
+    model, train_fwd = fasttrain.prepare_model(a.speed, model, device, "forward")
     cfg = {"phase": "supervised", "created": now_iso(), "args": vars(a), "device": str(device),
            "model": model.config, "params": count_params(model), "train_positions": len(tr),
-           "val_positions": len(va), "machine": machine_info()}
+           "val_positions": len(va), "speed": speed_info, "machine": machine_info()}
     run.write_config(cfg)
     log("run %s on %s: %d params, %d train / %d val positions" % (a.run, device, cfg["params"], len(tr), len(va)))
 
@@ -131,13 +137,14 @@ def main():
         t0 = time.time()
         model.train()
         perm = tr_t[torch.randperm(len(tr_t), device=device)]
-        sums = np.zeros(3)
+        sums_t = torch.zeros(3, device=device)
         for i in range(0, len(perm), a.batch):
             idx = perm[i:i + a.batch]
             mirror = torch.rand(len(idx), device=device) < 0.5
             x, pol, val, _, _ = make_batch(Dd, idx, mirror)
+            x = fasttrain.to_input(a.speed, x)
             with torch.autocast(device.type, dtype=torch.bfloat16, enabled=use_amp):
-                p_logits, v_logits = model(x)
+                p_logits, v_logits = train_fwd(x)
             lp = -(pol * F.log_softmax(p_logits.float(), 1)).sum(1).mean()
             lv = F.cross_entropy(v_logits.float(), val)
             loss = lp + a.value_weight * lv
@@ -146,8 +153,8 @@ def main():
             opt.step()
             sched.step()
             step += 1
-            sums += [loss.item() * len(idx), lp.item() * len(idx), lv.item() * len(idx)]
-        sums /= len(perm)
+            sums_t += torch.stack([loss.detach(), lp.detach(), lv.detach()]).float() * len(idx)
+        sums = sums_t.cpu().numpy().astype(np.float64) / len(perm)     # one GPU sync per epoch
 
         # ---- validation
         model.eval()

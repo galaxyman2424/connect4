@@ -39,6 +39,7 @@ import time
 import numpy as np
 
 from .common import NN_DATA, Run, log, machine_info, now_iso, pick_device
+from .fasttrain import SPEEDS
 
 ILLEGAL = -128
 SCORE_SCALE = 10.0
@@ -106,6 +107,26 @@ def load_data(paths, hard_paths, hard_weight, val_frac, val_max, seed):
     return D, tr, va, info
 
 
+def fit_input_pca(grids, k, seed=0, max_rows=500_000):
+    """PCA of the 84 stone cells (planes me/them, flattened like nn/encode.py) of the
+    training positions.  Mirrored copies are added because training mirrors at random.
+    Returns mean (84,), components U (84, k) and the explained variance."""
+    rng = np.random.default_rng(seed)
+    g = grids if len(grids) <= max_rows else grids[np.sort(rng.choice(len(grids), max_rows, replace=False))]
+    X = np.concatenate([g.reshape(len(g), -1), g[..., ::-1].reshape(len(g), -1)]).astype(np.float64)
+    mean = X.mean(0)
+    Xc = X - mean
+    cov = Xc.T @ Xc / (len(Xc) - 1)
+    evals, evecs = np.linalg.eigh(cov)
+    order = np.argsort(evals)[::-1]
+    evals, evecs = evals[order], evecs[:, order]
+    k = int(min(max(k, 1), X.shape[1]))
+    return {"k": k, "mean": mean.astype(np.float32), "components": evecs[:, :k].astype(np.float32),
+            "explained_variance": round(float(evals[:k].sum() / evals.sum()), 5),
+            "explained_by_component": [round(float(e / evals.sum()), 5) for e in evals[:k]],
+            "fit_positions": int(len(g))}
+
+
 def to_device(D, device):
     import torch
     return {k: torch.from_numpy(np.ascontiguousarray(v)).to(device) for k, v in D.items()}
@@ -134,10 +155,11 @@ def soft_target(sc, legal, temp):
     return torch.softmax(z, 1)
 
 
-def losses(model, x, sc, legal, val, w, a):
+def losses(model, x, sc, legal, val, w, a, fwd=None):
+    """(weighted total loss, detached tensor [policy, value, score, rank]) - no GPU sync."""
     import torch
     import torch.nn.functional as F
-    p, v, s = model.forward_all(x)
+    p, v, s = (fwd or model.forward_all)(x)
     p, v, s = p.float(), v.float(), s.float()
     lp_all = F.log_softmax(p.masked_fill(~legal, -1e9), 1)
     tgt = soft_target(sc, legal, a.policy_temp)
@@ -149,7 +171,7 @@ def losses(model, x, sc, legal, val, w, a):
     lrank = -(soft_target(sc, legal, a.rank_temp) * ls_all.masked_fill(~legal, 0)).sum(1)
     per = lp + a.value_weight * lv + a.score_weight * lreg + a.rank_weight * lrank
     wsum = w.sum()
-    parts = [((t * w).sum() / wsum).item() for t in (lp, lv, lreg, lrank)]
+    parts = torch.stack([(t * w).sum() / wsum for t in (lp, lv, lreg, lrank)]).detach()
     return (per * w).sum() / wsum, parts
 
 
@@ -248,6 +270,11 @@ def main():
     ap.add_argument("--device", default="auto")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--max-steps", type=int, default=0, help="stop early (smoke tests)")
+    ap.add_argument("--speed", choices=SPEEDS, default="safe",
+                    help="GPU speed settings (nn/fasttrain.py): off | safe (default) | max = + channels_last + torch.compile")
+    ap.add_argument("--pca", type=int, default=0,
+                    help="PCA input projection with K components fitted on the training positions "
+                         "(nn/model.py; research/pca_lda.py runs a sweep). 0 = off")
     a = ap.parse_args()
 
     import torch
@@ -269,6 +296,8 @@ def main():
     D, tr, va, dinfo = load_data(paths, hard, a.hard_weight, a.val_frac, a.val_max, a.seed)
 
     cfg_model = {"blocks": a.blocks, "channels": a.channels, "score_head": True}
+    if a.pca:
+        cfg_model["pca_k"] = a.pca
     init_note = None
     if a.init:
         old, _ = load_checkpoint(a.init, "cpu")
@@ -280,7 +309,16 @@ def main():
         del old
     else:
         model = build(cfg_model)
+    pca_info = None
+    if a.pca:
+        pca_info = fit_input_pca(D["grids"][tr], a.pca, a.seed)
+        model.set_input_projection(pca_info.pop("mean"), pca_info.pop("components"))
+        log("PCA input projection: %d components keep %.1f%% of the variance of the 84 stone cells"
+            % (a.pca, 100 * pca_info["explained_variance"]))
     model = model.to(device)
+    from . import fasttrain
+    speed_info = fasttrain.configure(a.speed, device)
+    model, train_fwd = fasttrain.prepare_model(a.speed, model, device, "forward_all")
 
     ema = None
     if a.ema:
@@ -288,7 +326,7 @@ def main():
         ema = AveragedModel(model, multi_avg_fn=get_ema_multi_avg_fn(a.ema), use_buffers=True)
     cfg = {"phase": "supervised_score", "created": now_iso(), "args": vars(a), "device": str(device),
            "model": model.config, "params": count_params(model), "data": dinfo, "init": init_note,
-           "machine": machine_info()}
+           "speed": speed_info, "pca": pca_info, "machine": machine_info()}
     run.write_config(cfg)
     log("run %s on %s: %d params; %s" % (a.run, device, cfg["params"], dinfo))
 
@@ -313,13 +351,14 @@ def main():
         t0 = time.time()
         model.train()
         perm = tr_t[torch.randperm(len(tr_t), device=device)]
-        sums, nb = np.zeros(5), 0
+        sums_t, nb = torch.zeros(5, device=device), 0
         for i in range(0, len(perm), a.batch):
             idx = perm[i:i + a.batch]
             mirror = torch.rand(len(idx), device=device) < 0.5
             x, sc, legal, _, val, w = make_batch(Dd, idx, mirror)
+            x = fasttrain.to_input(a.speed, x)
             with torch.autocast(device.type, dtype=torch.bfloat16, enabled=use_amp):
-                loss, parts = losses(model, x, sc, legal, val, w, a)
+                loss, parts = losses(model, x, sc, legal, val, w, a, fwd=train_fwd)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
@@ -329,10 +368,10 @@ def main():
                 ema.update_parameters(model)
             step += 1
             nb += 1
-            sums += [loss.item()] + parts
+            sums_t += torch.cat([loss.detach().float().view(1), parts.float()])
             if a.max_steps and step >= a.max_steps:
                 break
-        sums /= max(nb, 1)
+        sums = sums_t.cpu().numpy().astype(np.float64) / max(nb, 1)     # one GPU sync per epoch
 
         net = ema.module if ema is not None else model
         net.eval()

@@ -29,8 +29,13 @@ experiments/results/arena/*/games.csv.old
 .ruff_cache/
 .mypy_cache/
 
-# local MCP server (not committed)
+# local MCP server (not committed): everything in mcp_server/ + the client config
 mcp_server/
+mcp_server/server.py
+mcp_server/jobrun.py
+mcp_server/requirements.txt
+mcp_server/README.md
+mcp_server/jobs/
 .mcp.json
 
 # paper outline: local working draft, regenerate with `python -m research.paper_outline`

@@ -106,8 +106,8 @@ def main():
     t0 = time.time()
 
     # held-out benchmark positions (and mirrors) are excluded
-    from .bench import load_accuracy_bench
-    held = {canon(Board.from_moves(r["moves"])) for r in load_accuracy_bench()}
+    from .bench import heldout_rows
+    held = {canon(Board.from_moves(r["moves"])) for r in heldout_rows()}
 
     # ---- 1+2: generate unique positions
     seen = set()

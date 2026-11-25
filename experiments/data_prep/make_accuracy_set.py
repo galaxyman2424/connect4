@@ -9,6 +9,18 @@ under-represented). Columns in the CSV: moves (1-indexed cols), ply, scores (JSO
 column), optimal_cols (JSON list, 0-indexed), source, bucket.
 
 Usage: python make_accuracy_set.py [--n 3000] [--workers 2] [--seed 12345]
+
+A BIGGER benchmark (e.g. 20,000 positions for +-0.2-point intervals at 97.5%, see
+python -m nn.bench_stats --need) must not overlap the training data the nets already saw,
+nor the standard 3,000:
+
+    python experiments/data_prep/make_accuracy_set.py --n 20000 --workers 14 --seed 777 \
+        --out data/accuracy_positions_20k.csv \
+        --exclude data/accuracy_positions.csv,nn_data/solver_3m.npz,nn_data/solver_300k.npz,nn_data/hard_8x128_s0.npz
+
+--exclude takes benchmark csvs and nn/make_dataset.py-format .npz files (cur/mask); their
+positions and mirror images are skipped.  New datasets made by nn.make_dataset / nn.mine_hard
+afterwards automatically leave out every data/accuracy_positions_*.csv (nn/bench.heldout_rows).
 """
 import argparse, json, multiprocessing as mp, os, random, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -79,6 +91,40 @@ def _opp_wins(m, x):
         if n >= 4: return True
     return False
 
+def _packed_keys(cur, mask):
+    """uint64 arrays (side-to-move bits, mask) -> python ints, the same for a position and its
+    left-right mirror (min of the two packed (cur << 64 | mask) values)."""
+    import numpy as np
+    if ROOT not in sys.path:
+        sys.path.insert(0, ROOT)
+    from nn.encode import mirror_bits
+    cur = np.asarray(cur, dtype=np.uint64)
+    mask = np.asarray(mask, dtype=np.uint64)
+    mc, mm = mirror_bits(cur), mirror_bits(mask)
+    flip = (mc < cur) | ((mc == cur) & (mm < mask))
+    kc, km = np.where(flip, mc, cur), np.where(flip, mm, mask)
+    return {(int(c) << 64) | int(m) for c, m in zip(kc.tolist(), km.tolist())}
+
+
+def _moves_key(moves):
+    if ROOT not in sys.path:
+        sys.path.insert(0, ROOT)
+    from engine.board import Board
+    b = Board.from_moves(moves)
+    return next(iter(_packed_keys([b.current_bits()], [b.mask])))
+
+
+def exclusion_keys(path):
+    """Packed keys of every position in a benchmark .csv or a nn/make_dataset.py .npz."""
+    if path.endswith(".csv"):
+        import csv
+        with open(path, newline="", encoding="utf-8") as f:
+            return {_moves_key(r["moves"]) for r in csv.DictReader(f)}
+    import numpy as np
+    z = np.load(path)
+    return _packed_keys(z["cur"], z["mask"])
+
+
 _solver = None
 def _solve(m):
     global _solver
@@ -95,11 +141,24 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=3000); ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--seed", type=int, default=12345)
+    ap.add_argument("--out", default=os.path.join(ROOT, "data", "accuracy_positions.csv"))
+    ap.add_argument("--exclude", default="", help="comma list of .csv benchmarks / .npz datasets to keep out")
     a = ap.parse_args()
+    if os.path.abspath(a.out) == os.path.abspath(os.path.join(ROOT, "data", "accuracy_positions.csv")) \
+            and os.path.isfile(a.out) and a.n != 3000:
+        raise SystemExit("refusing to overwrite the standard benchmark with --n %d; pass --out" % a.n)
     rng = random.Random(a.seed)
     quota = [a.n // len(BUCKETS) + (1 if i < a.n % len(BUCKETS) else 0) for i in range(len(BUCKETS))]
     got = [dict() for _ in BUCKETS]   # moves -> (scores, source)
     seen = set(); skipped = [0] * len(BUCKETS); tsum = [0.0] * len(BUCKETS)
+    excluded = set()
+    for path in [p for p in a.exclude.split(",") if p]:
+        if not os.path.isfile(path):
+            print("WARNING: --exclude file not found, skipped: %s" % path, flush=True)
+            continue
+        before = len(excluded)
+        excluded |= exclusion_keys(path)
+        print("excluding %d positions from %s" % (len(excluded) - before, path), flush=True)
     t0 = time.time()
     with mp.Pool(a.workers) as pool:
         rnd = 0
@@ -116,6 +175,8 @@ if __name__ == "__main__":
                     if m is None: continue
                     k = board_key(m)
                     if k in seen: continue
+                    if excluded and _moves_key(m) in excluded:
+                        seen.add(k); continue
                     seen.add(k); cands.append((bi, m, "heuristic" if heur else "random")); target -= 1
             info = {m: (bi, src) for bi, m, src in cands}
             for m, sc, dt in pool.imap_unordered(_solve, [m for _, m, _ in cands], chunksize=4):
@@ -124,7 +185,8 @@ if __name__ == "__main__":
                 if sc is None: skipped[bi] += 1; continue
                 if len(got[bi]) < quota[bi]: got[bi][m] = (sc, src)
             print("round %d done %.0fs: %s skipped=%s" % (rnd, time.time() - t0, [len(g) for g in got], skipped), flush=True)
-    out = os.path.join(ROOT, "data", "accuracy_positions.csv")
+    out = a.out
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     rows = []
     for bi, g in enumerate(got):
         for m, (sc, src) in g.items():

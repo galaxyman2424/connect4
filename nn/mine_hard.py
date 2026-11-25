@@ -106,7 +106,6 @@ def main():
 
     import torch
     from engine.board import Board
-    from .bench import load_accuracy_bench
     from .encode import encode, legal_mask
     from .make_dataset import _label_worker
     from .model import load_checkpoint
@@ -122,7 +121,8 @@ def main():
         head = "combo%g" % (meta["play_policy_weight"] * meta["play_temp"])
     log("mining with %s (head %s) on %s" % (a.run, head, device))
 
-    bench = load_accuracy_bench()
+    from .bench import heldout_rows
+    bench = heldout_rows()
     banned = set(_key([r["cur"] for r in bench], [r["mask"] for r in bench]))
     moves = selfplay_positions(model, device, a.positions, a.games, a.temp, a.eps,
                                a.min_ply, a.max_ply, a.seed, banned)

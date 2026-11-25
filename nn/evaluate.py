@@ -3,6 +3,9 @@
     python -m nn.evaluate --run az_6x64                  # uses runs/az_6x64/model.npz
     python -m nn.evaluate --run sup_6x64 --model best.npz
     python -m nn.evaluate --run az_6x64 --quick          # smaller, ~5 min smoke version
+    python -m nn.evaluate --run sup_6x64 --backend torch # same numbers, much faster (GPU if present)
+    python -m nn.evaluate --run sup_6x64 --skip ladder,hypothesis,tactics --sims 200   # accuracy only
+    python -m nn.evaluate --run sup_6x64 --bench data/accuracy_positions_20k.csv --out eval_bench20k.json
     python -m nn.evaluate --run score_8x128_s0_r1 --out eval_ens3.json \
         --model runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz
 
@@ -109,7 +112,19 @@ def main():
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 2))
     ap.add_argument("--quick", action="store_true", help="small version for a smoke test")
     ap.add_argument("--skip", default="", help="comma list of sections to skip: accuracy,tactics,ladder,hypothesis")
+    ap.add_argument("--backend", choices=("numpy", "torch"), default=os.environ.get("C4_NN_BACKEND", "numpy"),
+                    help="how .npz nets run: numpy (default, no torch needed) or torch (nn/torch_net.py: "
+                         "same moves; GPU for the accuracy/MCTS section, 1-thread CPU torch in the workers)")
+    ap.add_argument("--device", default="auto", help="torch backend device for the main process: auto, cpu, cuda:0")
+    ap.add_argument("--mcts-batch", type=int, default=256,
+                    help="positions searched in lock-step in the accuracy section (bigger = fuller GPU batches)")
+    ap.add_argument("--bench", default="", help="benchmark csv (default data/accuracy_positions.csv); "
+                    "e.g. a bigger one from experiments/data_prep/make_accuracy_set.py --out")
     a = ap.parse_args()
+    if a.bench:
+        if not os.path.isfile(bench.bench_path(a.bench)):
+            raise SystemExit("benchmark not found: %s" % a.bench)
+        os.environ["C4_BENCH"] = bench.bench_path(a.bench)   # inherited by worker processes
     if a.quick:
         a.sims, a.depths, a.openings = "50", "1,2,4", 4
         a.hyp_depths, a.hyp_openings, a.hyp_positions, a.ladder_sims = "1,2", 4, 60, 50
@@ -122,13 +137,19 @@ def main():
         if not os.path.isfile(p):
             raise SystemExit("model not found: %s" % p)
     model_path = "+".join(parts)
-    ev = load_evaluator(model_path, "auto")
+    ev = load_evaluator(model_path, a.device, backend=a.backend)
+    if a.backend == "torch":
+        # worker processes (ladder, hypothesis) inherit these: torch on 1 CPU thread each
+        os.environ["C4_NN_BACKEND"] = "torch"
+        os.environ.setdefault("C4_NN_THREADS", "1")
+        log("backend torch (main process on %s, workers on 1-thread CPU torch)" % getattr(ev, "device", "cpu"))
     meta = getattr(ev, "meta", {})
     if not EVAL_NAME.match(a.out):
         raise SystemExit("--out must look like eval.json or eval_<tag>.json")
     out_path = run.path(a.out)
     out = {"run": a.run, "model": "+".join(os.path.relpath(p, bench.ROOT).replace("\\", "/") for p in parts),
-           "model_meta": meta, "created": now_iso(), "settings": vars(a)}
+           "model_meta": meta, "created": now_iso(), "settings": vars(a),
+           "benchmark": os.path.relpath(bench.bench_path(), bench.ROOT).replace("\\", "/")}
     if os.path.isfile(out_path):                 # keep sections we skip this time
         with open(out_path, encoding="utf-8") as f:
             old = json.load(f)
@@ -151,7 +172,7 @@ def main():
         pol = bench.policy_eval(ev, rows)
         acc = {"nn_policy": {k: pol[k] for k in ("n", "optimal", "keeps_nl", "by_bucket")}}
         for s in parse_list(a.sims):
-            r = bench.mcts_eval(ev, rows, s)
+            r = bench.mcts_eval(ev, rows, s, batch=a.mcts_batch)
             acc["nn_mcts%d" % s] = r
             log("  MCTS %d sims: optimal %.3f keeps %.3f" % (s, r["optimal"], r["keeps_nl"]))
         acc["minimax_reference"] = bench.minimax_reference()
@@ -159,6 +180,12 @@ def main():
         out["value"] = {"accuracy": pol["value_acc"], "by_bucket": pol["value_acc_by_bucket"],
                         "confusion": pol["value_confusion"], "labels": ["win", "draw", "loss"]}
         log("  policy optimal %.3f keeps %.3f, value accuracy %.3f" % (pol["optimal"], pol["keeps_nl"], pol["value_acc"]))
+        ci = pol.get("optimal_ci95") or [None, None]
+        if ci[0] is not None:
+            log("  95%% CI of policy optimal on %d positions: %.3f - %.3f (+-%.1f points)" % (
+                pol["n"], ci[0], ci[1], 50 * (ci[1] - ci[0])))
+        acc["nn_policy"]["optimal_ci95"] = pol.get("optimal_ci95")
+        acc["nn_policy"]["keeps_nl_ci95"] = pol.get("keeps_nl_ci95")
         save()
 
     # 3 -----------------------------------------------------------------
@@ -247,6 +274,7 @@ def main():
                                            for r in hyp["rows"])))
         save()
     out["seconds"] = round(time.time() - t0, 1)
+    out["backend"] = a.backend
     save()
     log("wrote %s (%.0fs)" % (out_path, out["seconds"]))
 

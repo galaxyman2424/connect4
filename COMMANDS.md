@@ -282,6 +282,55 @@ Watch `BENCH ...` in each epoch line. Quick start without the 3.5 h of labelling
 
 ---
 
+## H. Speed-ups, benchmark precision, PCA and LDA (Linux PC)
+
+Background and measured numbers: [`docs/SPEED_PCA_LDA.md`](docs/SPEED_PCA_LDA.md).
+
+```bash
+cd ~/projects/introAI/connect4 && source .venv/bin/activate
+python -m pytest -q tests/test_speedups.py          # ~5 s: speed-ups give identical moves
+
+# 1. training speed on THIS GPU (~5 min each): which --speed / --batch is fastest
+python -m nn.train_speedtest                         # 8x128 score net
+python -m nn.train_speedtest --blocks 6 --channels 64
+#    then e.g.  python -m nn.train_score ... --speed max --batch 2048 --lr 3e-3
+
+# 2. faster evaluation: same numbers, torch on the GPU (--backend torch)
+python -m nn.evaluate --run score_8x128_s0_r1 --model best.npz --backend torch --mcts-batch 1024
+python -m nn.bench_stats --runs score_8x128_s0_r1,score_8x128_s1_r1,score_8x128_s2_r1 --backend torch
+python -m nn.bench_stats --runs score_8x128_s0_r1,runs/score_8x128_s0_r1/best.npz+runs/score_8x128_s1_r1/best.npz+runs/score_8x128_s2_r1/best.npz --backend torch
+#    arena with the project's nets on torch:  C4_NN_BACKEND=torch C4_NN_THREADS=1 python -m arena.tournament ...
+
+# 3. a 20,000-position benchmark (CPU, minutes) that no training set contains
+python experiments/data_prep/make_accuracy_set.py --n 20000 --workers 14 --seed 777 \
+    --out data/accuracy_positions_20k.csv \
+    --exclude data/accuracy_positions.csv,nn_data/solver_3m.npz,nn_data/solver_300k.npz,nn_data/hard_8x128_s0.npz,nn_data/hard_8x128_s1.npz,nn_data/hard_8x128_s2.npz
+#    (add any other nn_data/*.npz you trained on; missing files are skipped with a warning)
+python -m nn.bench_stats --runs score_8x128_s0_r1,score_8x128_s1_r1 --bench data/accuracy_positions_20k.csv --backend torch
+python -m nn.evaluate --run score_8x128_s0_r1 --model best.npz --backend torch \
+    --bench data/accuracy_positions_20k.csv --out eval_bench20k.json --skip ladder,hypothesis,tactics
+
+# 4. PCA input reduction: 8 nets (6x64, solver_300k, 20 epochs) ~25-40 min GPU + evaluation
+python -m research.pca_lda pca-variance                       # CPU, seconds
+python -m research.pca_lda pca-sweep                          # prints the commands
+tmux new -s pca
+python -m research.pca_lda pca-sweep --go                     # resumable; logs: runs/pca_lda_logs/
+python -m research.pca_lda pca-summary                        # experiments/results/research/pca_lda/
+#    bigger version: --data nn_data/solver_3m.npz --size 8x128 --epochs 30 --seeds 0,1
+
+# 5. LDA: how separable is the data, then focus training on the LDA-hard positions
+python -m research.pca_lda lda-analyze --run score_8x128_s0_r1   # CPU ~1-2 min (+ trunk features on GPU)
+python -m research.pca_lda lda-focus                             # nn_data/lda_focus.npz + _control.npz
+python -m research.pca_lda lda-sweep --go                        # baseline / focus / control, ~15 min GPU
+python -m research.pca_lda lda-summary                           # paired focus-vs-control test
+#    variants: lda-focus --select misclassified | --select class:draw | --label bestcol | --frac 0.1
+```
+
+The MCP server (`mcp_server/`, git-ignored, so copy it to this PC yourself) can start all of
+these as background jobs: see `mcp_server/README.md`.
+
+---
+
 ## Where things end up
 
 | what | where |
@@ -294,3 +343,6 @@ Watch `BENCH ...` in each epoch line. Quick start without the 3.5 h of labelling
 | training cost of a run | `runs/<run>/cost.json` |
 | evolved weights / n-tuple table | `runs/<run>/weights.json`, `runs/<run>/ntuple.npz` |
 | method comparison | `experiments/results/methods/<name>/summary.json` (+ csv, png charts) |
+| PCA / LDA experiments | `experiments/results/research/pca_lda/` (+ runs `pca_k*`, `lda_*`; logs `runs/pca_lda_logs/`) |
+| training speed test | `experiments/results/speedtest_<blocks>x<channels>.json` |
+| jobs started from the MCP server | `mcp_server/jobs/<id>/output.log` (git-ignored) |

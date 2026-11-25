@@ -49,6 +49,9 @@ def export_model(model, path, meta=None):
     for name, lin in lins:
         arrays[name + ".w"] = lin.weight.detach().cpu().float().numpy()
         arrays[name + ".b"] = lin.bias.detach().cpu().float().numpy()
+    if getattr(model, "pca_k", 0):
+        arrays["inproj.mean"] = model.inproj_mean.detach().cpu().float().numpy()
+        arrays["inproj.U"] = model.inproj_U.detach().cpu().float().numpy()
     arrays["config_json"] = np.array(json.dumps(model.config))
     arrays["meta_json"] = np.array(json.dumps(meta or {}))
     tmp = path + ".tmp.npz"

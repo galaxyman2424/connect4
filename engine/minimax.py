@@ -123,6 +123,8 @@ class _Searcher:
     def __init__(self, use_tt, ordering, deadline, evaluator=None):
         self.nodes = 0
         self.evaluate = evaluator or evaluate_bits
+        # optional evaluator.prefetch(list of (me, opp)): batch the leaves of a depth-1 node
+        self.prefetch = getattr(evaluator, "prefetch", None)
         self.tt = {} if use_tt else None
         self.ordering = ordering
         self.deadline = deadline
@@ -159,6 +161,9 @@ class _Searcher:
         best = -INF
         best_col = cols[0]
         neg = self.negamax
+        if depth == 1 and self.prefetch is not None:
+            self.prefetch([(opp, cur | (possible & COLUMN_MASK[c])) for c in cols
+                           if (mask | (possible & COLUMN_MASK[c])) != _FULL])
         for i, c in enumerate(cols):
             mv = possible & COLUMN_MASK[c]
             nm = mask | mv
@@ -247,6 +252,9 @@ class _Searcher:
         best_col = moves[0][0]
         d1 = depth - 1
         p1 = ply + 1
+        if d1 == 0 and self.prefetch is not None:
+            # batched leaf evaluation (NN value nets): one call for all children
+            self.prefetch([(opp, cur | mv) for _, mv in moves if (mask | mv) != _FULL])
         for c, mv in moves:
             v = -self.negamax(opp, mask | mv, d1, -beta, -alpha, p1)
             if v > best:

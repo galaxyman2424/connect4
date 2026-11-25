@@ -40,8 +40,17 @@ def _sign(v):
 
 
 # ------------------------------------------------------------ accuracy set
+def bench_path(path=None):
+    """Benchmark csv: ``path``, else $C4_BENCH (nn.evaluate --bench sets it), else the
+    standard 3,000 positions data/accuracy_positions.csv."""
+    p = path or os.environ.get("C4_BENCH") or os.path.join(DATA, "accuracy_positions.csv")
+    if not os.path.isabs(p):
+        p = os.path.join(ROOT, p)
+    return p
+
+
 def load_accuracy_bench(path=None, limit=None):
-    path = path or os.path.join(DATA, "accuracy_positions.csv")
+    path = bench_path(path)
     import csv
     rows = []
     with open(path, newline="", encoding="utf-8") as f:
@@ -59,8 +68,40 @@ def load_accuracy_bench(path=None, limit=None):
     return rows
 
 
+def wilson_ci(k, n, z=1.96):
+    """95% Wilson score interval for k successes out of n (None, None if n == 0).
+    At 97.5% on 3,000 positions this is about +-0.55 points; per 500-position bucket +-1.4."""
+    if n <= 0:
+        return (None, None)
+    p = k / n
+    den = 1 + z * z / n
+    mid = (p + z * z / (2 * n)) / den
+    half = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / den
+    return (round(mid - half, 4), round(mid + half, 4))
+
+
+def heldout_rows():
+    """Every benchmark position that training data must never contain: the standard
+    data/accuracy_positions.csv plus any extra benchmark data/accuracy_positions_*.csv
+    (e.g. the 20k one from experiments/data_prep/make_accuracy_set.py --out)."""
+    import glob
+    paths = [os.path.join(DATA, "accuracy_positions.csv")] + sorted(
+        glob.glob(os.path.join(DATA, "accuracy_positions_*.csv")))
+    if os.environ.get("C4_BENCH"):
+        paths.append(bench_path())
+    rows, seen = [], set()
+    for p in paths:
+        p = os.path.abspath(p)
+        if p in seen or not os.path.isfile(p):
+            continue
+        seen.add(p)
+        rows += load_accuracy_bench(p)
+    return rows
+
+
 def accuracy_summary(bench, cols):
-    """cols[i] = column chosen in bench[i].  Returns overall + per-bucket metrics."""
+    """cols[i] = column chosen in bench[i].  Returns overall + per-bucket metrics
+    (+ 95% Wilson intervals: optimal_ci95, keeps_nl_ci95)."""
     def summ(idx):
         n = len(idx)
         if n == 0:
@@ -69,7 +110,9 @@ def accuracy_summary(bench, cols):
         nl = [i for i in idx if bench[i]["outcome"] != 2]
         keep = sum(_sign(bench[i]["scores"][cols[i]]) == _sign(bench[i]["best"]) for i in nl)
         return {"n": n, "optimal": round(opt / n, 4),
-                "keeps_nl": round(keep / len(nl), 4) if nl else None, "n_not_lost": len(nl)}
+                "keeps_nl": round(keep / len(nl), 4) if nl else None, "n_not_lost": len(nl),
+                "optimal_ci95": list(wilson_ci(opt, n)),
+                "keeps_nl_ci95": list(wilson_ci(keep, len(nl))) if nl else None}
     out = summ(list(range(len(bench))))
     out["by_bucket"] = {}
     for bk in BUCKETS:

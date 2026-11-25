@@ -165,12 +165,25 @@ class EnsembleEvaluator:
         return pri, np.mean([o[1] for o in outs], 0), np.mean([o[2] for o in outs], 0)
 
 
-def load_evaluator(path, device="auto"):
-    """Model file -> object with .evaluate().  .npz -> numpy (no torch needed);
-    .pt -> torch on the chosen device.  'a.npz+b.npz+c.npz' -> EnsembleEvaluator."""
+def nn_backend():
+    """'numpy' (default) or 'torch': how .npz files are run.  Set by the C4_NN_BACKEND
+    environment variable (nn.evaluate --backend torch sets it, so worker processes follow)."""
+    b = os.environ.get("C4_NN_BACKEND", "numpy").strip().lower() or "numpy"
+    return b if b in ("numpy", "torch") else "numpy"
+
+
+def load_evaluator(path, device="auto", backend=None):
+    """Model file -> object with .evaluate().  .npz -> numpy (no torch needed), or torch
+    (nn/torch_net.py: same moves, 2-5x faster on CPU, much faster on a GPU) when
+    backend='torch' / C4_NN_BACKEND=torch; .pt -> torch on the chosen device.
+    'a.npz+b.npz+c.npz' -> EnsembleEvaluator."""
     if "+" in path:
-        return EnsembleEvaluator(load_evaluator(p, device) for p in path.split("+"))
+        return EnsembleEvaluator(load_evaluator(p, device, backend) for p in path.split("+"))
     if path.endswith(".npz"):
+        if (backend or nn_backend()) == "torch":
+            from .torch_net import TorchNpzEvaluator
+            threads = os.environ.get("C4_NN_THREADS")
+            return TorchNpzEvaluator(path, device, threads=int(threads) if threads else None)
         from .numpy_net import NumpyNet
         return NumpyNet(path)
     from .model import load_checkpoint

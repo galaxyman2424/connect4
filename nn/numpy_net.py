@@ -76,6 +76,11 @@ class NumpyNet:
         """(policy logits, wdl logits, scores in Pons units or None)."""
         w = self.w
         x = np.ascontiguousarray(x, dtype=np.float32)
+        if "inproj.U" in w:         # PCA input projection (nn/model.py, --pca K in nn/train_score.py)
+            b = x.shape[0]
+            z = x[:, :2].reshape(b, -1)
+            z = (z - w["inproj.mean"]) @ w["inproj.U"] @ w["inproj.U"].T + w["inproj.mean"]
+            x = np.concatenate([z.reshape(b, 2, x.shape[2], x.shape[3]).astype(np.float32), x[:, 2:]], 1)
         h = _relu(_conv3x3(x, w["stem.w"], w["stem.b"]))
         for i in range(self.blocks):
             y = _relu(_conv3x3(h, w["b%d.c1.w" % i], w["b%d.c1.b" % i]))
