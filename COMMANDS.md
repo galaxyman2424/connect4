@@ -14,6 +14,12 @@ one with `server/`, `nn/`, `arena/` in it). More detail on training:
 
 ---
 
+> **C is the standard backend.** After `python -m engine.cbuild` (once per machine), the network
+> (engine/cminimax/net.c), the MCTS tree (mcts.c) and the hand-crafted minimax (minimax.c) all run
+> in C by default, everywhere: website, arena, nn.evaluate, bench_stats. Same moves as numpy
+> (`python -m nn.native --bench`). Without the library everything falls back to numpy.
+> Force a backend with `C4_NN_BACKEND=numpy|torch|native`. New hot-path code goes in C first.
+
 ## A. Run the website (Windows)
 
 ### First time only

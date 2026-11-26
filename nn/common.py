@@ -166,10 +166,20 @@ class EnsembleEvaluator:
 
 
 def nn_backend():
-    """'numpy' (default) or 'torch': how .npz files are run.  Set by the C4_NN_BACKEND
-    environment variable (nn.evaluate --backend torch sets it, so worker processes follow)."""
-    b = os.environ.get("C4_NN_BACKEND", "numpy").strip().lower() or "numpy"
-    return b if b in ("numpy", "torch", "native") else "numpy"
+    """How .npz files are run: 'native' (C, engine/cminimax/net.c), 'torch' or 'numpy'.
+
+    C is the standard: with no C4_NN_BACKEND set, the native C net is used whenever the
+    library is built (python -m engine.cbuild), else numpy.  All three give the same moves
+    (python -m nn.native --bench).  C4_NN_BACKEND=numpy|torch|native forces one
+    (nn.evaluate --backend torch sets it, so worker processes follow)."""
+    b = os.environ.get("C4_NN_BACKEND", "").strip().lower()
+    if b in ("numpy", "torch", "native"):
+        return b
+    try:
+        from .native import available
+        return "native" if available() else "numpy"
+    except Exception:
+        return "numpy"
 
 
 def load_evaluator(path, device="auto", backend=None):
